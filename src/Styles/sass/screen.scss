@@ -1,0 +1,12 @@
+@import "compass/reset";
+
+// Partials
+@import "../partials/_Header.scss";
+@import "../partials/_Sidebar.scss";
+@import "../partials/_EmailBlock.scss";
+
+body {
+    height: 100%;
+    width: 100%;
+    background: #ddd;
+}
