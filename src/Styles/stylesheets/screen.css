@@ -72,23 +72,202 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /* line 1, ../partials/_Sidebar.scss */
 .sideBar {
+  background: #ddd;
   height: 100vh;
   width: 12rem;
-  background: #ddd;
   float: left;
+}
+
+/* line 8, ../partials/_Sidebar.scss */
+.center {
+  background: yellow;
+  position: relative;
+  height: 10%;
+}
+/* line 13, ../partials/_Sidebar.scss */
+.center button[name="compose"] {
+  height: 30%;
+  width: 70%;
+  position: absolute;
+  left: 15%;
+  top: 50%;
 }
 
 /* line 1, ../partials/_EmailBlock.scss */
 .mainBlock {
   width: auto;
-  height: 100vh;
+  height: 100%;
   background: #007;
-  overflow: hidden;
+  overflow-y: scroll;
 }
 
-/* line 8, ../sass/screen.scss */
+/* line 8, ../partials/_EmailBlock.scss */
+.emailList {
+  table-layout: fixed;
+  width: 100%;
+  white-space: nowrap;
+  border-collapse: collapse;
+}
+/* line 15, ../partials/_EmailBlock.scss */
+.emailList colgroup .select {
+  background: yellow;
+  width: 2em;
+}
+/* line 19, ../partials/_EmailBlock.scss */
+.emailList colgroup .emailName {
+  width: 12em;
+}
+/* line 22, ../partials/_EmailBlock.scss */
+.emailList colgroup .emailTitle {
+  width: 100%;
+}
+/* line 25, ../partials/_EmailBlock.scss */
+.emailList colgroup .whiteSpace {
+  width: 7em;
+}
+/* line 28, ../partials/_EmailBlock.scss */
+.emailList colgroup .dateTag {
+  width: 10em;
+}
+/* line 35, ../partials/_EmailBlock.scss */
+.emailList tbody .email {
+  background: none;
+  color: green;
+  cursor: pointer;
+}
+/* line 40, ../partials/_EmailBlock.scss */
+.emailList tbody .email td {
+  text-align: center;
+  border-bottom: solid thin;
+}
+/* line 45, ../partials/_EmailBlock.scss */
+.emailList tbody .email .email-title-body {
+  overflow: hidden;
+}
+/* line 48, ../partials/_EmailBlock.scss */
+.emailList tbody .email .email-title-body span:nth-child(2) {
+  color: grey;
+  opacity: .4;
+}
+
+/* line 1, ../partials/_Logo.scss */
+.logo {
+  background: red;
+  height: 100%;
+  width: 12rem;
+  float: left;
+}
+/* line 7, ../partials/_Logo.scss */
+.logo div {
+  background: #fff;
+  height: inherit;
+  width: 60%;
+  margin: auto;
+}
+
+/* line 1, ../partials/_SearchForm.scss */
+.searchForm {
+  background: red;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+/* line 7, ../partials/_SearchForm.scss */
+.searchForm form {
+  position: absolute;
+  top: 30%;
+  height: 50%;
+  width: 100%;
+}
+/* line 13, ../partials/_SearchForm.scss */
+.searchForm form input {
+  height: auto;
+  width: 60%;
+  border-color: grey;
+}
+/* line 18, ../partials/_SearchForm.scss */
+.searchForm form input:hover {
+  border-color: #000;
+}
+/* line 21, ../partials/_SearchForm.scss */
+.searchForm form input:focus {
+  border-color: #000;
+}
+/* line 26, ../partials/_SearchForm.scss */
+.searchForm form .btn {
+  height: 1.6em;
+  width: 3em;
+}
+
+/* line 1, ../partials/_Dropdown.scss */
+.dropdown {
+  background: blue;
+  display: inline-block;
+  height: 80%;
+  width: 25%;
+  margin: auto 2%;
+}
+
+/* line 11, ../partials/_Dropdown.scss */
+.hur {
+  background: red;
+  position: relative;
+  height: 100%;
+  width: 12rem;
+  float: right;
+}
+
+/* line 19, ../partials/_Dropdown.scss */
+.gur {
+  height: inherit;
+  width: inherit;
+  position: absolute;
+  top: 10%;
+  box-sizing: border-box;
+}
+
+/* line 1, ../partials/_VerticalList.scss */
+.verticalList {
+  height: auto;
+  width: auto;
+  position: relative;
+}
+/* line 6, ../partials/_VerticalList.scss */
+.verticalList ol {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 15%;
+}
+/* line 12, ../partials/_VerticalList.scss */
+.verticalList ol li {
+  width: 80%;
+  margin-top: .5rem;
+}
+/* line 16, ../partials/_VerticalList.scss */
+.verticalList ol li:hover {
+  background: #aeeaad;
+  cursor: pointer;
+}
+/* line 22, ../partials/_VerticalList.scss */
+.verticalList ol li:nth-child(1) {
+  color: #5cdb7b;
+}
+
+/* line 1, ../partials/_Button.scss */
+.btn {
+  background: #5cdb7b;
+  border-radius: 10%;
+}
+/* line 5, ../partials/_Button.scss */
+.btn:hover {
+  background: #2ac94f;
+}
+
+/* line 15, ../sass/screen.scss */
 body {
   height: 100%;
   width: 100%;
+  min-width: 800px;
   background: #ddd;
 }

@@ -1,6 +1,65 @@
 .mainBlock {
-    width:auto;
-   height: 100vh;
-   background: #007;
-   overflow:hidden;
+    width: auto;
+    height: 100%;
+    background: #007;
+    overflow-y: scroll;
 }
+
+.emailList {
+    table-layout:fixed;
+    width:100%;
+    white-space: nowrap;
+    border-collapse: collapse;
+
+    colgroup {
+        .select {
+            background: yellow;
+            width: 2em;
+        }
+        .emailName {
+            width: 12em;;
+        }
+        .emailTitle {
+            width: 100%;
+        }
+        .whiteSpace {
+            width: 7em;
+        }
+        .dateTag {
+            width: 10em;
+
+        }
+    }
+
+    tbody {
+        .email {
+            background: none;
+            color: green;
+            cursor: pointer;
+
+            td {
+                text-align: center;
+                border-bottom: solid thin;
+            }
+
+            .email-title-body {
+                overflow: hidden;
+
+                span:nth-child(2) {
+                    color: grey;
+                    opacity: .4;
+                }
+            }
+        }
+    }
+}
+
+// .emailTitle {
+//     div {
+//         position: relative;
+//
+//         span {
+//             position: absolute;
+//         }
+//     }
+// }
