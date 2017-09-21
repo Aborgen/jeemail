@@ -1,0 +1,31 @@
+.searchForm {
+    background: red;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+
+    form {
+        position: absolute;
+        top: 30%;
+        height: 50%;
+        width: 100%;
+
+        input {
+            height: auto;
+            width: 60%;
+            border-color: grey;
+
+            &:hover {
+                border-color: #000;
+            }
+            &:focus {
+                border-color: #000;
+            }
+        }
+        
+        .btn {
+            height: 1.6em;
+            width: 3em;
+        }
+    }
+}
