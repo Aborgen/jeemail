@@ -1,13 +1,12 @@
 .verticalList {
     height: auto;
-    width: auto;
-    position: relative;
+    width: 70%;
+    margin: auto;
 
     ol {
+        background: salmon;
         height: 100%;
         width: 100%;
-        position: absolute;
-        left: 15%;
 
         li {
             width: 80%;

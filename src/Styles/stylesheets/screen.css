@@ -63,11 +63,60 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: block;
 }
 
-/* line 1, ../partials/_Header.scss */
+/* line 3, ../partials/_Header.scss */
 .header {
   background: blue;
   height: 4rem;
   width: 100%;
+}
+/* line 8, ../partials/_Header.scss */
+.header .logo {
+  background: red;
+  height: 100%;
+  width: 12rem;
+  float: left;
+}
+/* line 14, ../partials/_Header.scss */
+.header .logo div {
+  background: #fff;
+  height: inherit;
+  width: 60%;
+  margin: auto;
+}
+
+/* line 24, ../partials/_Header.scss */
+.navRight {
+  background: red;
+  position: relative;
+  height: 100%;
+  width: 12rem;
+  float: right;
+}
+
+/* line 32, ../partials/_Header.scss */
+.dropdown-group {
+  height: 80%;
+  width: 80%;
+  position: absolute;
+  display: block;
+  top: 25%;
+  left: 10%;
+  margin: auto;
+}
+
+/* line 43, ../partials/_Header.scss */
+.dropdown {
+  background: blue;
+  display: inline-block;
+  margin: 0 2%;
+  float: right;
+}
+
+/* line 1, ../partials/_SubNav.scss */
+.subNav {
+  height: 3.5rem;
+  width: 100%;
+  background: green;
 }
 
 /* line 1, ../partials/_Sidebar.scss */
@@ -80,17 +129,16 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /* line 8, ../partials/_Sidebar.scss */
 .center {
-  background: yellow;
+  background: pink;
   position: relative;
-  height: 10%;
+  height: 2rem;
 }
 /* line 13, ../partials/_Sidebar.scss */
 .center button[name="compose"] {
-  height: 30%;
+  height: 100%;
   width: 70%;
   position: absolute;
   left: 15%;
-  top: 50%;
 }
 
 /* line 1, ../partials/_EmailBlock.scss */
@@ -98,7 +146,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: auto;
   height: 100%;
   background: #007;
-  overflow-y: scroll;
+  overflow: hidden;
 }
 
 /* line 8, ../partials/_EmailBlock.scss */
@@ -150,21 +198,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .4;
 }
 
-/* line 1, ../partials/_Logo.scss */
-.logo {
-  background: red;
-  height: 100%;
-  width: 12rem;
-  float: left;
-}
-/* line 7, ../partials/_Logo.scss */
-.logo div {
-  background: #fff;
-  height: inherit;
-  width: 60%;
-  margin: auto;
-}
-
 /* line 1, ../partials/_SearchForm.scss */
 .searchForm {
   background: red;
@@ -199,57 +232,29 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 3em;
 }
 
-/* line 1, ../partials/_Dropdown.scss */
-.dropdown {
-  background: blue;
-  display: inline-block;
-  height: 80%;
-  width: 25%;
-  margin: auto 2%;
-}
-
-/* line 11, ../partials/_Dropdown.scss */
-.hur {
-  background: red;
-  position: relative;
-  height: 100%;
-  width: 12rem;
-  float: right;
-}
-
-/* line 19, ../partials/_Dropdown.scss */
-.gur {
-  height: inherit;
-  width: inherit;
-  position: absolute;
-  top: 10%;
-  box-sizing: border-box;
-}
-
 /* line 1, ../partials/_VerticalList.scss */
 .verticalList {
   height: auto;
-  width: auto;
-  position: relative;
+  width: 70%;
+  margin: auto;
 }
 /* line 6, ../partials/_VerticalList.scss */
 .verticalList ol {
+  background: salmon;
   height: 100%;
   width: 100%;
-  position: absolute;
-  left: 15%;
 }
-/* line 12, ../partials/_VerticalList.scss */
+/* line 11, ../partials/_VerticalList.scss */
 .verticalList ol li {
   width: 80%;
   margin-top: .5rem;
 }
-/* line 16, ../partials/_VerticalList.scss */
+/* line 15, ../partials/_VerticalList.scss */
 .verticalList ol li:hover {
   background: #aeeaad;
   cursor: pointer;
 }
-/* line 22, ../partials/_VerticalList.scss */
+/* line 21, ../partials/_VerticalList.scss */
 .verticalList ol li:nth-child(1) {
   color: #5cdb7b;
 }
@@ -264,7 +269,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: #2ac94f;
 }
 
-/* line 15, ../sass/screen.scss */
+/* line 14, ../sass/screen.scss */
 body {
   height: 100%;
   width: 100%;

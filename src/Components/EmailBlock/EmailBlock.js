@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
 //Components
-import Email from '../../../../Components/Email/Email';
+import EmailList            from './components/EmailList/EmailList';
+import Email                from '../Email/Email';
 
 class EmailBlock extends Component {
     constructor() {
@@ -23,18 +24,7 @@ class EmailBlock extends Component {
 
         return (
             <div className="mainBlock">
-                <table className="emailList">
-                    <colgroup>
-                        <col span="3" className="select" />
-                        <col className="emailName" />
-                        <col className="emailTitle" />
-                        <col className="whitespace" />
-                        <col className="dateTag" />
-                    </colgroup>
-                    <tbody>
-                        {emails}
-                    </tbody>
-                </table>
+                <EmailList emails={emails} />
             </div>
         );
     }

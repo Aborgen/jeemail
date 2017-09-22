@@ -2,7 +2,7 @@
     width: auto;
     height: 100%;
     background: #007;
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
 .emailList {
@@ -53,13 +53,3 @@
         }
     }
 }
-
-// .emailTitle {
-//     div {
-//         position: relative;
-//
-//         span {
-//             position: absolute;
-//         }
-//     }
-// }
