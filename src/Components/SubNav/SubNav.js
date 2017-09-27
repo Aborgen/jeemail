@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
 //Components
-import Selection            from './components/Selection/Selection';
-import MoreOptions          from './components/MoreOptions/MoreOptions';
 import EmailViews           from './components/EmailViews/EmailViews';
 import InputTools           from './components/InputTools/InputTools';
+import MoreOptions          from './components/MoreOptions/MoreOptions';
+import Pages                from './components/Pages/Pages';
+import Refresh              from './components/Refresh/Refresh';
+import Selection            from './components/Selection/Selection';
 import Settings             from './components/Settings/Settings';
 
 class SubNav extends Component {
@@ -14,29 +16,11 @@ class SubNav extends Component {
                 <div className="subNav__left">
                     <EmailViews />
                     <Selection />
-                    <div className="refresh">
-                        <div>&#8635;</div>
-                    </div>
+                    <Refresh />
                     <MoreOptions />
                 </div>
                 <div className="subNav__right">
-                    <div>
-                        <div className="pageSort">
-                            <span>
-                                <span>1</span>
-                                --
-                                <span>100</span>
-                                of
-                                <span>100</span>
-                            </span>
-                        </div>
-                        <div className="pagiation">
-                            <span>&#60;</span>
-                        </div>
-                        <div>
-                            <span>&#62;</span>
-                        </div>
-                    </div>
+                    <Pages />
                     <InputTools />
                     <Settings />
                 </div>

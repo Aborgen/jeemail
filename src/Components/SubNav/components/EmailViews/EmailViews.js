@@ -9,9 +9,12 @@ class EmailViews extends Component {
         return (
             <DropDown>
                 <Trigger className="emailViews">
-                    <span>JEEMAIL</span>
+                    <span>EMAIL</span>
                     <div>&#9660;</div>
                 </Trigger>
+                <Content className="emailViews__dropdown">
+                    <div>hey</div>
+                </Content>
             </DropDown>
         );
     }

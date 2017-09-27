@@ -8,7 +8,7 @@ class Selection extends Component {
     render() {
         return (
             <DropDown>
-                <Trigger className="select">
+                <Trigger className="selection">
                     <span><input type="checkbox"></input></span>
                     <div>&#9660;</div>
                 </Trigger>

@@ -1,5 +1,4 @@
 @mixin Centered_Box($margin:0) {
     background: blue;
-    display: inline-block;
     margin: $margin;
 }

@@ -63,82 +63,30 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: block;
 }
 
-/* line 3, ../partials/_Header.scss */
-.header {
-  background: blue;
-  height: 4rem;
-  width: 100%;
+/* line 1, ../partials/_Button.scss */
+.btn {
+  background: #5cdb7b;
+  border-radius: 10%;
 }
-/* line 8, ../partials/_Header.scss */
-.header .logo {
-  background: red;
-  height: 100%;
-  width: 12rem;
-  float: left;
-}
-/* line 14, ../partials/_Header.scss */
-.header .logo div {
-  background: #fff;
-  height: inherit;
-  width: 60%;
-  margin: auto;
+/* line 5, ../partials/_Button.scss */
+.btn:hover {
+  background: #2ac94f;
+  cursor: pointer;
 }
 
-/* line 24, ../partials/_Header.scss */
-.navRight {
-  background: red;
-  position: relative;
-  height: 100%;
-  width: 12rem;
-  float: right;
-}
-
-/* line 32, ../partials/_Header.scss */
-.dropdown-group {
-  height: 80%;
-  width: 80%;
-  position: absolute;
-  display: block;
-  top: 25%;
-  left: 10%;
-  margin: auto;
-}
-
-/* line 43, ../partials/_Header.scss */
-.dropdown {
-  background: blue;
-  display: inline-block;
+/* line 1, ../partials/_Dropdown.scss */
+.dropdown-container {
+  width: auto;
   margin: 0 2%;
-  float: right;
+}
+/* line 5, ../partials/_Dropdown.scss */
+.dropdown-container div {
+  display: inline-block;
 }
 
-/* line 1, ../partials/_SubNav.scss */
-.subNav {
-  height: 3.5rem;
-  width: 100%;
-  background: green;
-}
-
-/* line 1, ../partials/_Sidebar.scss */
-.sideBar {
-  background: #ddd;
-  height: 100vh;
-  width: 12rem;
-  float: left;
-}
-
-/* line 8, ../partials/_Sidebar.scss */
-.center {
-  background: pink;
-  position: relative;
-  height: 2rem;
-}
-/* line 13, ../partials/_Sidebar.scss */
-.center button[name="compose"] {
-  height: 100%;
-  width: 70%;
-  position: absolute;
-  left: 15%;
+/* line 10, ../partials/_Dropdown.scss */
+.dropdown-container:first-child {
+  margin: 0 10% 0 6%;
 }
 
 /* line 1, ../partials/_EmailBlock.scss */
@@ -198,6 +146,55 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .4;
 }
 
+/* line 3, ../partials/_Header.scss */
+.header {
+  background: blue;
+  height: 4rem;
+  width: 100%;
+}
+/* line 8, ../partials/_Header.scss */
+.header .logo {
+  background: red;
+  height: 100%;
+  width: 12rem;
+  float: left;
+}
+/* line 14, ../partials/_Header.scss */
+.header .logo div {
+  background: #fff;
+  height: inherit;
+  width: 60%;
+  margin: auto;
+}
+
+/* line 24, ../partials/_Header.scss */
+.navRight {
+  background: red;
+  position: relative;
+  height: 100%;
+  width: 12rem;
+  float: right;
+}
+
+/* line 32, ../partials/_Header.scss */
+.dropdown-group {
+  height: 80%;
+  width: 80%;
+  position: absolute;
+  display: block;
+  top: 25%;
+  left: 10%;
+  margin: auto;
+}
+
+/* line 43, ../partials/_Header.scss */
+.dropdown {
+  background: blue;
+  margin: 0 2%;
+  display: inline-block;
+  float: right;
+}
+
 /* line 1, ../partials/_SearchForm.scss */
 .searchForm {
   background: red;
@@ -232,6 +229,102 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   width: 3em;
 }
 
+/* line 1, ../partials/_Sidebar.scss */
+.sideBar {
+  background: #ddd;
+  height: 100vh;
+  width: 12rem;
+  float: left;
+}
+
+/* line 8, ../partials/_Sidebar.scss */
+.center {
+  background: pink;
+  position: relative;
+  height: 2rem;
+}
+/* line 13, ../partials/_Sidebar.scss */
+.center button[name="compose"] {
+  height: 100%;
+  width: 70%;
+  position: absolute;
+  left: 15%;
+}
+
+/* line 3, ../partials/_SubNav.scss */
+.subNav {
+  height: 3.5rem;
+  width: 100%;
+  background: green;
+}
+/* line 8, ../partials/_SubNav.scss */
+.subNav .subNav__left, .subNav .subNav__right {
+  background: #eee;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+/* line 14, ../partials/_SubNav.scss */
+.subNav .subNav__left > div, .subNav .subNav__right > div {
+  display: inline-block;
+  position: relative;
+  float: left;
+  height: 2rem;
+  width: 5rem;
+  border: 1px solid grey;
+  font-size: .8rem;
+  padding: 3px;
+  top: 15%;
+}
+/* line 25, ../partials/_SubNav.scss */
+.subNav .subNav__left > div > *, .subNav .subNav__right > div > * {
+  display: inline-block;
+  position: absolute;
+  height: 60%;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  margin: -15% 0 0 -40%;
+}
+/* line 37, ../partials/_SubNav.scss */
+.subNav .subNav__left > div > * > span, .subNav .subNav__left > div > * > div, .subNav .subNav__right > div > * > span, .subNav .subNav__right > div > * > div {
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+/* line 43, ../partials/_SubNav.scss */
+.subNav .subNav__left > div:hover, .subNav .subNav__right > div:hover {
+  background: gold;
+  cursor: pointer;
+}
+/* line 52, ../partials/_SubNav.scss */
+.subNav .subNav__left {
+  width: 30rem;
+  float: left;
+}
+/* line 56, ../partials/_SubNav.scss */
+.subNav .subNav__right {
+  width: 20rem;
+  float: right;
+}
+
+/* line 86, ../partials/_SubNav.scss */
+.emailViews:nth-child(1), .emailViews:nth-child(2) {
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* line 93, ../partials/_SubNav.scss */
+.emailViews__dropdown {
+  background: gold;
+  height: 200px;
+  width: 50px;
+  right: 500px;
+  position: absolute;
+}
+
 /* line 1, ../partials/_VerticalList.scss */
 .verticalList {
   height: auto;
@@ -257,16 +350,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /* line 21, ../partials/_VerticalList.scss */
 .verticalList ol li:nth-child(1) {
   color: #5cdb7b;
-}
-
-/* line 1, ../partials/_Button.scss */
-.btn {
-  background: #5cdb7b;
-  border-radius: 10%;
-}
-/* line 5, ../partials/_Button.scss */
-.btn:hover {
-  background: #2ac94f;
 }
 
 /* line 14, ../sass/screen.scss */

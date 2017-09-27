@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 //Components
-import EmailList            from './components/EmailList/EmailList';
 import Email                from '../Email/Email';
+import EmailList            from './components/EmailList/EmailList';
 
 class EmailBlock extends Component {
     constructor() {

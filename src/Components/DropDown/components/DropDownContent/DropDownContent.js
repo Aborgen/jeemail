@@ -4,7 +4,7 @@ class DropDownContent extends Component {
 
     render() {
         return (
-            <div></div>
+            <div ref="dropdown-content" {...this.props}></div>
         );
     }
 

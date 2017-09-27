@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 // Components
 import Logo                 from './components/Logo/Logo';
-import SearchForm           from '../../Components/SearchForm/SearchForm';
 import NavDropdownMenu      from './components/NavDropdownMenu/NavDropdownMenu';
+import SearchForm           from '../../Components/SearchForm/SearchForm';
 
 class Header extends Component {
 
