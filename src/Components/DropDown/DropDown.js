@@ -41,10 +41,13 @@ class DropDown extends Component {
         const dropdown = findDOMNode(this);
         if(e.target !== dropdown && !dropdown.contains(e.target)) {
             this.hideContent();
+            dropdown.classList.remove('drop__focus');
         }
 
         else {
             this.showContent();
+            dropdown.classList.add('drop__focus');
+
         }
         console.log(this.state.content_visible);
     }

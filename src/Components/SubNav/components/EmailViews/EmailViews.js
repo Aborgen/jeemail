@@ -6,6 +6,9 @@ import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
 class EmailViews extends Component {
 
     render() {
+        const links = this.props.nav.map((link) => {
+            return <li key={link.name}><div>{link.name}</div></li>
+        });
         return (
             <DropDown>
                 <Trigger className="emailViews">
@@ -13,7 +16,9 @@ class EmailViews extends Component {
                     <div>&#9660;</div>
                 </Trigger>
                 <Content className="emailViews__dropdown">
-                    <div>hey</div>
+                    <ol>
+                        {links}
+                    </ol>
                 </Content>
             </DropDown>
         );
@@ -22,3 +27,20 @@ class EmailViews extends Component {
 }
 
 export default EmailViews;
+
+EmailViews.defaultProps = {
+    nav: [
+        {
+            name: "Email",
+            url: ""
+        },
+        {
+            name: "Contacts",
+            url: ""
+        },
+        {
+            name: "Tasks",
+            url: ""
+        }
+    ]
+}

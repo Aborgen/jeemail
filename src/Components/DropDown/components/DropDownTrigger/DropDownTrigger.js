@@ -4,10 +4,10 @@ class DropDownTrigger extends Component {
 
     render() {
         return (
-            <div ref="dropdown-trigger" {...this.props}>{this.props.children}</div>
+            <div ref="dropdown-trigger" {...this.props}></div>
+
         );
     }
-
 }
 
 export default DropDownTrigger;

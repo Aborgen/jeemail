@@ -16,4 +16,9 @@ body {
     width: 100%;
     min-width: 800px;
     background: #ddd;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }

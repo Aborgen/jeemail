@@ -3,8 +3,10 @@ import React, { Component } from 'react';
 class DropDownContent extends Component {
 
     render() {
+        const { className, children} = this.props;
+        console.log(children);
         return (
-            <div ref="dropdown-content" {...this.props}></div>
+            <div className={`dropdownContent ${className}`}>{children}</div>
         );
     }
 
