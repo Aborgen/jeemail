@@ -7,14 +7,27 @@ import Sidebar              from '../../Components/Sidebar/Sidebar';
 import SubNav               from '../../Components/SubNav/SubNav';
 
 class Home extends Component {
+    constructor() {
+        super();
+        this.state = {
+            emails: []
+        };
+    }
+
+    refresh(arr) {
+        // this.setState({
+        //     emails: arr
+        // })
+    }
+
 
     render() {
         return (
             <div>
                 <Header />
-                <SubNav />
+                <SubNav refresh = {this.refresh.bind(this)} />
                 <Sidebar />
-                <EmailBlock />
+                <EmailBlock refreshEmails = {this.state.emails} />
             </div>
         );
     }

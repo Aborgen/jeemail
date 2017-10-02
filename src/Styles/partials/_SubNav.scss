@@ -1,28 +1,39 @@
-@import "../mixins/dropdownMixin";
+@import "../variables/Colors";
 
 .subNav {
     height: 3.5rem;
     position: relative;
     width: 100%;
-    background: green;
+    // background: green;
+    white-space: nowrap;
+    border-top: solid thin green;
+    border-bottom: solid thin green;
 
     .subNav__left, .subNav__right {
-        background: #eee;
+        // background: #eee;
         position: relative;
         height: 100%;
-        // overflow:hidden;
+        white-space: nowrap;
     }
     .subNav__left {
-        width: 30rem;
+        width: 29rem;
         float: left;
     }
     .subNav__right {
-        width: 20rem;
+        width: 40%;
         float: right;
     }
 }
 
-.dropdown-container, .refresh {
+
+
+.dropdown-container:first-child {
+    margin: 0 10% 0 6%;
+}
+
+
+.dropdown-container, .refresh, .pages, .languageConfig {
+    background: #fff;
     display: inline-block;
     position: relative;
     float: left;
@@ -30,10 +41,11 @@
     width: 5rem;
     border: 1px solid grey;
     font-size: .8rem;
+    margin: 0 1%;
     padding: 3px;
     top: 15%;
 
-    .emailViews, .selection, .moreOptions, .inputTools, .settings {
+    .emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
         // background: orange;
         display: inline-block;
         height: 60%;
@@ -44,22 +56,37 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        margin: -15% 0 0 -40%;
+        margin: -0.5rem 0 0 -40%;
     }
+
     &:hover {
         cursor: pointer;
     }
 }
 
+.emailViews div, .selection div, .moreOptions div, .settings div {
+    display: inline-block;
+}
+
+.emailViews {
+
+}
+
+.refresh, .settings span {
+    font-size: 1.50rem;
+}
+
+////
+//
+//DropDown rules
 .drop__focus {
-    background: gold;
+    background: $dropDown_Background;
     cursor: default
 }
 
-
-// DropDown rules
 .dropdownContent {
-    background: gold;
+    background: $dropDown_Background;
+    box-sizing: border-box;
     border: 2px solid grey;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
 
@@ -68,7 +95,7 @@
     text-align: left;
 
     position: absolute;
-    top: 2rem;
+    top: 2.3rem;
 
     z-index: 5;
     cursor: default;
@@ -76,7 +103,7 @@
 }
 
 .emailViews__dropdown {
-    right: -35px;
+    left: -2px;
 
     ol {
         padding: 0;
@@ -86,7 +113,7 @@
             padding-right: 3rem;
 
             &:hover {
-                background: rgba(255, 255, 0, 0.8);
+                background: $dropDown_Background__hover;
                 cursor: pointer;
             }
         }
@@ -94,7 +121,7 @@
 }
 
 .moreOptions__dropdown {
-    right: -148px;
+    left: -2px;
 
     ol {
         padding: 0;
@@ -105,7 +132,7 @@
             white-space: nowrap;
 
             &:hover {
-                background: rgba(255, 255, 0, 0.8);
+                background: $dropDown_Background__hover;
                 cursor: pointer;
             }
         }
@@ -113,7 +140,7 @@
 }
 
 .selection__dropdown {
-    right: -29px;
+    left: -2px;
 
     ol {
         padding: 0;
@@ -124,9 +151,176 @@
             white-space: nowrap;
 
             &:hover {
-                background: rgba(255, 255, 0, 0.8);
+                background: $dropDown_Background__hover;
                 cursor: pointer;
             }
+        }
+    }
+}
+.pages {
+    // background: maroon;
+    position: relative;
+    height: 2.35rem;
+    width: 9rem;
+    font-size: 1.02rem;
+    padding: 0;
+    margin: 0 1% 0 0;
+
+    .pageSort, .pagination {
+        display: inline-block;
+        height: 100%;
+    }
+
+    .pageSort {
+        // background: green;
+        float: left;
+        width: 70%;
+
+        span {
+            display: inline-block;
+            height: 100%;
+
+            span {
+                height: 50%;
+
+            }
+        }
+    }
+
+    .pagination {
+        background: red;
+        float: left;
+        width: 30%;
+        vertical-align: middle;
+
+        .progressArrow {
+            display: inline-block;
+            position: relative;
+            box-sizing: border-box;
+            height: 100%;
+            width: 50%;
+            border: 3px solid grey;
+            text-align: center;
+        }
+
+        .progressArrow-prev p, .progressArrow-next p {
+            position: absolute;
+            top: 50%;
+            margin-top: -50%;
+        }
+
+        .progressArrow-prev p {
+            left: 1px;
+        }
+
+        .progressArrow-next p {
+            left: 3px;
+        }
+    }
+}
+
+.languageConfig {
+    display: inline-block;
+    height: 2.5rem;
+    border: none;
+    margin: 0 2%;
+    padding: 0;
+    width: auto;
+
+    &:hover {
+        cursor: default;
+    }
+    .checky {
+        box-sizing: border-box;
+        position: relative;
+        display: block;
+        border: 1px solid grey;
+        height: 100%;
+        width: 3rem;
+        padding: 0;
+        margin: 0;
+        float: left;
+        font-size: 1.25rem;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin: -0.625rem 0 0 -0.88rem;
+        }
+    }
+    .dropdown-container {
+        box-sizing: border-box;
+        // position: relative;
+        // height: 2rem;
+        // border: 1px solid grey;
+        top: auto;
+        height: 100%;
+        width: 1rem;
+        // float: left;
+        margin: 0;
+        padding: 0;
+
+        .inputTools {
+            position: relative;
+            height: 100%;
+            padding: 0;
+
+            span {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                margin: -0.40rem 0 0 -0.31rem;
+            }
+        }
+    }
+}
+
+.inputTools__dropdown {
+    right: -2px;
+    line-height: 1.2rem;
+
+    li {
+        padding: 0.5rem;
+        padding-right: 4rem;
+        white-space: nowrap;
+
+        &:hover {
+            background: $dropDown_Background__hover;
+            cursor: pointer;
+        }
+    }
+}
+
+.subNav__right .dropdown-container:last-child {
+    margin-right: 0;
+}
+.settings__dropdown {
+    right: -2px;
+    line-height: 1.2rem;
+
+    ol li:nth-child(4) {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    ol li:nth-child(7) {
+        margin-top: 1.5rem;
+    }
+
+    li {
+        padding: 0.5rem;
+        padding-right: 4rem;
+        white-space: nowrap;
+
+        &:hover {
+            background: $dropDown_Background__hover;
+            cursor: pointer;
         }
     }
 }

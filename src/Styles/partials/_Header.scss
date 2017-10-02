@@ -42,6 +42,5 @@
 
 .dropdown {
     @include Centered_Box(0 2%);
-    display: inline-block;
     float: right;
 }

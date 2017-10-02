@@ -49,7 +49,6 @@ class DropDown extends Component {
             dropdown.classList.add('drop__focus');
 
         }
-        console.log(this.state.content_visible);
     }
 
 

@@ -1,7 +1,7 @@
 .mainBlock {
     width: auto;
     height: 100%;
-    background: #007;
+    // background: #007;
     overflow: hidden;
     z-index: 1;
 }
@@ -14,7 +14,7 @@
 
     colgroup {
         .select {
-            background: yellow;
+            // background: yellow;
             width: 2em;
         }
         .emailName {
@@ -40,7 +40,7 @@
 
             td {
                 text-align: center;
-                border-bottom: solid thin;
+                border-bottom: solid thin green;
             }
 
             .email-title-body {

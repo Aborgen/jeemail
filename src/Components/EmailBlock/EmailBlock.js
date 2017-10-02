@@ -3,19 +3,31 @@ import React, { Component } from 'react';
 //Components
 import Email                from '../Email/Email';
 import EmailList            from './components/EmailList/EmailList';
+import getEmails            from '../../Services/GetEmails';
 
 class EmailBlock extends Component {
     constructor() {
         super();
-        this.state = {emails: []};
+        this.state = {
+            emails: [],
+            emails_available: false
+        };
 
-        fetch('https://jsonplaceholder.typicode.com/posts')
-            .then((res) => res.json())
-            .then((posts) => {
-                this.setState({emails: posts})
-            })
-            .catch((err) => console.log(err))
+        getEmails().then(emails => {
+            this.setState({emails, emails_available: true});
+        });
     }
+
+    componentWillReceiveProps(nextProps) {
+        // nextProps.refreshEmails.then(emails => {
+        //     this.setState({emails, emails_available: true});
+        // });
+    }
+
+    // refresh(fresh) {
+    //     this.setState({emails: fresh, emails_available: true});
+    //     console.log(fresh);
+    // }
 
     render() {
         const emails = this.state.emails.map((email) => {
@@ -24,7 +36,7 @@ class EmailBlock extends Component {
 
         return (
             <div className="mainBlock">
-                <EmailList emails={emails} />
+                {this.state.emails_available && <EmailList emails={emails} />}
             </div>
         );
     }
