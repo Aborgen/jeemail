@@ -47,7 +47,6 @@ class DropDown extends Component {
         else {
             this.showContent();
             dropdown.classList.add('drop__focus');
-
         }
     }
 

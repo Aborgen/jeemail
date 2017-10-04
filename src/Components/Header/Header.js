@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component }           from 'react';
 
 // Components
-import Logo                 from './components/Logo/Logo';
-import NavDropdownMenu      from './components/NavDropdownMenu/NavDropdownMenu';
-import SearchForm           from '../../Components/SearchForm/SearchForm';
+import AdditionalApps                 from './components/AdditionalApps/AdditionalApps';
+import Logo                           from './components/Logo/Logo';
+import Notifications                  from './components/Notifications/Notifications';
+import ProfileMenu                    from './components/ProfileMenu/ProfileMenu';
+import SearchForm                     from '../../Components/SearchForm/SearchForm';
 
 class Header extends Component {
 
@@ -13,9 +15,9 @@ class Header extends Component {
                 <Logo />
                 <div className="navRight">
                     <div className="dropdown-group">
-                        <NavDropdownMenu />
-                        <NavDropdownMenu />
-                        <NavDropdownMenu />
+                        <AdditionalApps />
+                        <Notifications />
+                        <ProfileMenu />
                     </div>
                 </div>
                 <SearchForm />

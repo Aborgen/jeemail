@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes            from 'prop-types';
 
 class Button extends Component {
 
@@ -13,3 +14,9 @@ class Button extends Component {
 }
 
 export default Button;
+
+Button.propTypes = {
+    type: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired
+}

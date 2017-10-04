@@ -30,17 +30,127 @@
 }
 
 .dropdown-group {
-    height: 80%;
-    width: 80%;
-    position: absolute;
+    position: relative;
     display: block;
     top: 25%;
-    left: 10%;
-    margin: auto;
+    white-space: nowrap;
     // padding-right: 10%;
+
+    .dropdown-container {
+        background: transparent;
+        border: none;
+        position: static;
+        float: none;
+        top: auto;
+        width: auto;
+    }
+    .drop__focus > div:first-child {
+        border-color: aqua;
+    }
 }
 
 .dropdown {
     @include Centered_Box(0 2%);
-    float: right;
+    // float: right;
+}
+
+.profileMenu, .notifications, .additionalApps {
+    position: relative;
+    border: 3px solid #000;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 50%;
+    overflow: hidden;
+    text-align: center;
+    bottom: 0.23em;
+
+    & > div img {
+        max-height: 100%;
+        max-width: 200%;
+        margin: 0 -100%;
+    }
+
+    & > span {
+        display: block;
+        background: grey;
+        font-size: 2rem;
+    }
+}
+
+.profileMenu__dropdown {
+    right: 50px;
+}
+
+.profile__info {
+    position: relative;
+    white-space: nowrap;
+    line-height: 1rem;
+    text-align: left;
+    border-bottom: 1px solid grey;
+    padding: 2%;
+
+    &:last-child {
+        border: none;
+    }
+
+    span {
+        height: 100%;
+        display: inline-block;
+        line-height: 1.25rem;
+    }
+
+    ol {
+        width: auto;
+        padding-right: 10rem;
+
+        li {
+            width: 100%;
+            position: relative;
+            padding: inherit;
+            border-bottom: 1px solid rgba(10, 10, 10, 0.2);
+
+            &:last-child {
+                border: none;
+            }
+
+            .profileIcon {
+                height: 3rem;
+                width: 3rem;
+            }
+
+            & > span:last-child {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                margin: -1rem 0 0 -5rem;
+            }
+        }
+
+    }
+    .profileIcon {
+        background: orange;
+        position: static;
+        border: 3px solid #000;
+        height: 6rem;
+        width: 6rem;
+        border-radius: 50%;
+        overflow: hidden;
+        text-align:center;
+    }
+
+
+}
+.profileIcon > img {
+    max-width:200%;
+    max-height:100%;
+    margin:0 -100%;
+}
+
+.profile__info > span:last-child {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    margin: -1rem 0 0 -2rem;
 }

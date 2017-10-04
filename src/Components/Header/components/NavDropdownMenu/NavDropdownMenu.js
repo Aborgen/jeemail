@@ -11,7 +11,7 @@ class NavDropdownMenu extends Component {
 
         return (
             <div className="dropdown">
-                <div className="dropdownContent">
+                <div>
                     <span style={fresh} role="img">🍔</span>
                 </div>
             </div>
