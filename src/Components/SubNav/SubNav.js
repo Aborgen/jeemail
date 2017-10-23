@@ -11,7 +11,7 @@ import Selection            from './components/Selection/Selection';
 import Settings             from './components/Settings/Settings';
 
 // Services
-import getEmails            from '../../Services/GetEmails';
+// import getEmails            from '../../Services/GetEmails';
 
 class SubNav extends Component {
 
@@ -21,12 +21,16 @@ class SubNav extends Component {
         this.props.refresh(/*getEmails(beginning, end)*/);
     }
 
+    selectionOpt(e) {
+        this.props.selectionOpt(e.target.innerText);
+    }
+
     render() {
         return (
             <div className="subNav">
                 <div className="subNav__left">
                     <EmailViews />
-                    <Selection />
+                    <Selection selectionOpt={this.selectionOpt.bind(this)} />
                     <Refresh refreshEmails={this.refresh.bind(this)} />
                     <MoreOptions />
                 </div>

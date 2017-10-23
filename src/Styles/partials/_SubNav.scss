@@ -18,6 +18,10 @@
     .subNav__left {
         width: 29rem;
         float: left;
+
+        .dropdown-container:first-child {
+            margin: 0 10% 0 6%;
+        }
     }
     .subNav__right {
         width: 40%;
@@ -27,9 +31,7 @@
 
 
 
-.dropdown-container:first-child {
-    margin: 0 10% 0 6%;
-}
+
 
 
 .dropdown-container, .refresh, .pages, .languageConfig {
@@ -66,10 +68,6 @@
 
 .emailViews div, .selection div, .moreOptions div, .settings div {
     display: inline-block;
-}
-
-.emailViews {
-
 }
 
 .refresh, .settings span {

@@ -7,7 +7,13 @@ class Selection extends Component {
 
     render() {
         const links = this.props.nav.map((link) => {
-            return <li key={link.name}><div>{link.name}</div></li>
+            return <li
+                    onClick={this.props.selectionOpt}
+                    key={link.name}>
+                        <div>
+                            {link.name}
+                        </div>
+                    </li>
         });
         return (
             <DropDown>
@@ -31,28 +37,22 @@ export default Selection;
 Selection.defaultProps = {
     nav: [
         {
-            name: "All",
-            url: ""
+            name: "All"
         },
         {
-            name: "None",
-            url: ""
+            name: "None"
         },
         {
-            name: "Read",
-            url: ""
+            name: "Read"
         },
         {
-            name: "Unread",
-            url: ""
+            name: "Unread"
         },
         {
-            name: "Starred",
-            url: ""
+            name: "Starred"
         },
         {
-            name: "Unstarred",
-            url: ""
+            name: "Unstarred"
         },
     ]
 }

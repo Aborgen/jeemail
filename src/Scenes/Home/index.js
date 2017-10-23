@@ -10,8 +10,12 @@ class Home extends Component {
     constructor() {
         super();
         this.state = {
-            emails: []
+            emails: [],
+            selection: ""
         };
+
+        this.refresh = this.refresh.bind(this);
+        this.selectionOpt = this.selectionOpt.bind(this);
     }
 
     refresh(arr) {
@@ -20,14 +24,23 @@ class Home extends Component {
         // })
     }
 
+    selectionOpt(checkStatus) {
+        this.setState({
+            selection: checkStatus
+        })
+    }
 
     render() {
         return (
             <div>
                 <Header />
-                <SubNav refresh = {this.refresh.bind(this)} />
+                <SubNav
+                    refresh = {this.refresh}
+                    selectionOpt = {this.selectionOpt} />
                 <Sidebar />
-                <EmailBlock refreshEmails = {this.state.emails} />
+                <EmailBlock
+                    refreshEmails = {this.state.emails}
+                    selectionOpt = {this.state.selection} />
             </div>
         );
     }

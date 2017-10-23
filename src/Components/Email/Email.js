@@ -6,7 +6,7 @@ class Email extends Component {
     render() {
         return (
                 <tr className="email">
-                    <td><input type="checkbox" name="select"></input></td>
+                    <td><input type="checkbox" name="select" checked={this.props.email.checked}></input></td>
                     <td><input type="checkbox" name="favorite"></input></td>
                     <td><input type="checkbox" name="tag"></input></td>
                     <td>{this.props.email.id}</td>

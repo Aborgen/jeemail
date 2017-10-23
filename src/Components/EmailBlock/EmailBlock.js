@@ -16,12 +16,43 @@ class EmailBlock extends Component {
         getEmails().then(emails => {
             this.setState({emails, emails_available: true});
         });
+
+        this.selectionOpt = this.selectionOpt.bind(this);
+    }
+
+    selectionOpt(checkStatus) {
+
+        switch (checkStatus) {
+            case "All":
+
+                break;
+            case "None":
+
+                break;
+            case "Read":
+
+                break;
+            case "Unread":
+
+                break;
+            case "Starred":
+
+                break;
+            case "Unstarred":
+
+                break;
+            default:
+                break;
+
+        }
     }
 
     componentWillReceiveProps(nextProps) {
-        // nextProps.refreshEmails.then(emails => {
-        //     this.setState({emails, emails_available: true});
-        // });
+        // if(nextProps.refreshEmails) {
+        //     nextProps.refreshEmails.then(emails => {
+        //         this.setState({emails, emails_available: true});
+        //     });
+        // }
     }
 
     // refresh(fresh) {
