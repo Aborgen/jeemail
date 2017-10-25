@@ -7,7 +7,14 @@
     function trim_value(&$value) {
         $value = trim($value);
     }
-    $labels = new Insert_Label();
+
+    try {
+        $labels = new Insert_Label();
+    }
+
+    catch (Exception $err) {
+        echo "<h1>Unable to connect to database.</h1>";
+    }
 
     if(filter_has_var(INPUT_POST, 'submit')) {
         array_walk_recursive($_POST, 'trim_value');
@@ -25,12 +32,11 @@
             echo $result2;
         }
         else {
-            echo $_POST['parent'];
-            echo "OH NOOOOOOOOOOOOOO";
+            echo $labels->err('no-parent');
         }
     }
 
-    $coolguy = $labels->getLabelsOrdered('name');
+    $existingLabels = $labels->getLabels();
  ?>
 
 <!DOCTYPE html>
@@ -40,8 +46,8 @@
         <title>Root Labels</title>
     </head>
     <body>
-        <?php foreach($coolguy as $guy): ?>
-            <pre><?php echo $guy['labels']; ?></pre>
+        <?php foreach($existingLabels as $label): ?>
+            <pre><?php echo $label['labels']; ?></pre>
         <?php endforeach; ?>
         <form action=<?php echo $_SERVER['PHP_SELF']; ?> method="POST">
             <label for="rooty">Root Label</label>
@@ -53,9 +59,9 @@
             <input type="text" name="non-rooty" value="">
             <select class="" name="parent">
                 <option hidden disabled selected value> -- select an option -- </option>
-                <?php foreach($coolguy as $guy): ?>
-                    <option value=<?php echo $guy['labels']; ?>>
-                        <?php echo $guy['labels']; ?>
+                <?php foreach($existingLabels as $label): ?>
+                    <option value=<?php echo trim($label['labels'], '&emsp;'); ?>>
+                        <?php echo $label['labels']; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
