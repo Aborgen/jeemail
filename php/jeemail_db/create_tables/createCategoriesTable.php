@@ -3,17 +3,14 @@
 
     $pdo = new PDO($dsn, $user, $pass, $opt);
 
-    $table = 'User_Labels';
+    $table = 'Categories';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
-        User_LabelsID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        UserID INT(11) NOT NULL,
-        LabelsID INT(11) NOT NULL,
+        CategoriesID INT(11) AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
         visibility BOOLEAN NOT NULL DEFAULT 1
-
-        FOREIGN KEY (UserID)
-            REFERENCES UserID
-            ON DELETE CASCADE
         );";
+
+    $default = "INSERT INTO {$table} (name, visibility)";
 
     $pdo->exec($sql);
     echo "Created {$table} table";

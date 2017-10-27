@@ -3,14 +3,13 @@
 
     $pdo = new PDO($dsn, $user, $pass, $opt);
 
-    $table = 'User_Labels';
+    $table = 'User_Settings';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
-        User_LabelsID INT(11) AUTO_INCREMENT PRIMARY KEY,
+        User_SettingsID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL,
-        LabelsID INT(11) NOT NULL,
-        visibility BOOLEAN NOT NULL DEFAULT 1
+        SettingsID INT(11) NOT NULL DEFAULT 0
 
-        FOREIGN KEY (UserID)
+        FOREIGN KEY(UserID)
             REFERENCES UserID
             ON DELETE CASCADE
         );";

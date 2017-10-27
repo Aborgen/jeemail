@@ -3,10 +3,10 @@
 
     $pdo = new PDO($dsn, $user, $pass, $opt);
 
-    $table = 'Labels';
+    $table = 'Blocked';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
-        LabelsID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL
+        BlockedID INT(11) AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(64) NOT NULL
         );";
 
     $pdo->exec($sql);

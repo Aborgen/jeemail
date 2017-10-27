@@ -6,12 +6,10 @@
     $table = 'Email';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
         EmailID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        reply_to_email VARCHAR(64) NULL,
-        mailed_by VARCHAR(64) NOT NULL,
-        signed_by VARCHAR(64) NOT NULL,
-        subject VARCHAR(128) NOT NULL,
-        body TEXT NOT NULL,
-        LabelsID INT(11) NOT NULL,
+        reply_to_email VARCHAR(64) NOT NULL,
+        sent_by VARCHAR(255) NOT NULL,
+        subject VARCHAR(128) NULL,
+        body TEXT NULL,
         time_sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );";
 

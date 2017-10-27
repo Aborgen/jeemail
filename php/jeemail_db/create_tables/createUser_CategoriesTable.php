@@ -3,11 +3,11 @@
 
     $pdo = new PDO($dsn, $user, $pass, $opt);
 
-    $table = 'User_Labels';
+    $table = 'User_Categories';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
-        User_LabelsID INT(11) AUTO_INCREMENT PRIMARY KEY,
+        User_CategoriesID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL,
-        LabelsID INT(11) NOT NULL,
+        CategoriesID INT(11) NOT NULL,
         visibility BOOLEAN NOT NULL DEFAULT 1
 
         FOREIGN KEY (UserID)
