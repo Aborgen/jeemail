@@ -6,7 +6,7 @@
     $table = 'Images';
     $sql = "CREATE TABLE IF NOT NULL {$table}(
         ImagesID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        UserID INT(11) NOT NULL,
+        UserID INT(11) NOT NULL UNIQUE,
         icon_small VARCHAR(255) NOT NULL,
         icon_medium VARCHAR(255) NOT NULL,
         icon_large VARCHAR(255) NOT NULL

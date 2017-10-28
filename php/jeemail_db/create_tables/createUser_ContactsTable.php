@@ -8,7 +8,7 @@
         User_ContactsID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL,
         ContactsID INT(11) NOT NULL,
-        Contact_DetailsID INT(11) NOT NULL
+        Contact_DetailsID INT(11) NOT NULL UNIQUE
 
         FOREIGN KEY(UserID)
             REFERENCES UserID

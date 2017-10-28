@@ -6,7 +6,7 @@
     $table = 'Blocked';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
         BlockedID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(64) NOT NULL
+        email VARCHAR(64) NOT NULL UNIQUE
         );";
 
     $pdo->exec($sql);

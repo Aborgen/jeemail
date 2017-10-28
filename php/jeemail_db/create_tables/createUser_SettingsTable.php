@@ -6,7 +6,7 @@
     $table = 'User_Settings';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
         User_SettingsID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        UserID INT(11) NOT NULL,
+        UserID INT(11) NOT NULL UNIQUE,
         SettingsID INT(11) NOT NULL DEFAULT 0
 
         FOREIGN KEY(UserID)

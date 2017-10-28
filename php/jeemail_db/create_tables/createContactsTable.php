@@ -6,8 +6,8 @@
     $table = 'Contacts';
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
         ContactsID INT(11) AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(64) NOT NULL,
-        email VARCHAR(64) NOT NULL
+        name VARCHAR(64) NOT NULL UNIQUE,
+        email VARCHAR(64) NOT NULL UNIQUE
         );";
 
     $pdo->exec($sql);
