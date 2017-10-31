@@ -98,7 +98,7 @@ class Database {
     }
 
     /**
-     * @return STRING Returns the id of the last succesfully INSERTed row
+     * @return INT Returns the id of the last succesfully INSERTed row
      */
     public function lastInsertId(){
         return $this->pdo->lastInsertId();
@@ -132,6 +132,56 @@ class Database {
 
     public function clearCursor() {
         return $this->pdo->clearCursor();
+    }
+
+    private function deleteFiles($files) {
+        // If any files fail to be deleted, collect them
+        $result =
+            array_filter(array_map('deleteFile', $files), function($el) {
+                if(getType($el) !== 'boolean') {
+                    return $el;
+                }
+            });
+
+        if(count($result) > 0) {
+            return $result;
+        }
+
+        return true;
+    }
+
+    private function deleteFile($file) {
+        $result = unlink($file);
+
+        if(!$result) {
+            return $file;
+        }
+
+        return $result;
+    }
+
+    private function resizeImage($path, $origName, $name, $size, $format) {
+        $img = new Imagick("{$path}/{$origName}");
+        $width = $img->getImageWidth() * $size;
+        // Setting height to 0 automatically maintains a square aspect ratio
+        $img->newImage($width, 0);
+        $img->setImageFormat($format);
+        switch ($size) {
+            case 1.0:
+                $newName = "{$name}_LARGE";
+                break;
+
+            case 0.5:
+                $newName = "{$name}_MEDIUM";
+                break;
+
+            case 0.25:
+                $newName = "{$name}_SMALL";
+                break;
+        }
+
+        file_put_contents("{$path}/{$newName}.{$format}", $img);
+        return "{$path}/{$newName}.{$format}";
     }
 }
  ?>
