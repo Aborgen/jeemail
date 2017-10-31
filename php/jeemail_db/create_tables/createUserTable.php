@@ -11,7 +11,7 @@
         username VARCHAR(64) NOT NULL,
         email VARCHAR(64) NOT NULL UNIQUE,
         pass VARCHAR(255) NOT NULL,
-        ImagesID INT(11) NOT NULL UNIQUE
+        ImagesID INT(11) NOT NULL DEFAULT 0
         );";
 
     $pdo->exec($sql);

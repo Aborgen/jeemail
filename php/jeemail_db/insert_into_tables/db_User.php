@@ -3,50 +3,143 @@
 
 
     class db_User extends Database {
-        private $blockedTable      = 'Blocked';
-        private $contactsTable     = 'Contacts';
-        private $imgTable          = 'Images';
-        private $settingsTable     = 'Settings';
-        private $userTable         = 'User';
+        private $blockedTable          = 'Blocked';
+        private $contactsTable         = 'Contacts';
+        private $imgTable              = 'Images';
+        private $settingsTable         = 'Settings';
+        private $systemLabelsTable     = 'System_Labels_Table';
+        private $userTable             = 'User';
 
         // Junction tables
-        private $userBlockedTable  = 'User_Blocked';
-        private $userContactsTable = 'User_Contacts';
-        private $userSettingsTable = 'User_Settings';
+        private $userBlockedTable      = 'User_Blocked';
+        private $userContactsTable     = 'User_Contacts';
+        private $userImagesTable       = 'User_Images';
+        private $userSettingsTable     = 'User_Settings';
+        private $userSystemLabelsTable = 'User_System_Labels';
 
-        public function insert_user($user) {
+        public function insert_user($user, $imgPath = NULL) {
             // TODO: Plaintext password can be no longer than 72 characters
             // when using PASSWORD_BCRYPT
+            $this->transaction();
+            list($firstName, $lastName, $username, $email, $pass) = $user;
             try {
-                $hashpass = $this->encrypt($user['pass']);
+                $hashpass = $this->encrypt($pass);
                 if(!$hashpass) {
                     throw new Exception("Error in password encryption");
                 }
 
                 $insert = "INSERT INTO {$this->userTable}
                                 (first_name, last_name, username,
-                                    email, pass)
+                                    email, pass, ImagesID)
                                Values
-                                (:fname, :lname, :uname, :email, :pass)";
+                                (:fname, :lname, :uname, :email,
+                                    :pass)";
                 $this->query($insert);
-                $this->bind(':fname', $user['firstName']);
-                $this->bind(':lname', $user['lastName']);
-                $this->bind(':uname', $user['username']);
-                $this->bind(':email', $user['email']);
-                $this->bind(':pass', $hashpass);
+                $this->bind(':fname', $firstName);
+                $this->bind(':lname', $lastName);
+                $this->bind(':uname', $username);
+                $this->bind(':email', $email);
+                $this->bind(':pass',  $hashpass);
                 $this->execute();
+
+                $userID  = lastInsertId();
+                $newUser = insert_defaults($userID);
+                if(getType($newUser) !== 'boolean') {
+                    throw new Exception($newUser);
+                }
+
+                if(isset($imgPath)) {
+                    $newImg  = insert_user_image($userID, $name, $imgPath);
+                    if(getType($newImg) !== 'boolean') {
+                        throw new Exception($newImg);
+                    }
+
+                    $imgID = lastInsertId();
+                    $change = "UPDATE {$this->userTable}
+                               SET ImagesID = :imgID
+                               WHERE
+                                  UserID = :userID";
+                    $this->query($change);
+                    $this->bind(':imgID', $imgID);
+                    $this->bind(':userID', $userID);
+                    $this->execute();
+                }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
                 var_dump($err->getMessage());
-                return $this->err('unsuccessful-insert');
+                $this->rollBack();
+                return $this->err('unsuccessful-user');
             }
 
-            return "<h1>Successfully created user \"{$user}\".</h1>";
+            $this->commit();
+            return "<h1>Successfully created user
+                \"{$firstName} {$lastName}\".</h1>";
         }
 
-        public function insert_user_img($id) {
-            return;
+        private function insert_defaults($id) {
+            try {
+                $insert = "INSERT INTO {$this->userThemesTable}
+                              (UserID)
+                           VALUES
+                              (:userID)";
+                $this->bind(':userID', $id);
+                $this->execute();
+
+                $lables     = get_system_labels();
+                $categories = get_categories();
+
+                foreach ($lables as $key => $label) {
+                    $insert = "INSERT INTO {$this->userSystemLabelsTable}
+                                  (UserID, SystemLabelsID)
+                               VALUES
+                                  (:userID, :sysLabelID)";
+                    $this->bind(':userID', $id);
+                    // TODO: Don't know if this works
+                    $this->bind(':sysLabelID', $label['label']);
+                    $this->execute();
+                }
+
+                foreach ($categories as $key => $category) {
+                    $insert = "INSERT INTO {$this->userCategoriesTable}
+                                  (UserID, CategoriesID)
+                               VALUES
+                                  (:userID, :categoriesID)";
+                    $this->bind(':userID', $id);
+                    // TODO: Don't know if this works
+                    $this->bind(':categoriesID', $category['category']);
+                    $this->execute();
+                }
+            }
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return true;
+        }
+        // TODO: Imagick nonsense, I guess
+        public function insert_user_image($id, $name, $imgPath) {
+            try {
+                $imgSmall = resize_image($name, $imgPath, 0.25);
+                $imgMed   = resize_image($name, $imgPath, 0.5);
+                $imgLarge = $imgPath;
+
+                $insert = "INSERT INTO {$this->imagesTable}
+                              (icon_small, icon_medium, icon_large)
+                           VALUES
+                              (:iconSm, :iconMd, :iconLg)";
+                $this->query($insert);
+                $this->bind(':iconSm', $imgSmall);
+                $this->bind(':iconMd', $imgMed);
+                $this->bind(':iconLg', $imgLarge);
+                $this->execute();
+            }
+
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return true;
         }
 
         public function insert_contact($id, $newOrOldContact, $details) {
@@ -54,7 +147,7 @@
             try {
                 list($name, $email) = $newOrOldContact;
                 $select =
-                    "SELECT ContactsID FROM {$this->ContactsTable} AS tarID
+                    "SELECT ContactsID FROM {$this->contactsTable} AS tarID
                      WHERE
                         name  = :name AND
                         email = :email";
@@ -73,9 +166,7 @@
 
                     $contactID = $this->lastInsertId();
                 }
-                // TODO: THIS IS NOT COMPLETE!
-                // TODO: The line below is replacing the second
-                //       insert_contact_details.
+
                 $insertDetails =
                     $this->insert_contact_details($id, $details);
                 if(getType($insertDetails) !== 'boolean') {
@@ -98,16 +189,14 @@
                 echo 'Exception -> ';
                 var_dump($err->getMessage());
                 $this->rollBack();
-                $this->clearCursor();
                 return $this->err('unsuccessful-contact');
             }
 
             $this->commit();
-            $this->clearCursor();
             return "<h1>Contact successfully created!</h1>";
         }
 
-        public function insert_new_contact($id, $newContact) {
+        private function insert_new_contact($id, $newContact) {
             try {
                 list($name, $email) = $newContact;
                 $insert = "INSERT INTO {$this->contactsTable}
@@ -125,8 +214,8 @@
 
             return true;
         }
-        // TODO: Does this need to be a private function?
-        public function insert_contact_details($id, $details) {
+
+        private function insert_contact_details($id, $details) {
             try{
                 list($type, $nickname, $company, $jobTitle, $phone, $address,
                         $birthday, $relationship, $website, $notes) = $details;
@@ -158,6 +247,32 @@
             return true;
         }
 
+        private function insert_settings_profile($updateSettings) {
+            try {
+                list($maxPage, $maxContacts, $replyStyle, $img, $labels, $type)
+                    = $updateSettings;
+                $insert = "INSERT INTO {$this->userSettingsTable}
+                              (max_page, max_contacts, reply_style,
+                                  display_img, button_labels, display_type)
+                           VALUES
+                              (:maxPage, :maxContacts, :replyStyle,
+                                  :img, :labels, :type)";
+                $this->query($insert);
+                $this->bind(':maxPage', $maxPage);
+                $this->bind(':maxContacts', $maxContacts);
+                $this->bind(':replyStyle', $replyStyle);
+                $this->bind(':img', $img);
+                $this->bind(':labels', $labels);
+                $this->bind(':type', $type);
+                $this->execute();
+            }
+            catch(Exception $err) {
+                return $err;
+            }
+
+            return true;
+        }
+
         public function edit_user($id, $column, $diff) {
             try {
                 // This method is not intended to change these values
@@ -182,7 +297,7 @@
             return "<h1>Changes saved.</h1>";
         }
 
-        public function change_password($id, $inputPass, $diffPass) {
+        public function edit_password($id, $inputPass, $diffPass) {
             try {
                 $validated = $this->validate_password($id, $inputPass);
                 if(getType($validated !== "boolean")) {
@@ -212,13 +327,13 @@
             }
         }
 
-        public function change_settings($id, $updateSettings) {
+        public function edit_settings($id, $updateSettings) {
             $this->transaction();
             try {
                 list($maxPage, $maxContacts, $replyStyle, $img, $labels, $type)
                     = $updateSettings;
                 $select =
-                    "SELECT SettingsID FROM {$this->userSettingsTable} AS tarID
+                    "SELECT SettingsID FROM {$this->settingsTable} AS tarID
                      WHERE
                         max_page = :maxPage AND
                         max_contacts = :maxContacts AND
@@ -235,81 +350,63 @@
                 $this->bind(':labels', $labels);
                 $this->bind(':type', $type);
 
-                $result = sizeOf($this->single()) > 0
+                $settingsProfileID = sizeOf($this->single()) > 0
                     ? $this->single()['tarID'] : false;
 
-                if(!$result) {
-                    $profile = create_settings_profile($id, $updateSettings);
+                if(!$settingsProfileID) {
+                    $profile = insert_settings_profile($id, $updateSettings);
                     if(getType($profile) !== 'boolean') {
                         throw new Exception($profile);
                     }
+
+                    $settingsProfileID = $this->lastInsertId();
                 }
-                else {
-                    $change = "UPDATE {$this->userSettingsTable}
-                               SET SettingsID = {$result}
-                               WHERE UserID = {$id}";
-                    $this->query($change);
-                    $this->execute();
-                }
+
+                $change = "UPDATE {$this->userSettingsTable}
+                           SET SettingsID = :settingsID
+                           WHERE UserID = {$id}";
+                $this->query($change);
+                $this->bind(':settingsID', $settingsProfileID);
+                $this->execute();
             }
             catch(Exception $err) {
                 echo 'Exception -> ';
                 var_dump($err->getMessage());
                 $this->rollBack();
-                $this->clearCursor();
                 return $this->err('unsuccessful-edit', 'settings');
             }
 
             $this->commit();
-            $this->clearCursor();
             return "<h1>Changes saved.</h1>";
         }
 
+        public function resize_image($name, $path, $modifier, $format = 'jpg') {
+            $img = new Imagick($path);
+            $width = $img->getImageHeight() * $modifier;
+            $img->newImage($width, 0);
+            $img->setImageFormat ($format);
+            switch ($modifier) {
+                case 0.5:
+                    $newName = "{$name}_MED";
+                    break;
 
-        public function create_settings_profile($id, $updateSettings) {
-            $this->transaction();
-            try {
-                list($maxPage, $maxContacts, $replyStyle, $img, $labels, $type)
-                    = $updateSettings;
-                $insert = "INSERT INTO {$this->userSettingsTable}
-                              (max_page, max_contacts, reply_style,
-                                  display_img, button_labels, display_type)
-                           VALUES
-                              (:maxPage, :maxContacts, :replyStyle,
-                                  :img, :labels, :type)";
-                $this->query($insert);
-                $this->bind(':maxPage', $maxPage);
-                $this->bind(':maxContacts', $maxContacts);
-                $this->bind(':replyStyle', $replyStyle);
-                $this->bind(':img', $img);
-                $this->bind(':labels', $labels);
-                $this->bind(':type', $type);
-                $this->execute();
-
-                $lastID = $this->lastInsertId();
-
-                $change = "UPDATE {$this->userSettingsTable}
-                              SET SettingsID = {$lastID}
-                              WHERE UserID = {$id}";
-                $this->query($change);
-                $this->execute();
+                case 0.25:
+                    $newName = "{$name}_SMALL";
+                    break;
             }
-            catch(Exception $err) {
-                $this->rollBack();
-                $this->clearCursor();
-                return $err;
-            }
-
-            $this->commit();
-            $this->clearCursor();
-            return true;
+            file_put_contents ("{$newName}.{$format}", $img);
+            return $newName;
         }
 
         public function err($reason, $field = NULL) {
             switch ($reason) {
-                case 'unsuccessful-insert':
+                case 'unsuccessful-user':
                     return "<h1>There was an issue creating your user.
                             Please try again.</h1>";
+                    break;
+
+                case 'unsuccessful-edit':
+                    return "<h1>Failed to edit {$field}. Please try again.</h1>";
                     break;
 
                 case 'unsuccessful-contact':
@@ -318,16 +415,12 @@
                     break;
 
                 case 'unsuccessful-blocked':
-                    return "<h1>There was an issue in blocking this email.
-                            Please try again.</h1>";
-                    break;
-
-                case 'unsuccessful-edit':
-                    return "<h1>Failed to edit {$field}. Please try again.</h1>";
+                    return "<h1>There was an issue in blocking this email
+                        address. Please try again.</h1>";
                     break;
 
                 case 'bad-password':
-                    return "<h1>Password does not match.</h1>";
+                    return "<h1>Passwords do not match.</h1>";
                     break;
 
                 default:
@@ -335,11 +428,12 @@
                     break;
             }
         }
-        // PRIVATES
+
         private function get_pass($id) {
             try {
-            $this->query("SELECT pass from {$this->table} AS pass
-                          WHERE UserID = {$id}");
+            $select = "SELECT pass FROM {$this->userTable} AS pass
+                          WHERE UserID = {$id}";
+            $this->query($select);
             $result = $this->single()['pass'];
             }
             catch (Exception $err) {
@@ -349,6 +443,34 @@
             }
 
             return $result;
+        }
+
+        private function get_system_labels() {
+            try {
+                $select
+                    = "SELECT name FROM {$this->systemLabelsTable} AS label";
+                $this->query($select);
+                $labels = $this->resultSet();
+            }
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return $labels;
+        }
+
+        private function get_categories() {
+            try {
+                $select
+                    = "SELECT name FROM {$this->categoriesTable} AS category";
+                $this->query($select);
+                $categories = $this->resultSet();
+            }
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return $categories;
         }
 
         private function validate_password($id, $inputPass) {
