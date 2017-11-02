@@ -81,11 +81,29 @@ class Database {
             $select =
                 "SELECT {$value} FROM {$table} AS {$alias}";
         }
-
         else {
             $select =
                 "SELECT {$value} FROM {$table} AS {$alias}
                  WHERE {$maybeWhere}";
+        }
+
+        return $select;
+    }
+
+    private function selectJoin($table1, $table2, $value,
+                                $common, $maybeWhere = NULL) {
+        if(!isset($maybeWhere)) {
+            $select = "SELECT {$table1}.{$value}
+                       FROM {$table1} tb1
+                       LEFT JOIN {$table2} tb2
+                       ON tb1.{$common} = tb2.{$common}";
+        }
+        else {
+            $select = "SELECT {$table1}.{$value}
+                       FROM {$table1} tb1
+                       LEFT JOIN {$table2} tb2
+                       ON tb1.{$common} = tb2.{$common}
+                       WHERE {$maybeWhere}";
         }
 
         return $select;
@@ -97,7 +115,6 @@ class Database {
             $update = "UPDATE {$table}
                        SET {$column} = {$value}";
         }
-
         else {
             $update = "UPDATE {$table}
                        SET {$column} = {$value}
@@ -105,6 +122,13 @@ class Database {
         }
 
         return $update;
+    }
+
+    private function delete($table, $where) {
+        $delete = "DELETE FROM {$table}
+                   WHERE {$where}";
+
+        return $delete;
     }
 
     /**

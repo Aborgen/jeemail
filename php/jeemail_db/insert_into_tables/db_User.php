@@ -7,6 +7,7 @@
         private $contactsTable         = 'Contacts';
         private $contactDetailsTable   = 'Contact_Details';
         private $imgTable              = 'Images';
+        private $labelsTable           = 'Labels';
         private $settingsTable         = 'Settings';
         private $systemLabelsTable     = 'System_Labels_Table';
         private $userTable             = 'User';
@@ -15,6 +16,7 @@
         private $userBlockedTable      = 'User_Blocked';
         private $userContactsTable     = 'User_Contacts';
         private $userImagesTable       = 'User_Images';
+        private $userLabelsTable       = 'User_Labels';
         private $userSettingsTable     = 'User_Settings';
         private $userSystemLabelsTable = 'User_System_Labels';
 
@@ -170,6 +172,9 @@
                 $where = "name = ? AND email = ?";
                 $contactID = $this->get_existing_field($table, 'ContactsID',
                                                        $where, $contact);
+                if(getType($contactID) === 'array') {
+                    throw new Exception($contactID[0]);
+                }
 
                 if(!$contactID) {
                     $newContact = $this->insert_new_contact($contact);
@@ -277,6 +282,9 @@
                 $where = "email = ?";
                 $blockedID = $this->get_existing_field($table, 'BlockedID',
                                                        $where, [$email]);
+                if(getType($blockedID) === 'array') {
+                    throw new Exception($blockedID[0]);
+                }
 
                 if(!$blockedID) {
                     $newBlocked = $this->insert_new_blocked($email);
@@ -349,8 +357,63 @@
 
             return true;
         }
-        // TODO: Refactor this method to work generally. edit_fields!
-        //       Should be able to work with edit_user, edit_contact, edit_blocked!
+
+        public function insert_user_label($id, $name) {
+            $this->transaction();
+            try {
+                $table   = $this->labelsTable;
+                $where   = "name = ?";
+                $labelID = $this->get_existing_field($table, 'LabelsID',
+                                                     $where, [$name]);
+                if(getType($labelID) === 'array') {
+                    throw new Exception($labelID[0]);
+                }
+
+                if(!$labelID) {
+                    $newLabel = $this->insert_new_label($name);
+                    if(getType($newLabel) !== 'boolean') {
+                        throw new Exception($newLabel);
+                    }
+
+                    $labelID = $this->lastInsertId();
+                }
+                $table   = $this->userLabelsTable;
+                $columns = "(UserID, LabelsID)";
+                $values  = "(:userID, :labelsID)";
+                $insert  = $this->insert($table, $columns, $values);
+                $this->query($insert);
+                $this->bind(':userID', $id);
+                $this->bind(':labelsID', $labelID);
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                $this->rollBack();
+                return $this->err('unsuccessful-label');
+            }
+
+            $this->commit();
+            return "<h1>Successfully created label \"{$name}!\"</h1>";
+        }
+
+        private function insert_new_label($name) {
+            try {
+                $table  = $this->labelsTable;
+                $column = "(name)";
+                $value  = "(:name)";
+                $insert = $this->insert($table, $column, $value);
+                $this->query($insert);
+                $this->bind(':name', $name);
+                $this->execute();
+            }
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return true;
+        }
+
+
 
         private function edit_fields($id, $table, $changesBundle) {
             // $changesBundle = [
@@ -419,9 +482,9 @@
                 $this->query($remove);
                 $this->execute();
                 // Next, add a new row
-                $newImg = $this->insert_user_image($img);
-                if(getType($newImg) !== 'boolean') {
-                    throw new Exception($newImg);
+                $result = $this->insert_user_image($img);
+                if(getType($result) !== 'boolean') {
+                    throw new Exception($result);
                 }
                 // Finally, update User to have the new row's ID as
                 // a foreign key.
@@ -454,9 +517,16 @@
                     $contactID =
                         $this->get_existing_field($table, 'ContactsID',
                                                   $where, $contact);
+                        if(getType($contactID) === 'array') {
+                            throw new Exception($contactID[0]);
+                        }
                     if(!$contactID) {
-                        $this->insert_new_contact($contact);
+                        $result = $this->insert_new_contact($contact);
+                        if(getType($result) !== 'boolean') {
+                            throw new Exception($result);
+                        }
                         $contactID = $this->lastInsertId();
+                        //TODO: Garbage collect a possibly useless row
                     }
 
                     $change = "UPDATE {$this->userContactsTable}
@@ -495,9 +565,16 @@
                 $blockedID =
                     $this->get_existing_field($table, 'BlockedID',
                                               $where, $blocked);
+                if(getType($blockedID) === 'array') {
+                    throw new Exception($blockedID[0]);
+                }
                 if(!$blockedID) {
-                    $this->insert_new_blocked($blocked);
+                    $result = $this->insert_new_blocked($blocked);
+                    if(getType($result) !== 'boolean') {
+                        throw new Exception($result);
+                    }
                     $blockedID = $this->lastInsertId();
+                    //TODO: Garbage collect a possibly useless row
                 }
 
                 $change = "UPDATE {$this->userBlockedTable}
@@ -584,6 +661,9 @@
                           display_type  = ?";
                 $settingsProfileID = get_existing_field($table, 'SettingsID',
                                                         $where, $settings);
+                if(getType($settingsProfileID) === 'array') {
+                    throw new Exception($settingsProfileID[0]);
+                }
 
                 if(!$settingsProfileID) {
                     $profile =
@@ -614,8 +694,141 @@
             return "<h1>Changes saved.</h1>";
         }
 
+        public function edit_label($id, $name) {
+            $this->transaction();
+            try {
+                $table = $this->labelTable;
+                $where = "name = ?";
+                $labelID =
+                    $this->get_existing_field($table, 'LabelsID',
+                                              $where, $name);
+                if(getType($labelID) === 'array') {
+                    throw new Exception($labelID[0]);
+                }
+                if(!$labelID) {
+                    $result = $this->insert_new_label($name);
+                    if(getType($result) !== 'boolean') {
+                        throw new Exception($result);
+                    }
+                    $labelID = $this->lastInsertId();
+                    //TODO: Garbage collect a possibly useless row
+                    // $deletedContact = $this->maybe_delete_unused_row($contactID,
+                    //                                                  $juncTable,
+                    //                                                  $table,
+                    //                                                  $column);
+                }
+
+                $table = $this->userLabelsTable;
+                $column = 'LabelsID';
+                $where = "UserID = {$id}";
+                $update = $this->update($table, $column, $labelID, $where);
+
+                $this->query($update);
+                $this->execute();
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                $this->rollBack();
+                return $this->err('unsuccessful-edit', 'blocked email');
+            }
+
+            $this->commit();
+            return "<h1>Changes saved.</h1>";
+        }
+
+        public function delete_contact($id, $contactID) {
+            $this->transaction();
+            try {
+                $juncTable = $this->userContactsTable;
+                $where = "UserID = {$id} AND ContactsID = {$contactID}";
+                $delete = $this->delete($table, $where);
+                $this->query($delete);
+                $this->execute();
+
+                $table = $this->contactsTable;
+                $column = 'ContactsID';
+                // Might or might not delete the row from the Contacts table.
+                $deletedContact = $this->maybe_delete_unused_row($contactID,
+                                                                 $juncTable,
+                                                                 $table,
+                                                                 $column);
+                if(getType($deletedContact !== 'boolean')) {
+                    throw new Exception($deletedContact);
+                }
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                $this->rollBack();
+                return $this->err('unsuccessful-delete', 'contact');
+            }
+
+            $this->commit();
+            return "<h1>Contact removed.</h1>";
+        }
+
+        public function delete_blocked($id, $blockedID) {
+            $this->transaction();
+            try {
+                $juncTable = $this->userBlockedTable;
+                $where = "UserID = {$id} AND ContactsID = {$blockedID}";
+                $delete = $this->delete($table, $where);
+                $this->query($delete);
+                $this->execute();
+                $table = $this->blockedTable;
+                $column = 'BlockedID';
+                // Might or might not delete the row from the Blocked table.
+                $deletedContact = $this->maybe_delete_unused_row($blockedID,
+                                                                 $juncTable,
+                                                                 $table,
+                                                                 $column);
+                if(getType($deletedContact !== 'boolean')) {
+                    throw new Exception($deletedContact);
+                }
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                $this->rollBack();
+                return $this->err('unsuccessful-delete', 'blocked email');
+            }
+
+            $this->commit();
+            return "<h1>Contact removed.</h1>";
+        }
+
+        private function maybe_delete_unused_row($id, $juncTable,
+                                                 $table, $column) {
+            try {
+                $where = "{$column} = {$id}";
+                // Check to see if anyone is using a row in a
+                // many-to-many table.
+                $usedRow = $this->get_existing_field($juncTable, $id, $where);
+                if(getType($usedRow) === 'array') {
+                    throw new Exception($usedRow[0]);
+                }
+                // If no one is, delete it!
+                if(!$usedRow) {
+                    $delete = $this->delete($table, $where);
+                    $this->query($delete);
+                    $this->execute();
+                }
+            }
+            catch (Exception $err) {
+                return $err;
+            }
+
+            return true;
+        }
+
         private function err($reason, $field = NULL) {
             switch ($reason) {
+                case 'unsuccessful-get':
+                    return "<h1>There was a problem getting {$field}.
+                            Please try again.</h1>";
+                    break;
+
                 case 'unsuccessful-user':
                     return "<h1>There was an issue creating your user.
                             Please try again.</h1>";
@@ -633,7 +846,17 @@
 
                 case 'unsuccessful-blocked':
                     return "<h1>There was an issue in blocking this email
-                        address. Please try again.</h1>";
+                            address. Please try again.</h1>";
+                    break;
+
+                case 'unsuccessful-label':
+                    return "<h1>There was an issue in creating the label.
+                            Please try again.</h1>";
+                    break;
+
+                case 'unsuccessful-delete':
+                    return "<h1>Could not remove {$field}.
+                            Please try again.</h1>";
                     break;
 
                 case 'bad-password':
@@ -644,6 +867,67 @@
                     return "<h1>Oops! Something went wrong.</h1>";
                     break;
             }
+        }
+
+        public function get_user($id) {
+            try{
+                $user   = $this->userTable;
+                $img    = $this->imagesTable;
+                $imgID  = 'ImagesID';
+                $where  = "UserID = {$id}";
+                $select = $this->selectJoin($user, $img, '*', $imgID, $where);
+
+                $this->query($select);
+                $result = $this->resultSet();
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                return $this->err('unsuccessful-get', 'user details');
+            }
+
+            return $result;
+        }
+
+        public function get_contacts($id) {
+            try{
+                $contacts     = $this->contactsTable;
+                $userContacts = $this->userContactsTable;
+                $contactsID   = 'ContactsID';
+                $where        = "UserID = {$id}";
+                $select       = $this->selectJoin($contacts, $userContacts, '*',
+                                                  $contactsID, $where);
+
+                $this->query($select);
+                $result = $this->resultSet();
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                return $this->err('unsuccessful-get', 'contacts');
+            }
+
+                return $result;
+        }
+
+        public function get_blocked($id) {
+            try{
+                $blocked     = $this->blockedTable;
+                $userBlocked = $this->userBlockedTable;
+                $blockedID   = 'BlockedID';
+                $where       = "UserID = {$id}";
+                $select      = $this->selectJoin($blocked, $userBlocked, '*',
+                                                  $blockedID, $where);
+                $this->query($select);
+                $result = $this->resultSet();
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                var_dump($err->getMessage());
+                return $this->err('unsuccessful-get', 'blocked email list');
+            }
+
+                return $result;
         }
 
         private function get_pass($id) {
@@ -662,22 +946,27 @@
             return $result;
         }
 
-        public function get_existing_field($table, $field, $where, $bind) {
+        public function get_existing_field($table, $field, $where,
+                                           $bind = NULL) {
             try {
                 $select =
                     "SELECT {$field} FROM {$table} AS tarID
                      WHERE
                         {$where}";
                 $this->query($select);
-                for ($i=1; $i < count($bind); $i++) {
-                    $this->bind($i, $bind[i]);
+                if(isset($bind)) {
+                    for ($i=1; $i < count($bind); $i++) {
+                        $this->bind($i, $bind[i]);
+                    }
                 }
 
                 $existingID = sizeOf($this->single()) > 0
                     ? $this->single()['tarID'] : false;
             }
             catch (Exception $err) {
-                return $err;
+                // I am turning this exception into an array for a quick
+                // and dirty check where it is called.
+                return [$err];
             }
 
             return $existingID;
