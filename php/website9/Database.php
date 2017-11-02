@@ -58,6 +58,55 @@ class Database {
         $this->stmt = $this->pdo->prepare($query);
     }
 
+    private function insert($table, $columns, $values, $maybeWhere = NULL) {
+        if(!isset($maybeWhere)) {
+            $insert = "INSERT INTO {$table}
+                          {$columns}
+                       VALUES
+                          {$values}";
+        }
+        else {
+            $insert = "INSERT INTO {$table}
+                          {$columns}
+                       VALUES
+                          {$values}
+                       WHERE {$maybeWhere}";
+        }
+
+        return $insert;
+    }
+
+    private function select($table, $value, $alias, $maybeWhere = NULL) {
+        if(!isset($maybeWhere)) {
+            $select =
+                "SELECT {$value} FROM {$table} AS {$alias}";
+        }
+
+        else {
+            $select =
+                "SELECT {$value} FROM {$table} AS {$alias}
+                 WHERE {$maybeWhere}";
+        }
+
+        return $select;
+    }
+
+    private function update($table, $column, $value, $maybeWhere = NULL) {
+        if(!isset($maybeWhere)) {
+            // TODO: Not sure if this works! Placeholders for column and value
+            $update = "UPDATE {$table}
+                       SET {$column} = {$value}";
+        }
+
+        else {
+            $update = "UPDATE {$table}
+                       SET {$column} = {$value}
+                          WHERE {$maybeWhere}";
+        }
+
+        return $update;
+    }
+
     /**
  	 * @return FUNCTION Returns the result of queued up sql statement execution
      * found in $stmt.
