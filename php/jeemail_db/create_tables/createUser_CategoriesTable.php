@@ -8,10 +8,10 @@
         User_CategoriesID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL,
         CategoriesID INT(11) NOT NULL,
-        visibility BOOLEAN NOT NULL DEFAULT 1
+        visibility BOOLEAN NOT NULL DEFAULT 1,
 
-        FOREIGN KEY (UserID)
-            REFERENCES UserID
+        CONSTRAINT fk__User__User_Categories
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE
         );";
 

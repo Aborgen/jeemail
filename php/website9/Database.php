@@ -6,7 +6,7 @@ class Database {
     private $charset = 'utf8mb4';
     private $dbname  = DB_NAME;
 
-    public $pdo;
+    public  $pdo;
     private $error;
 
     private $stmt;
@@ -58,7 +58,7 @@ class Database {
         $this->stmt = $this->pdo->prepare($query);
     }
 
-    private function insert($table, $columns, $values, $maybeWhere = NULL) {
+    protected function insert($table, $columns, $values, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
             $insert = "INSERT INTO {$table}
                           {$columns}
@@ -76,21 +76,23 @@ class Database {
         return $insert;
     }
 
-    private function select($table, $value, $alias, $maybeWhere = NULL) {
+    public function select($table, $value, $alias = NULL, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
-            $select =
+            $select = !isset($alias) ?
+                "SELECT {$value} FROM {$table}" :
                 "SELECT {$value} FROM {$table} AS {$alias}";
         }
         else {
-            $select =
+            $select = !isset($alias) ?
+                "SELECT {$value} FROM {$table} WHERE {$maybeWhere}" :
                 "SELECT {$value} FROM {$table} AS {$alias}
-                 WHERE {$maybeWhere}";
+                    WHERE {$maybeWhere}";
         }
 
         return $select;
     }
 
-    private function selectJoin($table1, $table2, $value,
+    protected function selectJoin($table1, $table2, $value,
                                 $common, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
             $select = "SELECT {$table1}.{$value}
@@ -109,7 +111,7 @@ class Database {
         return $select;
     }
 
-    private function update($table, $column, $value, $maybeWhere = NULL) {
+    protected function update($table, $column, $value, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
             // TODO: Not sure if this works! Placeholders for column and value
             $update = "UPDATE {$table}
@@ -124,7 +126,7 @@ class Database {
         return $update;
     }
 
-    private function delete($table, $where) {
+    protected function delete($table, $where) {
         $delete = "DELETE FROM {$table}
                    WHERE {$where}";
 
@@ -207,7 +209,7 @@ class Database {
         return $this->pdo->clearCursor();
     }
 
-    private function deleteFiles($files) {
+    protected function deleteFiles($files) {
         // If any files fail to be deleted, collect them
         $result =
             array_filter(array_map('deleteFile', $files), function($el) {
@@ -233,7 +235,7 @@ class Database {
         return $result;
     }
 
-    private function resizeImage($path, $origName, $name, $size, $format) {
+    protected function resizeImage($path, $origName, $name, $size, $format) {
         $img = new Imagick("{$path}/{$origName}");
         $width = $img->getImageWidth() * $size;
         // Setting height to 0 automatically maintains a square aspect ratio

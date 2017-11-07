@@ -4,50 +4,61 @@
 
     class db_User extends Database {
         private $blockedTable          = 'Blocked';
+        private $categoriesTable       = 'Categories';
         private $contactsTable         = 'Contacts';
         private $contactDetailsTable   = 'Contact_Details';
         private $emailTable            = 'emailTable';
         private $imgTable              = 'Images';
         private $labelsTable           = 'Labels';
         private $settingsTable         = 'Settings';
-        private $systemLabelsTable     = 'System_Labels_Table';
+        private $systemLabelsTable     = 'System_Labels';
         private $userTable             = 'User';
 
         // Junction tables
-        private $userBlockedTable      = 'User_Blocked';
-        private $userContactsTable     = 'User_Contacts';
         private $emailReceivedTable    = 'User_Received_Emails';
         private $emailSentTable        = 'User_Sent_Emails';
+        private $userBlockedTable      = 'User_Blocked';
+        private $userCategoriesTable   = 'User_Categories';
+        private $userContactsTable     = 'User_Contacts';
         private $userImagesTable       = 'User_Images';
         private $userLabelsTable       = 'User_Labels';
         private $userSettingsTable     = 'User_Settings';
         private $userSystemLabelsTable = 'User_System_Labels';
+        private $userThemesTable       = 'User_Themes';
 
+        /**
+         * INSERT a new user
+         *
+         * @param $user ARRAY
+         *        An array containing:
+         *        'firstName' => STRING
+         *        'lastName'  => STRING
+         *        'username'  => STRING
+         *        'email'     => STRING
+         *        'pass'      => STRING
+         */
         public function insert_user($user, $img = NULL) {
             // TODO: Plaintext password can be no longer than 72 characters
             // when using PASSWORD_BCRYPT
             $this->transaction();
-            list($firstName, $lastName, $username, $email, $pass) = $user;
             try {
-                $hashpass = $this->encrypt($pass);
+                $hashpass = $this->encrypt($user['pass']);
                 if(!$hashpass) {
                     throw new Exception("Error in password encryption");
                 }
 
-                $insert = "INSERT INTO {$this->userTable}
-                                (first_name, last_name, username,
-                                    email, pass, ImagesID)
-                               Values
-                                (:fname, :lname, :uname, :email,
-                                    :pass)";
+                $columns = "(first_name, last_name, username, email, pass)";
+                $values = "(:fname, :lname, :uname, :email, :pass)";
+                $insert = $this->insert($this->userTable, $columns, $values);
                 $this->query($insert);
-                $this->bind(':fname', $firstName);
-                $this->bind(':lname', $lastName);
-                $this->bind(':uname', $username);
-                $this->bind(':email', $email);
+                $this->bind(':fname', $user['firstName']);
+                $this->bind(':lname', $user['lastName']);
+                $this->bind(':uname', $user['username']);
+                $this->bind(':email', $user['email']);
                 $this->bind(':pass',  $hashpass);
                 $this->execute();
 
+                // Set up user defaults
                 $userID  = $this->lastInsertId();
                 $newUser = $this->insert_defaults($userID);
                 if(getType($newUser) !== 'boolean') {
@@ -81,7 +92,7 @@
 
             $this->commit();
             return "<h1>Successfully created user
-                \"{$firstName} {$lastName}\".</h1>";
+                \"{$user['firstName']} {$user['lastName']}\".</h1>";
         }
 
         private function insert_defaults($id) {
@@ -90,20 +101,23 @@
                               (UserID)
                            VALUES
                               (:userID)";
-                $this->bind(':userID', $id);
+                $this->query($insert);
+                $this->bind(':userID', $id, PDO::PARAM_INT);
                 $this->execute();
-
                 $lables     = $this->get_system_labels();
                 $categories = $this->get_categories();
-
+                // TODO: Get IDs for each system label and each category!
                 $insert = "INSERT INTO {$this->userSystemLabelsTable}
-                              (UserID, SystemLabelsID)
+                              (UserID, System_LabelsID)
                            VALUES
                               (:userID, :sysLabelID)";
+                $this->query($insert);
                 $this->bind(':userID', $id);
-                $this->bind(':sysLabelID', $looped_label);
+                $this->bind(':sysLabelID', $label_name);
                 foreach ($lables as $label) {
-                    extract($label, EXTR_PREFIX_ALL, 'looped');
+                    echo $label_name;
+                    echo "<br />ECHOOOO  <br /> <br />";
+                    extract($label, EXTR_PREFIX_ALL, 'label');
                     $this->execute();
                 }
 
@@ -111,15 +125,17 @@
                               (UserID, CategoriesID)
                            VALUES
                               (:userID, :categoriesID)";
+                $this->query($insert);
                 $this->bind(':userID', $id);
-                $this->bind(':categoriesID', $looped_category);
+                $this->bind(':categoriesID', $category_name);
                 foreach ($categories as $category) {
-                    extract($label, EXTR_PREFIX_ALL, 'looped');
+                    extract($label, EXTR_PREFIX_ALL, 'category');
                     $this->execute();
                 }
             }
             catch (Exception $err) {
-                return $err;
+                echo "Error: ".$err;
+                //return $err;
             }
 
             return true;
@@ -687,35 +703,48 @@
             return "<h1>Changes saved.</h1>";
         }
 
+        /**
+         * Allows changing of user password
+         *
+         * @param $id INT
+         *        The unique id assigned to the user
+         * @param $inputPass STRING
+         *        The user's password attempt
+         * @param $diffPass STRING
+         *        The new value of the user's password,
+         *        assuming successful validation.
+         */
         public function edit_password($id, $inputPass, $diffPass) {
             try {
                 $validated = $this->validate_password($id, $inputPass);
-                if(getType($validated !== "boolean")) {
+                if(getType($validated) !== 'boolean') {
                     throw new Exception($validated);
                 }
 
-                if ($validated) {
-                    $hashpass = $this->encrypt($diffPass);
-                    if(!$hashpass) {
-                        throw new Exception("Error in password encryption");
-                    }
-                    $change = "UPDATE {$this->userTable}
-                               SET pass = :value
-                                   WHERE UserID = :userID";
-                    $this->query($change);
-                    $this->bind(':value', $hashpass);
-                    $this->bind(':userID', $id);
-                    $this->execute();
-                }
-                else {
+                if (!$validated) {
                     return $this->err('bad-password');
                 }
+
+                $hashpass = $this->encrypt($diffPass);
+                if(!$hashpass) {
+                    throw new Exception("Error in password encryption");
+                }
+
+                $where = 'UserID = :userID';
+                $change = $this->update($this->userTable, 'pass',
+                                        ':value', $where);
+                $this->query($change);
+                $this->bind(':value', $hashpass);
+                $this->bind(':userID', $id);
+                $this->execute();
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
                 var_dump($err->getMessage());
                 return $this->err('unsuccessful-edit', 'password');
             }
+
+            return "<h1>Password successfully updated</h1>";
         }
 
         public function edit_settings($id, $settings) {
@@ -1001,7 +1030,7 @@
                                             'ImagesID', $where);
 
                 $this->query($select);
-                $result = $this->resultSet();
+                $result = $this->single();
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
@@ -1114,10 +1143,14 @@
             return $existingID;
         }
 
+        /**
+     	 * Queries db for all System Labels
+     	 *
+     	 * @return ARRAY (or STRING if it errors out)
+    	 */
         public function get_system_labels() {
             try {
-                $select =
-                    "SELECT name FROM {$this->systemLabelsTable} AS label";
+                $select = $this->select($this->systemLabelsTable, 'name');
                 $this->query($select);
                 $labels = $this->resultSet();
             }
@@ -1128,10 +1161,14 @@
             return $labels;
         }
 
+        /**
+         * Queries db for all Categories
+         *
+         * @return ARRAY (or STRING if it errors out)
+         */
         public function get_categories() {
             try {
-                $select =
-                    "SELECT name FROM {$this->categoriesTable} AS category";
+                $select = $this->select($this->categoriesTable, 'name');
                 $this->query($select);
                 $categories = $this->resultSet();
             }
@@ -1162,11 +1199,11 @@
             if(getType($currentPass) === 'array') {
                 return $currentPass[0];
             }
-
             if(password_verify($inputPass, $currentPass)) {
                 return true;
             }
 
+            echo '<br />uhoh<br />';
             return false;
         }
 

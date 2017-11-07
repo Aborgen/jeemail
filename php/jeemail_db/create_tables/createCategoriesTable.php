@@ -9,8 +9,6 @@
         name VARCHAR(255) NOT NULL UNIQUE
         );";
 
-    $default = "INSERT INTO {$table} (name, visibility)";
-
     $pdo->exec($sql);
     echo "Created {$table} table";
  ?>
