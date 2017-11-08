@@ -8,10 +8,12 @@
         User_ContactsID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL,
         ContactsID INT(11) NOT NULL,
-        Contact_DetailsID INT(11) NOT NULL UNIQUE
+        Contact_DetailsID INT(11) NOT NULL,
 
-        FOREIGN KEY(UserID)
-            REFERENCES UserID
+        UNIQUE KEY User_Contact_Details (UserID, ContactsID, Contact_DetailsID),
+
+        CONSTRAINT fk__User__User_Contacts
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE
         );";
 

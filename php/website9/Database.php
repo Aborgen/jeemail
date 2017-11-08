@@ -6,10 +6,10 @@ class Database {
     private $charset = 'utf8mb4';
     private $dbname  = DB_NAME;
 
-    public  $pdo;
+    private  $pdo;
     private $error;
 
-    private $stmt;
+    protected $stmt;
 
     public function __construct(){
         $dsn = "mysql:host={$this->host};
@@ -36,7 +36,6 @@ class Database {
 	 */
     public function bind($placeholder, $value, $type=NULL) {
         if(is_null($type)) {
-            // If $type is not explicitly sent as a param
             switch (true) {
                 case is_bool($value):
                     $type = PDO::PARAM_BOOL;
@@ -51,8 +50,34 @@ class Database {
                     $type = PDO::PARAM_STR;
             }
         }
-        $this->stmt->bindValue($placeholder, $value, $type);
+
+        $butt = $this->stmt->bindValue($placeholder, $value, $type);
+        var_dump( $value);
     }
+    // TODO: Why can I use $this->stmt->bindParam, but not this method?
+    //       It appears that it does not retain reference to a variable
+    //       in db_User::insert_defaults(). Work-around is making stmt
+    //       protected, which might not be ideal. I honestly don't know.
+    /*public function bindFluid($placeholder, $value, $type=NULL) {
+        $length = count($value);
+        if(is_null($type)) {
+            switch (true) {
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
+                default:
+                    $type = PDO::PARAM_STR;
+            }
+        }
+        echo "THIS IS FLUID VALUE: {$value}";
+        $this->stmt->bindParam($placeholder, $value, $type, $length);
+    }*/
 
     public function query($query) {
         $this->stmt = $this->pdo->prepare($query);
@@ -76,17 +101,12 @@ class Database {
         return $insert;
     }
 
-    public function select($table, $value, $alias = NULL, $maybeWhere = NULL) {
+    public function select($table, $value, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
-            $select = !isset($alias) ?
-                "SELECT {$value} FROM {$table}" :
-                "SELECT {$value} FROM {$table} AS {$alias}";
+            $select = "SELECT {$value} FROM {$table}";
         }
         else {
-            $select = !isset($alias) ?
-                "SELECT {$value} FROM {$table} WHERE {$maybeWhere}" :
-                "SELECT {$value} FROM {$table} AS {$alias}
-                    WHERE {$maybeWhere}";
+            $select = "SELECT {$value} FROM {$table} WHERE {$maybeWhere}";
         }
 
         return $select;
@@ -142,8 +162,7 @@ class Database {
             return $this->stmt->execute();
         }
         catch(Exception $err) {
-            echo 'Exception -> ';
-            var_dump($err->getMessage());
+            return $err->getMessage();
         }
     }
 
@@ -152,7 +171,11 @@ class Database {
  	 * @return ARRAY Returns an array of rows
 	 */
     public function resultSet() {
-        $this->execute();
+        $exec = $this->execute();
+        if(getType($exec) !== 'boolean') {
+            return $exec;
+        }
+
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -161,8 +184,12 @@ class Database {
     * @return ARRAY Returns an array of a single row
     */
     public function single() {
-        $this->execute();
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+        $exec = $this->execute();
+        if(getType($exec) !== 'boolean') {
+            return $exec;
+        }
+
+        return $this->stmt->fetch(PDO::FETCH_BOTH);
     }
 
     /**

@@ -16,10 +16,6 @@
         relationship VARCHAR(64) NULL,
         website VARCHAR(64) NULL,
         notes TEXT NULL
-
-        FOREIGN KEY(UserID)
-            REFERENCES UserID
-            ON DELETE CASCADE
         );";
 
     $pdo->exec($sql);

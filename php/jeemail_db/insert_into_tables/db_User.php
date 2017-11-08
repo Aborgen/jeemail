@@ -3,31 +3,42 @@
 
 
     class db_User extends Database {
-        private $blockedTable          = 'Blocked';
-        private $categoriesTable       = 'Categories';
-        private $contactsTable         = 'Contacts';
-        private $contactDetailsTable   = 'Contact_Details';
-        private $emailTable            = 'emailTable';
-        private $imgTable              = 'Images';
-        private $labelsTable           = 'Labels';
-        private $settingsTable         = 'Settings';
-        private $systemLabelsTable     = 'System_Labels';
-        private $userTable             = 'User';
+        public $blockedTable          = 'Blocked';
+        public $categoriesTable       = 'Categories';
+        public $contactsTable         = 'Contacts';
+        public $contactDetailsTable   = 'Contact_Details';
+        public $emailTable            = 'emailTable';
+        public $imgTable              = 'Images';
+        public $labelsTable           = 'Labels';
+        public $settingsTable         = 'Settings';
+        public $systemLabelsTable     = 'System_Labels';
+        public $userTable             = 'User';
 
         // Junction tables
-        private $emailReceivedTable    = 'User_Received_Emails';
-        private $emailSentTable        = 'User_Sent_Emails';
-        private $userBlockedTable      = 'User_Blocked';
-        private $userCategoriesTable   = 'User_Categories';
-        private $userContactsTable     = 'User_Contacts';
-        private $userImagesTable       = 'User_Images';
-        private $userLabelsTable       = 'User_Labels';
-        private $userSettingsTable     = 'User_Settings';
-        private $userSystemLabelsTable = 'User_System_Labels';
-        private $userThemesTable       = 'User_Themes';
+        public $emailReceivedTable    = 'User_Received_Emails';
+        public $emailSentTable        = 'User_Sent_Emails';
+        public $userBlockedTable      = 'User_Blocked';
+        public $userCategoriesTable   = 'User_Categories';
+        public $userContactsTable     = 'User_Contacts';
+        public $userImagesTable       = 'User_Images';
+        public $userLabelsTable       = 'User_Labels';
+        public $userSettingsTable     = 'User_Settings';
+        public $userSystemLabelsTable = 'User_System_Labels';
+        public $userThemesTable       = 'User_Themes';
 
         /**
-         * INSERT a new user
+         * INSERT a new user. There are five phases, two of which are optional:
+         *      1) The provided password will be hashed.
+         *      2) The user details will then be inserted into db.
+         *      3) Next, insert_defaults() will be invoked with the newly
+         *         created UserID.
+         *      4) If $img is provided, it will be sent as an argument
+         *         to insert_user_image() (otherwise, default icon is used)
+         *      5) Finally, the fk to User_Images will be updated with the
+         *         newly inserted User_ImagesID.
+         *
+         * If--at any point along the way--any issues crop up, there are
+         * various checks to ensure that an incomplete user is not created.
          *
          * @param $user ARRAY
          *        An array containing:
@@ -36,17 +47,25 @@
          *        'username'  => STRING
          *        'email'     => STRING
          *        'pass'      => STRING
+         * @param $img ARRAY
+         *        This array will be sent as argument to insert_user_image().
+         *        It contains:
+         *        'path'     => STRING
+         *        'name'     => STRING
+         *        'tempFile' => STRING
+         *        'format'   => STRING
          */
         public function insert_user($user, $img = NULL) {
             // TODO: Plaintext password can be no longer than 72 characters
             // when using PASSWORD_BCRYPT
             $this->transaction();
             try {
+                // Phase #1
                 $hashpass = $this->encrypt($user['pass']);
                 if(!$hashpass) {
                     throw new Exception("Error in password encryption");
                 }
-
+                // Phase #2
                 $columns = "(first_name, last_name, username, email, pass)";
                 $values = "(:fname, :lname, :uname, :email, :pass)";
                 $insert = $this->insert($this->userTable, $columns, $values);
@@ -58,7 +77,7 @@
                 $this->bind(':pass',  $hashpass);
                 $this->execute();
 
-                // Set up user defaults
+                // Phase #3
                 $userID  = $this->lastInsertId();
                 $newUser = $this->insert_defaults($userID);
                 if(getType($newUser) !== 'boolean') {
@@ -66,12 +85,13 @@
                 }
 
                 if(isset($img)) {
+                    // Phase #4 OPTIONAL
                     $newImg =
                         $this->insert_user_image($img);
                     if(getType($newImg) !== 'boolean') {
                         throw new Exception($newImg);
                     }
-
+                    // Phase #5 OPTIONAL
                     $imgID = $this->lastInsertId();
                     $change = "UPDATE {$this->userTable}
                                SET ImagesID = :imgID
@@ -85,7 +105,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-user');
             }
@@ -95,47 +115,65 @@
                 \"{$user['firstName']} {$user['lastName']}\".</h1>";
         }
 
-        private function insert_defaults($id) {
+        /**
+         * Used when creating a new user to establish entries in various
+         * many-to-many relationship tables.
+         *
+         * @param $id INT
+         *        The unique UserID value of the newly created user.
+         */
+        protected function insert_defaults($id) {
             try {
-                $insert = "INSERT INTO {$this->userThemesTable}
-                              (UserID)
-                           VALUES
-                              (:userID)";
+                $insert = $this->insert($this->userThemesTable,
+                                        '(UserID)', '(:userID)');
                 $this->query($insert);
                 $this->bind(':userID', $id, PDO::PARAM_INT);
-                $this->execute();
-                $lables     = $this->get_system_labels();
-                $categories = $this->get_categories();
-                // TODO: Get IDs for each system label and each category!
-                $insert = "INSERT INTO {$this->userSystemLabelsTable}
-                              (UserID, System_LabelsID)
-                           VALUES
-                              (:userID, :sysLabelID)";
-                $this->query($insert);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    echo "ERROR THEME";
+                    throw new Exception($exec);
+                }
+                // These two are defined up here in order to not interfere with
+                // the statements that come next.
+                $lables     = $this->get_system_labels('System_LabelsID');
+                $categories = $this->get_categories('CategoriesID');
+
+                $columns = "(UserID, System_LabelsID)";
+                $values  = "(:userID, :sysLabelID)";
+                $insert  = $this->insert($this->userSystemLabelsTable,
+                                         $columns, $values);
+                $this->query("{$insert}");
                 $this->bind(':userID', $id);
-                $this->bind(':sysLabelID', $label_name);
+                $this->stmt->bindParam(':sysLabelID', $looped_System_LabelsID,
+                                       PDO::PARAM_INT);
+
                 foreach ($lables as $label) {
-                    echo $label_name;
-                    echo "<br />ECHOOOO  <br /> <br />";
-                    extract($label, EXTR_PREFIX_ALL, 'label');
-                    $this->execute();
+                    extract($label, EXTR_PREFIX_ALL, 'looped');
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
                 }
 
-                $insert = "INSERT INTO {$this->userCategoriesTable}
-                              (UserID, CategoriesID)
-                           VALUES
-                              (:userID, :categoriesID)";
-                $this->query($insert);
+                $columns = "(UserID, CategoriesID)";
+                $values  = "(:userID, :categoriesID)";
+                $insert  = $this->insert($this->userCategoriesTable,
+                                         $columns, $values);
+                $this->query("{$insert}");
                 $this->bind(':userID', $id);
-                $this->bind(':categoriesID', $category_name);
+                $this->stmt->bindParam(':categoriesID', $looped_CategoriesID,
+                                       PDO::PARAM_INT);
+
                 foreach ($categories as $category) {
-                    extract($label, EXTR_PREFIX_ALL, 'category');
-                    $this->execute();
+                    extract($category, EXTR_PREFIX_ALL, 'looped');
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
                 }
             }
             catch (Exception $err) {
-                echo "Error: ".$err;
-                //return $err;
+                return $err->getMessage();
             }
 
             return true;
@@ -254,7 +292,7 @@
 
         public function insert_contact($id, $contact, $details) {
             $this->transaction();
-            list($name, $email) = $contact;
+            // list($name, $email) = $contact;
             try {
                 // $select =
                 //     "SELECT ContactsID FROM {$this->contactsTable} AS tarID
@@ -267,9 +305,9 @@
                 //
                 // $contactID = sizeOf($this->single()) > 0
                 //     ? $this->single()['tarID'] : false;
-                $table = $this->contactsTable;
                 $where = "name = ? AND email = ?";
-                $contactID = $this->get_existing_field($table, 'ContactsID',
+                $contactID = $this->get_existing_field($this->contactsTable,
+                                                       'ContactsID',
                                                        $where, $contact);
                 if(getType($contactID) === 'array') {
                     throw new Exception($contactID[0]);
@@ -300,7 +338,10 @@
                 $this->bind(':userID', $id);
                 $this->bind(':contactsID', $contactID);
                 $this->bind(':detailsID', $detailsID);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
@@ -1120,24 +1161,30 @@
         public function get_existing_field($table, $field, $where,
                                            $bind = NULL) {
             try {
-                $select =
-                    "SELECT {$field} FROM {$table} AS tarID
-                     WHERE
-                        {$where}";
+                $select = $this->select($table, $field, $where);
+                echo count($bind);
                 $this->query($select);
+                // TODO: UHHHHHHHHHHHHHHHHHHHHHHHHH
                 if(isset($bind)) {
-                    for ($i=1; $i < count($bind); $i++) {
-                        $this->bind($i, $bind[i]);
+                    for ($i=0; $i < count($bind); $i++) {
+                        // $this->stmt->bindParams($i, $bind[i]);
+                        echo "<br /><br />OH YEAAAAAAAAH<br /><br />";
+                        echo "{$i} AND {$bind[$i]}";
+                        $this->bind($i+1, $bind[$i]);
                     }
                 }
 
-                $existingID = sizeOf($this->single()) > 0
-                    ? $this->single()['tarID'] : false;
+                $exec = $this->single();
+                if(getType($exec) !== 'array') {
+                    throw new Exception($exec);
+                }
+                $existingID = sizeOf($exec) > 0
+                    ? $exec[0] : false;
             }
             catch (Exception $err) {
                 // I am turning this exception into an array for a quick
                 // and dirty check where it is called.
-                return [$err];
+                return [$err->getMessage()];
             }
 
             return $existingID;
@@ -1148,9 +1195,9 @@
      	 *
      	 * @return ARRAY (or STRING if it errors out)
     	 */
-        public function get_system_labels() {
+        public function get_system_labels($column) {
             try {
-                $select = $this->select($this->systemLabelsTable, 'name');
+                $select = $this->select($this->systemLabelsTable, $column);
                 $this->query($select);
                 $labels = $this->resultSet();
             }
@@ -1166,9 +1213,9 @@
          *
          * @return ARRAY (or STRING if it errors out)
          */
-        public function get_categories() {
+        public function get_categories($column) {
             try {
-                $select = $this->select($this->categoriesTable, 'name');
+                $select = $this->select($this->categoriesTable, $column);
                 $this->query($select);
                 $categories = $this->resultSet();
             }
