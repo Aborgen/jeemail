@@ -10,6 +10,8 @@
         System_LabelsID INT(11) NOT NULL,
         visibility BOOLEAN NOT NULL DEFAULT 1,
 
+        UNIQUE KEY UserID__SystemLabelsID (UserID, SystemLabelsID),
+        
         CONSTRAINT fk__User__User_System_Labels
         FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE

@@ -10,7 +10,7 @@
         ContactsID INT(11) NOT NULL,
         Contact_DetailsID INT(11) NOT NULL,
 
-        UNIQUE KEY User_Contact_Details (UserID, ContactsID, Contact_DetailsID),
+        UNIQUE KEY User__Contact__Details (UserID, ContactsID),
 
         CONSTRAINT fk__User__User_Contacts
         FOREIGN KEY (UserID) REFERENCES User(UserID)

@@ -47,7 +47,7 @@
          *        'username'  => STRING
          *        'email'     => STRING
          *        'pass'      => STRING
-         * @param $img ARRAY
+         * @param $img ARRAY (or NULL)
          *        This array will be sent as argument to insert_user_image().
          *        It contains:
          *        'path'     => STRING
@@ -116,21 +116,29 @@
         }
 
         /**
-         * Used when creating a new user to establish entries in various
-         * many-to-many relationship tables.
+         * Called in insert_user(). Used when creating a new user to
+         * establish entries in various many-to-many relationship tables.
          *
          * @param $id INT
-         *        The unique UserID value of the newly created user.
+         *        A unique UserID from the User table
          */
         protected function insert_defaults($id) {
             try {
+                // Themes defaults
                 $insert = $this->insert($this->userThemesTable,
                                         '(UserID)', '(:userID)');
                 $this->query($insert);
                 $this->bind(':userID', $id, PDO::PARAM_INT);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
-                    echo "ERROR THEME";
+                    throw new Exception($exec);
+                }
+                // Settings defaults
+                $insert = $this->insert($this->userSettingsTable,
+                                        '(userID)', '(:userID)');
+                $this->bind(':userID', $id, PDO::PARAM_INT);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
                 // These two are defined up here in order to not interfere with
@@ -290,22 +298,45 @@
             }
         }
 
+        /**
+         * INSERT user-defined contacts. There are three phases:
+         *      1) First, a search is done to see if a row containing
+         *         the name + email combination already exists.
+         *         If it does not, then a new contact is inserted.
+         *      2) Next, a row within Contact_Details is created
+         *         for the particular user and contact.
+         *      3) Finally, the UserID, the ContactID and Contact_DetailsID
+         *         are all inserted in the User_Contacts table.
+         *
+         * If--at any point along the way--any issues crop up, there are
+         * various checks to ensure that an incomplete user is not created.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $contact ARRAY
+         *        The following is expected:
+         *        [0] STRING
+         *            This is assumed to be the 'name' value
+         *        [1] STRING
+         *            This is assumed to be the 'email' value
+         * @param $details ARRAY
+         *        This is to be an associative array in the form of:
+         *        'type'         => STRING,
+         *        'nickname'     => STRING,
+         *        'company'      => STRING,
+         *        'jobTitle'     => STRING,
+         *        'phone'        => STRING,
+         *        'address'      => STRING,
+         *        'birthday'     => STRING,
+         *        'relationship' => STRING,
+         *        'website'      => STRING,
+         *        'notes'        => STRING
+         */
         public function insert_contact($id, $contact, $details) {
             $this->transaction();
-            // list($name, $email) = $contact;
             try {
-                // $select =
-                //     "SELECT ContactsID FROM {$this->contactsTable} AS tarID
-                //      WHERE
-                //         name  = :name AND
-                //         email = :email";
-                // $this->query($select);
-                // $this->bind(':name', $name);
-                // $this->bind(':email', $email);
-                //
-                // $contactID = sizeOf($this->single()) > 0
-                //     ? $this->single()['tarID'] : false;
                 $where = "name = ? AND email = ?";
+                // Phase #1
                 $contactID = $this->get_existing_field($this->contactsTable,
                                                        'ContactsID',
                                                        $where, $contact);
@@ -321,7 +352,7 @@
 
                     $contactID = $this->lastInsertId();
                 }
-
+                // Phase #2
                 $insertDetails =
                     $this->insert_contact_details($id, $details);
                 if(getType($insertDetails) !== 'boolean') {
@@ -329,11 +360,11 @@
                 }
 
                 $detailsID = $this->lastInsertId();
-
-                $insert = "INSERT INTO {$this->userContactsTable}
-                              (UserID, ContactsID, Contact_DetailsID)
-                           VALUES
-                              (:userID, :contactsID, :detailsID)";
+                // Phase #3
+                $columns = "(UserID, ContactsID, Contact_DetailsID)";
+                $values  = "(:userID, :contactsID, :detailsID)";
+                $insert  = $this->insert($this->userContactsTable,
+                                        $columns, $values);
                 $this->query($insert);
                 $this->bind(':userID', $id);
                 $this->bind(':contactsID', $contactID);
@@ -351,53 +382,82 @@
             }
 
             $this->commit();
-            return "<h1>Contact successfully created for {$name}!</h1>";
+            return "<h1>Contact successfully created for {$contact[0]}!</h1>";
         }
 
+        /**
+         * If a contact is not already available, it is created here.
+         *
+         *@param $newContact ARRAY
+         *       [0] STRING
+         *           Expects a name value
+         *       [1] STRING
+         *           Expects an email value
+         *
+         *@return BOOL (or STRING on failure)
+         */
         private function insert_new_contact($newContact) {
-            list($name, $email) = $newContact;
             try {
-                $insert = "INSERT INTO {$this->contactsTable}
-                              (name, email)
-                           VALUES
-                              (:name, :email)";
+                $insert = $this->insert($this->contactsTable,
+                                        '(name, email)', '(:name, :email)');
                 $this->query($insert);
-                $this->bind(':name', $name);
-                $this->bind(':email', $email);
-                $this->execute();
+                $this->bind(':name', $newContact[0]);
+                $this->bind(':email', $newContact[1]);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
         }
-
+        /**
+         * Called in insert_contact(). Every contact will have a details
+         * entry. One, none, or many may be empty strings.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $details ARRAY
+         *        This is to be an associative array in the form of:
+         *        'type'         => STRING,
+         *        'nickname'     => STRING,
+         *        'company'      => STRING,
+         *        'jobTitle'     => STRING,
+         *        'phone'        => STRING,
+         *        'address'      => STRING,
+         *        'birthday'     => STRING,
+         *        'relationship' => STRING,
+         *        'website'      => STRING,
+         *        'notes'        => STRING
+         */
         private function insert_contact_details($id, $details) {
-            list($type, $nickname, $company, $jobTitle,
-                    $phone, $address, $birthday, $relationship,
-                        $website, $notes) = $details;
             try{
-                $insert = "INSERT INTO {$this->contactDetailsTable}
-                              (type, nickname, company, job_title,
-                                  phone, address birthday, relationship,
-                                    website, notes)
-                           VALUES
-                              (:type, :nickname, :company, :jobTitle, :phone,
-                                  :address, :birthday, :relationship,
-                                     :website, :notes)";
+                $columns = "(type, nickname, company, job_title,
+                             phone, address, birthday, relationship,
+                             website, notes)";
+                $values = "(:type, :nickname, :company, :jobTitle, :phone,
+                            :address, :birthday, :relationship,
+                            :website, :notes)";
+                $insert = $this->insert($this->contactDetailsTable,
+                                        $columns, $values);
                 $this->query($insert);
-                $this->bind(':type', $type);
-                $this->bind(':nickname', $nickname);
-                $this->bind(':company', $company);
-                $this->bind(':jobTitle', $jobTitle);
-                $this->bind(':phone', $phone);
-                $this->bind(':address', $address);
-                $this->bind(':birthday', $birthday);
-                $this->bind(':relationship', $relationship);
-                $this->bind(':website', $website);
-                $this->bind(':notes', $notes);
-                $this->execute();
+                $this->bind(':type', $details['type']);
+                $this->bind(':nickname', $details['nickname']);
+                $this->bind(':company', $details['company']);
+                $this->bind(':jobTitle', $details['jobTitle']);
+                $this->bind(':phone', $details['phone']);
+                $this->bind(':address', $details['address']);
+                $this->bind(':birthday', $details['birthday']);
+                $this->bind(':relationship', $details['relationship']);
+                $this->bind(':website', $details['website']);
+                $this->bind(':notes', $details['notes']);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 return $err;
@@ -406,18 +466,21 @@
             return true;
         }
 
+        /**
+         * INSERT undesirable emails to the Blocked table in two phases:
+         *      1) If this email has been blocked before, get the BlockedID
+         *         from the Blocked table. If not, create a new row.
+         *      2) Insert UserID and BlockedID in the many-to-many
+         *         table: User_Blocked.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $email STRING
+         *        The email to be blocked
+         */
         public function insert_blocked($id, $email) {
             $this->transaction();
             try {
-                // $select =
-                //     "SELECT BlockedID FROM {$this->blockedTable} AS tarID
-                //      WHERE email = :email";
-                // $this->query($select);
-                // $this->bind(':email', $email);
-                //
-                //
-                // $blockedID = sizeOf($this->single()) > 0
-                //     ? $this->single()['tarID'] : false;
                 $table = $this->blockedTable;
                 $where = "email = ?";
                 $blockedID = $this->get_existing_field($table, 'BlockedID',
@@ -435,35 +498,47 @@
                     $blockedID = $this->lastInsertId();
                 }
 
-                $insert = "INSERT INTO {$this->userBlockedTable}
-                              (UserID, BlockedID)
-                           VALUES
-                              (:userID, :blockedID)";
+                $columns = "(UserID, BlockedID)";
+                $values  = "(:userID, :blockedID)";
+                $insert  = $this->insert($this->userBlockedTable,
+                                      $columns, $values);
                 $this->query($insert);
                 $this->bind(':userID', $id);
                 $this->bind(':blockedID', $blockedID);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-blocked');
             }
 
             $this->commit();
-            return "<h1>Email added to blocked list.!</h1>";
+            return "<h1>Email blocked!</h1>";
         }
 
+        /**
+         * If a given email has not been blocked, it is blocked here.
+         *
+         *@param $email STRING
+         *       The email to be added to the Blocked table
+         *
+         *@return BOOL (or STRING on failure)
+         */
         private function insert_new_blocked($email) {
             try {
-                $insert = "INSERT INTO {$this->blockedTable}
-                              (email)
-                           VALUES
-                              (:email)";
+                $insert = $this->insert($this->blockedTable,
+                                        '(email)', '(:email)');
                 $this->query($insert);
                 $this->bind(':email', $email);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 return $err;
@@ -472,24 +547,45 @@
             return true;
         }
 
-        private function insert_settings_profile($updateSettings) {
-            list($maxPage, $maxContacts, $replyStyle,
-                    $img, $labels, $type) = $updateSettings;
+        /**
+         * If a settings combination does not already exist, create it.
+         *
+         * @param $settings ARRAY
+         *        [0] STRING (enum),
+         *            maxPerPage
+         *        [1] STRING (enum),
+         *            maxContactShow
+         *        [2] BOOL,
+         *            replyOneOrAll
+         *        [3] BOOL,
+         *            displayImg
+         *        [4] BOOL,
+         *            labelsOrText
+         *        [5] STRING (enum)
+         *            displayType
+         *
+         * @return BOOL (or STRING on failure)
+         */
+        private function insert_settings_profile($settings) {
             try {
-                $insert = "INSERT INTO {$this->userSettingsTable}
-                              (max_page, max_contacts, reply_style,
-                                  display_img, button_labels, display_type)
-                           VALUES
-                              (:maxPage, :maxContacts, :replyStyle,
-                                  :img, :labels, :type)";
+                $columns = "(max_email_per_page, max_contacts_show,
+                             reply_one_or_all, display_images,
+                             btn_labels_or_text, ui_display_type)";
+                $values  = "(:maxPerPage, :maxContactShow, :replyOneOrAll,
+                             :displayImg, :labelsOrText, :displayType)";
+                $insert  = $this->insert($this->settingsTable,
+                                         $columns, $values);
                 $this->query($insert);
-                $this->bind(':maxPage', $maxPage);
-                $this->bind(':maxContacts', $maxContacts);
-                $this->bind(':replyStyle', $replyStyle);
-                $this->bind(':img', $img);
-                $this->bind(':labels', $labels);
-                $this->bind(':type', $type);
-                $this->execute();
+                $this->bind(':maxPerPage', $settings[0]);
+                $this->bind(':maxContactShow', $settings[1]);
+                $this->bind(':replyOneOrAll', $settings[2]);
+                $this->bind(':displayImg', $settings[3]);
+                $this->bind(':labelsOrText', $settings[4]);
+                $this->bind(':displayType', $settings[5]);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch(Exception $err) {
                 return $err;
@@ -748,7 +844,7 @@
          * Allows changing of user password
          *
          * @param $id INT
-         *        The unique id assigned to the user
+         *        A unique UserID from the User table
          * @param $inputPass STRING
          *        The user's password attempt
          * @param $diffPass STRING
@@ -788,61 +884,63 @@
             return "<h1>Password successfully updated</h1>";
         }
 
+        /**
+         * Allows user to change settings by:
+         *      1) First, check to see if the settings correspond to an
+         *         already-exisitng row in the Settings table.
+         *         If it does, use it. If not, create another.
+         *      2) Then, update the user's preferences in the
+         *         many-to-many table: User_Settings.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $settings ARRAY
+         *        [0] STRING (enum),
+         *            maxPerPage
+         *        [1] STRING (enum),
+         *            maxContactShow
+         *        [2] BOOL,
+         *            replyOneOrAll
+         *        [3] BOOL,
+         *            displayImg
+         *        [4] BOOL,
+         *            labelsOrText
+         *        [5] STRING (enum)
+         *            displayType
+         */
         public function edit_settings($id, $settings) {
             $this->transaction();
-            list($maxPage, $maxContacts, $replyStyle,
-                    $img, $labels, $type) = $settings;
             try {
-                // $select =
-                //     "SELECT SettingsID FROM {$this->settingsTable} AS tarID
-                //      WHERE
-                //         max_page      = :maxPage     AND
-                //         max_contacts  = :maxContacts AND
-                //         reply_style   = :replyStyle  AND
-                //         display_img   = :img         AND
-                //         button_labels = :labels      AND
-                //         display_type  = :type";
-                //
-                // $this->query($select);
-                // $this->bind(':maxPage', $maxPage);
-                // $this->bind(':maxContacts', $maxContacts);
-                // $this->bind(':replyStyle', $replyStyle);
-                // $this->bind(':img', $img);
-                // $this->bind(':labels', $labels);
-                // $this->bind(':type', $type);
-                //
-                // $settingsProfileID = sizeOf($this->single()) > 0
-                //     ? $this->single()['tarID'] : false;
-                $table = $this->settingsTable;
-                $where = "max_page      = ? AND
-                          max_contacts  = ? AND
-                          reply_style   = ? AND
-                          display_img   = ? AND
-                          button_labels = ? AND
-                          display_type  = ?";
-                $settingsProfileID = get_existing_field($table, 'SettingsID',
+                $where = "max_email_per_page = ? AND
+                          max_contacts_show  = ? AND
+                          reply_one_or_all   = ? AND
+                          display_images     = ? AND
+                          btn_labels_or_text = ? AND
+                          ui_display_type    = ?";
+                $settingsID = $this->get_existing_field($this->settingsTable,
+                                                        'SettingsID',
                                                         $where, $settings);
-                if(getType($settingsProfileID) === 'array') {
-                    throw new Exception($settingsProfileID[0]);
+                if(getType($settingsID) === 'array') {
+                    throw new Exception($settingsID[0]);
                 }
 
-                if(!$settingsProfileID) {
-                    $profile =
-                        $this->insert_settings_profile($id, $settings);
+                if(!$settingsID) {
+                    $profile = $this->insert_settings_profile($settings);
                     if(getType($profile) !== 'boolean') {
                         throw new Exception($profile);
                     }
 
-                    $settingsProfileID = $this->lastInsertId();
+                    $settingsID = $this->lastInsertId();
                 }
-
-                $change = "UPDATE {$this->userSettingsTable}
-                           SET SettingsID = :settingsID
-                           WHERE UserID = :userID";
+                $change = $this->update($this->userSettingsTable,
+                                        'SettingsID', ':settingsID',
+                                        "UserID = {$id}");
                 $this->query($change);
-                $this->bind(':settingsID', $settingsProfileID);
-                $this->bind(':userID', $id);
-                $this->execute();
+                $this->bind(':settingsID', $settingsID);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch(Exception $err) {
                 echo 'Exception -> ';
@@ -1135,7 +1233,7 @@
             catch (Exception $err) {
                 echo 'Exception -> ';
                 var_dump($err->getMessage());
-                return $this->err('unsuccessful-get', 'contacts');
+                return $this->err('unsuccessful-get', 'labels');
             }
 
                 return $result;
@@ -1162,22 +1260,17 @@
                                            $bind = NULL) {
             try {
                 $select = $this->select($table, $field, $where);
-                echo count($bind);
                 $this->query($select);
-                // TODO: UHHHHHHHHHHHHHHHHHHHHHHHHH
                 if(isset($bind)) {
                     for ($i=0; $i < count($bind); $i++) {
-                        // $this->stmt->bindParams($i, $bind[i]);
-                        echo "<br /><br />OH YEAAAAAAAAH<br /><br />";
-                        echo "{$i} AND {$bind[$i]}";
                         $this->bind($i+1, $bind[$i]);
                     }
                 }
-
-                $exec = $this->single();
-                if(getType($exec) !== 'array') {
+                $exec = $this->single(PDO::FETCH_NUM);
+                if(getType($exec) !== 'array' && $exec !== false) {
                     throw new Exception($exec);
                 }
+
                 $existingID = sizeOf($exec) > 0
                     ? $exec[0] : false;
             }
@@ -1191,7 +1284,7 @@
         }
 
         /**
-     	 * Queries db for all System Labels
+     	 * Queries System_Labels table for all results
      	 *
      	 * @return ARRAY (or STRING if it errors out)
     	 */
@@ -1209,7 +1302,7 @@
         }
 
         /**
-         * Queries db for all Categories
+         * Queries Categories for all results
          *
          * @return ARRAY (or STRING if it errors out)
          */

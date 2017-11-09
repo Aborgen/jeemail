@@ -51,8 +51,7 @@ class Database {
             }
         }
 
-        $butt = $this->stmt->bindValue($placeholder, $value, $type);
-        var_dump( $value);
+        $this->stmt->bindValue($placeholder, $value, $type);
     }
     // TODO: Why can I use $this->stmt->bindParam, but not this method?
     //       It appears that it does not retain reference to a variable
@@ -170,26 +169,26 @@ class Database {
  	 * Invokes execute()
  	 * @return ARRAY Returns an array of rows
 	 */
-    public function resultSet() {
+    public function resultSet($fetchType = PDO::FETCH_ASSOC) {
         $exec = $this->execute();
         if(getType($exec) !== 'boolean') {
             return $exec;
         }
 
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->stmt->fetchAll($fetchType);
     }
 
     /**
     * Invokes execute()
     * @return ARRAY Returns an array of a single row
     */
-    public function single() {
+    public function single($fetchType = PDO::FETCH_ASSOC) {
         $exec = $this->execute();
         if(getType($exec) !== 'boolean') {
             return $exec;
         }
 
-        return $this->stmt->fetch(PDO::FETCH_BOTH);
+        return $this->stmt->fetch($fetchType);
     }
 
     /**

@@ -9,8 +9,10 @@
         UserID INT(11) NOT NULL,
         BlockedID INT(11) NOT NULL,
 
-        FOREIGN KEY(UserID)
-            REFERENCES UserID
+        UNIQUE KEY UserID__BlockedID (UserID, BlockedID),
+
+        CONSTRAINT fk__User__User_Blocked
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE
         );";
 

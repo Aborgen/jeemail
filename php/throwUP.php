@@ -16,17 +16,19 @@ $user = [
 $contact = ['Billy Bob Joe Plantation', 'onlythebest@gradual.decline'];
 
 $details = [
-    'type' => 'onlythebest@gradual.decline',
-    'nickname' => 'onlythebest@gradual.decline',
-    'company' => 'onlythebest@gradual.decline',
-    'jobTitle' => 'onlythebest@gradual.decline',
-    'phone' => 'onlythebest@gradual.decline',
-    'address' => 'onlythebest@gradual.decline',
-    'birthday' => 'onlythebest@gradual.decline',
-    'relationship' => 'onlythebest@gradual.decline',
-    'website' => 'onlythebest@gradual.decline',
-    'notes' => 'onlythebest@gradual.decline',
+    'type' => 'Personal',
+    'nickname' => 'Ol\' Bobby',
+    'company' => '',
+    'jobTitle' => '',
+    'phone' => '0215541325741158741444',
+    'address' => '123 Rural Rd.',
+    'birthday' => '',
+    'relationship' => 'Eh.',
+    'website' => '',
+    'notes' => 'Doesn\'t much care fer opera and such',
 ];
+
+$settings = ['100', '250', 0, 1, 0, 'Cozy'];
 
 /**********************************Good to go**********************************/
  /****************************************************************************/
@@ -34,11 +36,14 @@ $details = [
 // $foo = $db->insert_user($user);
 // $foo = $db->get_system_labels('System_LabelsID');
 // $foo = $db->get_existing_field($db->userTable, 'email',
-// "UserID = 164 AND first_name = 'Bob'");
-
+                               // "UserID = 164 AND first_name = 'Bob'");
+// 11-8
+// $foo = $db->insert_contact(164, $contact, $details);
+// $foo = $db->insert_blocked(164, 'badd00d@jeemail.com');
+// $foo = $db->edit_settings(164, $settings);
 /***********************************Testing************************************/
  /****************************************************************************/
-$foo = $db->insert_contact(164, $contact, $details);
+ $foo = $db->insert_user_label(164, 'Good Label');
  ?>
 <!DOCTYPE html>
 <html>

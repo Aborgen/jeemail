@@ -7,10 +7,10 @@
     $sql = "CREATE TABLE IF NOT EXISTS {$table}(
         User_SettingsID INT(11) AUTO_INCREMENT PRIMARY KEY,
         UserID INT(11) NOT NULL UNIQUE,
-        SettingsID INT(11) NOT NULL DEFAULT 0
+        SettingsID INT(11) NOT NULL DEFAULT 0,
 
-        FOREIGN KEY(UserID)
-            REFERENCES UserID
+        CONSTRAINT fk__User__User_SettingsID
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE
         );";
 
