@@ -8,6 +8,8 @@ $db = new db_User();
 $user = [
     'firstName' => 'Bob',
     'lastName'  => 'Parr',
+    'address'   => 'nunya',
+    'phone'     => '555-555-5555',
     'username'  => 'Bobbart',
     'email'     => 'bobbartTheMan',
     'pass'      => 'BobParrBobbat space '
@@ -28,7 +30,27 @@ $details = [
     'notes' => 'Doesn\'t much care fer opera and such',
 ];
 
+$changesBundle = [
+    [
+        'column' => 'first_name',
+        'value' => 'Oh, its BOB!'
+    ],
+    [
+        'column' => 'address',
+        'value' => '123 Rural'
+    ],
+    [
+        'column' => 'phone',
+        'value' => '1211511551'
+    ],
+    [
+        'column' => 'email',
+        'value' => 'sneaky@shady.go'
+    ]
+];
+
 $settings = ['100', '250', 0, 1, 0, 'Cozy'];
+$testID = 31;
 
 /**********************************Good to go**********************************/
  /****************************************************************************/
@@ -36,14 +58,15 @@ $settings = ['100', '250', 0, 1, 0, 'Cozy'];
 // $foo = $db->insert_user($user);
 // $foo = $db->get_system_labels('System_LabelsID');
 // $foo = $db->get_existing_field($db->userTable, 'email',
-                               // "UserID = 164 AND first_name = 'Bob'");
+                               // "UserID = $testID AND first_name = 'Bob'");
 // 11-8
-// $foo = $db->insert_contact(164, $contact, $details);
-// $foo = $db->insert_blocked(164, 'badd00d@jeemail.com');
-// $foo = $db->edit_settings(164, $settings);
+// $foo = $db->insert_contact($testID, $contact, $details);
+// $foo = $db->insert_blocked($testID, 'badd00d@jeemail.com');
+// $foo = $db->edit_settings($testID, $settings);
+// $foo = $db->insert_user_label($testID, 'GExelent??');
 /***********************************Testing************************************/
  /****************************************************************************/
- $foo = $db->insert_user_label(164, 'Good Label');
+ $foo = $db->edit_user($testID, $changesBundle);
  ?>
 <!DOCTYPE html>
 <html>

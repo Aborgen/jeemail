@@ -8,6 +8,8 @@
         UserID INT(11) AUTO_INCREMENT PRIMARY KEY,
         first_name VARCHAR(64) NOT NULL,
         last_name VARCHAR(64) NOT NULL,
+        address VARCHAR(64) NOT NULL,
+        phone VARCHAR(64) NOT NULL,
         username VARCHAR(64) NOT NULL,
         email VARCHAR(64) NOT NULL UNIQUE,
         pass VARCHAR(255) NOT NULL,

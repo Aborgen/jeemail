@@ -66,12 +66,16 @@
                     throw new Exception("Error in password encryption");
                 }
                 // Phase #2
-                $columns = "(first_name, last_name, username, email, pass)";
-                $values = "(:fname, :lname, :uname, :email, :pass)";
-                $insert = $this->insert($this->userTable, $columns, $values);
+                $columns = "(first_name, last_name, address, phone,
+                             username, email, pass)";
+                $values  = "(:fname, :lname, :address, :phone,
+                             :uname, :email, :pass)";
+                $insert  = $this->insert($this->userTable, $columns, $values);
                 $this->query($insert);
                 $this->bind(':fname', $user['firstName']);
                 $this->bind(':lname', $user['lastName']);
+                $this->bind(':address', $user['address']);
+                $this->bind(':phone', $user['phone']);
                 $this->bind(':uname', $user['username']);
                 $this->bind(':email', $user['email']);
                 $this->bind(':pass',  $hashpass);
@@ -86,13 +90,12 @@
 
                 if(isset($img)) {
                     // Phase #4 OPTIONAL
-                    $newImg =
-                        $this->insert_user_image($img);
+                    $newImg = $this->insert_user_image($img);
                     if(getType($newImg) !== 'boolean') {
                         throw new Exception($newImg);
                     }
                     // Phase #5 OPTIONAL
-                    $imgID = $this->lastInsertId();
+                    $imgID  = $this->lastInsertId();
                     $change = "UPDATE {$this->userTable}
                                SET ImagesID = :imgID
                                WHERE
@@ -128,19 +131,21 @@
                 $insert = $this->insert($this->userThemesTable,
                                         '(UserID)', '(:userID)');
                 $this->query($insert);
-                $this->bind(':userID', $id, PDO::PARAM_INT);
+                $this->bind(':userID', $id);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
                 // Settings defaults
                 $insert = $this->insert($this->userSettingsTable,
-                                        '(userID)', '(:userID)');
-                $this->bind(':userID', $id, PDO::PARAM_INT);
+                                        '(UserID)', '(:userID)');
+                $this->query($insert);
+                $this->bind(':userID', $id);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
+                echo "<br /><br />HUUUUH<br /><br />";
                 // These two are defined up here in order to not interfere with
                 // the statements that come next.
                 $lables     = $this->get_system_labels('System_LabelsID');
@@ -353,8 +358,7 @@
                     $contactID = $this->lastInsertId();
                 }
                 // Phase #2
-                $insertDetails =
-                    $this->insert_contact_details($id, $details);
+                $insertDetails = $this->insert_contact_details($id, $details);
                 if(getType($insertDetails) !== 'boolean') {
                     throw new Exception($insertDetails);
                 }
@@ -376,7 +380,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-contact');
             }
@@ -438,11 +442,11 @@
                 $columns = "(type, nickname, company, job_title,
                              phone, address, birthday, relationship,
                              website, notes)";
-                $values = "(:type, :nickname, :company, :jobTitle, :phone,
+                $values  = "(:type, :nickname, :company, :jobTitle, :phone,
                             :address, :birthday, :relationship,
                             :website, :notes)";
-                $insert = $this->insert($this->contactDetailsTable,
-                                        $columns, $values);
+                $insert  = $this->insert($this->contactDetailsTable,
+                                         $columns, $values);
                 $this->query($insert);
                 $this->bind(':type', $details['type']);
                 $this->bind(':nickname', $details['nickname']);
@@ -460,7 +464,7 @@
                 }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
@@ -498,10 +502,9 @@
                     $blockedID = $this->lastInsertId();
                 }
 
-                $columns = "(UserID, BlockedID)";
-                $values  = "(:userID, :blockedID)";
                 $insert  = $this->insert($this->userBlockedTable,
-                                      $columns, $values);
+                                         '(UserID, BlockedID)',
+                                         '(:userID, :blockedID)');
                 $this->query($insert);
                 $this->bind(':userID', $id);
                 $this->bind(':blockedID', $blockedID);
@@ -541,7 +544,7 @@
                 }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
@@ -588,12 +591,24 @@
                 }
             }
             catch(Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
         }
 
+        /**
+         * INSERT user-defined labels by:
+         *      1) First, check for the existance of the label. If it does, reuse.
+         *         If not, insert into the Labels table.
+         *      2) And then insert UserID and LabelID into the many-to-many
+         *         table: User_Labels.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $name STRING
+         *        The name of the label
+         */
         public function insert_user_label($id, $name) {
             $this->transaction();
             try {
@@ -613,94 +628,128 @@
 
                     $labelID = $this->lastInsertId();
                 }
-                $table   = $this->userLabelsTable;
-                $columns = "(UserID, LabelsID)";
-                $values  = "(:userID, :labelsID)";
-                $insert  = $this->insert($table, $columns, $values);
+
+                $insert  = $this->insert($this->userLabelsTable,
+                                         '(UserID, LabelsID)',
+                                         '(:userID, :labelsID)');
                 $this->query($insert);
                 $this->bind(':userID', $id);
                 $this->bind(':labelsID', $labelID);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-label');
             }
 
             $this->commit();
-            return "<h1>Successfully created label \"{$name}!\"</h1>";
+            return "<h1>Successfully created label \"{$name}\"</h1>";
         }
 
+        /**
+         * If a given label does not exist, it is created here.
+         *
+         *@param $name STRING
+         *       The label to be inserted into the Labels table
+         *
+         *@return BOOL (or STRING on failure)
+         */
         private function insert_new_label($name) {
             try {
-                $table  = $this->labelsTable;
-                $column = "(name)";
-                $value  = "(:name)";
-                $insert = $this->insert($table, $column, $value);
+                $insert = $this->insert($this->labelsTable,
+                                        '(name)', '(:name)');
                 $this->query($insert);
                 $this->bind(':name', $name);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
         }
 
-
-
         private function edit_fields($id, $table, $changesBundle) {
-            // $changesBundle = [
-            //     '0' => [
-            //         'column' => 'one_column',
-            //         'newValue' => 'extreme wheelbarrowing'
-            //     ]
-            // ]
+            try {
+                $columns = [];
+                $values  = [];
+
+                foreach ($changesBundle as $arr) {
+                    $columns[] = "{$arr['column']} = ?";
+                    $values[]  = $arr['value'];
+                }
+                // This will allow an arbitrary number of columns
+                // to be prepared before binding values in the for loop.
+                $allColumns = implode(', ', $columns);
+
+                $change = "UPDATE {$table}
+                           SET {$allColumns}
+                           WHERE UserID = {$id}";
+                $this->query($change);
+                for ($i=0; $i < count($values); $i++) {
+                    $this->bind($i+1, $values[$i]);
+                }
+
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
+            }
+            catch (Exception $err) {
+                $err->getMessage();
+            }
+
+            return true;
+        }
+
+        /**
+         * Allows editing of user attributes in the User table
+         *
+         * @param $id INT
+         *
+         * @param $changesBundle ARRAY
+         *        An array of arbitrary length with pattern:
+         *        [
+         *            [
+         *                'column' => STRING,
+         *                'value'  => STRING
+         *            ],
+         *            [
+         *                ...
+         *        ]
+         */
+        public function edit_user($id, $changesBundle) {
             $this->transaction();
             try {
-                $change = "UPDATE {$table}
-                           SET {$extracted_column} = :newValue";
-                $this->query($change);
-                $this->bind(':newValue', $extracted_newValue);
+                // This method is not intended to change email or passwords
+                $filtered_array = array_filter($changesBundle, function($el) {
+                    if($el['column'] !== 'email' && $el['column'] !== 'pass') {
+                        return $el;
+                    }
+                });
 
-                foreach ($changesBundle as $change => $value) {
-                    // Will result in $extracted_column and $extracted_newValue
-                    extract($value, EXTR_PREFIX_ALL, 'extracted');
-                    $this->execute();
+                $exec =
+                    $this->edit_fields($id, $this->userTable, $filtered_array);
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
                 }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                $err->getMessage();
                 $this->rollBack();
-                return $this->err('unsuccessful-edit', $extracted_column);
+                return $this->err('unsuccessful-edit');
             }
 
             $this->commit();
-            return true;
-        }
-        public function edit_user($id, $changesBundle) {
-            $this->transaction();
-            try {
-                // $change = "UPDATE {$this->userTable}
-                //            SET {$column} = :value
-                //               WHERE UserID = :userID";
-                // $this->query($change);
-                // $this->bind(':value', $diff);
-                // $this->bind(':userID', $id);
-                // $this->execute();
-                $table = $this->userTable;
-                $this->edit_fields($id, $table, $changesBundle);
-            }
-            catch (Exception $err) {
-                echo 'Exception -> ';
-                var_dump($err->getMessage());
-                $this->rollBack();
-                return $this->err('unsuccessful-edit', $column);
-            }
-
             return "<h1>Changes saved.</h1>";
         }
 

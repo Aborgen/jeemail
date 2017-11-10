@@ -6,7 +6,7 @@ class Database {
     private $charset = 'utf8mb4';
     private $dbname  = DB_NAME;
 
-    private  $pdo;
+    protected $pdo;
     private $error;
 
     protected $stmt;
@@ -35,6 +35,7 @@ class Database {
      * what type of data the column accepts.
 	 */
     public function bind($placeholder, $value, $type=NULL) {
+        echo "<br />BEGIN BIND <br />";
         if(is_null($type)) {
             switch (true) {
                 case is_bool($value):
@@ -50,8 +51,11 @@ class Database {
                     $type = PDO::PARAM_STR;
             }
         }
-
+        var_dump($placeholder);
+        var_dump($value);
         $this->stmt->bindValue($placeholder, $value, $type);
+        echo "<br />END BIND<br />";
+        return true;
     }
     // TODO: Why can I use $this->stmt->bindParam, but not this method?
     //       It appears that it does not retain reference to a variable
@@ -79,7 +83,14 @@ class Database {
     }*/
 
     public function query($query) {
-        $this->stmt = $this->pdo->prepare($query);
+        try {
+            $this->stmt = $this->pdo->prepare($query);
+        }
+        catch (Exception $err) {
+            return $err;
+        }
+
+        return true;
     }
 
     protected function insert($table, $columns, $values, $maybeWhere = NULL) {
@@ -132,7 +143,6 @@ class Database {
 
     protected function update($table, $column, $value, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
-            // TODO: Not sure if this works! Placeholders for column and value
             $update = "UPDATE {$table}
                        SET {$column} = {$value}";
         }
@@ -163,6 +173,7 @@ class Database {
         catch(Exception $err) {
             return $err->getMessage();
         }
+
     }
 
     /**
