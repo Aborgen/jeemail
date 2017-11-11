@@ -10,6 +10,8 @@
         CategoriesID INT(11) NOT NULL,
         visibility BOOLEAN NOT NULL DEFAULT 1,
 
+        UNIQUE KEY UserID__CategoriesID (UserID, CategoriesID),
+
         CONSTRAINT fk__User__User_Categories
         FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE

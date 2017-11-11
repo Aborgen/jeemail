@@ -9,10 +9,14 @@
         UserID INT(11) NOT NULL,
         EmailID INT(11) NOT NULL,
         important BOOLEAN NOT NULL DEFAULT 0,
-        starred BOOLEAN NOT NULL DEFAULT 0
+        starred BOOLEAN NOT NULL DEFAULT 0,
+        User_CategoriesID INT(11) NOT NULL DEFAULT -100,
+        labels VARCHAR(255) NULL,
 
-        FOREIGN KEY(UserID)
-            REFERENCES UserID
+        UNIQUE KEY UserId__EmailID (UserID, EmailID),
+
+        CONSTRAINT fk__User__User_Received_Emails
+        FOREIGN KEY (UserID) REFERENCES User(UserID)
             ON DELETE CASCADE
         );";
 

@@ -7,7 +7,7 @@
         public $categoriesTable       = 'Categories';
         public $contactsTable         = 'Contacts';
         public $contactDetailsTable   = 'Contact_Details';
-        public $emailTable            = 'emailTable';
+        public $emailTable            = 'Email';
         public $imgTable              = 'Images';
         public $labelsTable           = 'Labels';
         public $settingsTable         = 'Settings';
@@ -40,20 +40,20 @@
          * If--at any point along the way--any issues crop up, there are
          * various checks to ensure that an incomplete user is not created.
          *
-         * @param $user ARRAY
+         * @param $user ASSOC ARRAY
          *        An array containing:
-         *        'firstName' => STRING
-         *        'lastName'  => STRING
-         *        'username'  => STRING
-         *        'email'     => STRING
-         *        'pass'      => STRING
-         * @param $img ARRAY (or NULL)
+         *            'firstName' => STRING
+         *            'lastName'  => STRING
+         *            'username'  => STRING
+         *            'email'     => STRING
+         *            'pass'      => STRING
+         * @param $img ASSOC ARRAY (or NULL)
          *        This array will be sent as argument to insert_user_image().
          *        It contains:
-         *        'path'     => STRING
-         *        'name'     => STRING
-         *        'tempFile' => STRING
-         *        'format'   => STRING
+         *            'path'     => STRING
+         *            'name'     => STRING
+         *            'tempFile' => STRING
+         *            'format'   => STRING
          */
         public function insert_user($user, $img = NULL) {
             // TODO: Plaintext password can be no longer than 72 characters
@@ -134,6 +134,7 @@
                 $this->bind(':userID', $id);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
+                    echo "no";
                     throw new Exception($exec);
                 }
                 // Settings defaults
@@ -174,11 +175,11 @@
                                          $columns, $values);
                 $this->query("{$insert}");
                 $this->bind(':userID', $id);
-                $this->stmt->bindParam(':categoriesID', $looped_CategoriesID,
+                $this->stmt->bindParam(':categoriesID', $extracted_CategoriesID,
                                        PDO::PARAM_INT);
 
                 foreach ($categories as $category) {
-                    extract($category, EXTR_PREFIX_ALL, 'looped');
+                    extract($category, EXTR_PREFIX_ALL, 'extracted');
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
                         throw new Exception($exec);
@@ -223,23 +224,40 @@
             return true;
         }
 
-        public function insert_email($id, $email, $sent, $received) {
+        /**
+         * INSERT an email by going through the following:
+         *      1) Insert an email into the Email table.
+         *      2) Insert the sender's UserID into the
+         *         many-to-many table: User_Sent_Emails.
+         *      3) Insert any and all recepients into the
+         *         User_Received_Emails table.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $email ASSOC ARRAY
+         *        An array containing all that constitutes an email:
+         *            'replyToEmail' => STRING,
+         *            'sentByEmail'  => STRING,
+         *            'subject'      => STRING,
+         *            'body'         => STRING
+         * @param $received ARRAY
+         *        A list of emails to receive the email
+         *        [STRING, STRING, STRING, STRING]
+         */
+        public function insert_email($id, $email, $received) {
             $this->transaction();
-            list($replyEmail, $sentEmail, $subject, $body) = $email;
             try {
-                $table   = $this->emailTable;
                 $columns = "(reply_to_email, sent_by, subject, body)";
                 $values  = "(:reply, :sent, :subject, :body)";
-                $insert  = $this->insert($table, $columns, $values);
+                $insert  = $this->insert($this->emailTable, $columns, $values);
                 $this->query($insert);
-                $this->bind(':reply', $replyEmail);
-                $this->bind(':sent', $sentEmail);
-                $this->bind(':subject', $subject);
-                $this->bind(':body', $body);
+                $this->bind(':reply', $email['replyToEmail']);
+                $this->bind(':sent', $email['sentByEmail']);
+                $this->bind(':subject', $email['subject']);
+                $this->bind(':body', $email['body']);
                 $this->execute();
-
                 $emailID = $this->lastInsertId();
-                $sent = $this->insert_sent_email($emailID, $sent);
+                $sent = $this->insert_sent_email($emailID, $id);
                 if(getType($sent) !== 'boolean') {
                     throw new Exception($sent);
                 }
@@ -251,7 +269,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-email');
             }
@@ -260,47 +278,163 @@
             return "<h2>Email successfully sent!</h2>";
         }
 
+        /**
+         * INSERT into User_Sent_Emails
+         *
+         * @param $emailID INT
+         *        The ID of the newly created email
+         * @param $id INT
+         *        The UserID of the user who sent the email
+         *
+         * @return BOOL (or STRING on failure)
+         */
+        private function insert_sent_email($emailID, $id) {
+            try {
+                // CategoriesID 2 corresponds to 'Sent Mail'
+                $where = "UserID = ? AND CategoriesID = 2";
+                $catID = $this->get_existing_field($this->userCategoriesTable,
+                                                   'User_CategoriesID',
+                                                   $where, [$id]);
+                if(getType($catID) !== 'array') {
+                    throw new Exception($catID);
+                }
+
+                $insert = $this->insert($this->emailSentTable,
+                                        '(UserID, EmailID, User_CategoriesID)',
+                                        '(:userID, :emailID, :catID)');
+                $this->query($insert);
+                $this->bind(':userID', $id);
+                $this->bind(':emailID', $emailID);
+                $this->bind(':catID', $catID[0]);
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
+
+            }
+            catch (Exception $err) {
+                return $err->getMessage();
+            }
+
+            return true;
+        }
+        /**
+         * INSERT into User_Received_Emails by:
+         *      1) Invoke verify_user() with $received. This will return
+         *         an array: [0] is existing users, [1] is nonexisting.
+         *      2) Insert each verified user's UserID into the many-to-many
+         *         table User_Received_Emails, utilizing the first foreach loop.
+         *      3) Finally, update the new rows with each user's default
+         *         User_CategoriesID (the one with their unique UserID and
+         *         a CategoriesID of 1).
+         *
+         * @param $emailID INT
+         *        The ID of the newly created email
+         * @param $received ARRAY
+         *        An array of one or many emails that have been sent the email.
+         *        [STRING, STRING, STRING, STRING]
+         *
+         * @return BOOL (or STRING on failure)
+         */
         private function insert_received_email($emailID, $received) {
             try {
-                //TODO: Waiting on verify_user
-                list($existing, $nonUser) = $this->verify_user($received);
-                $table = $this->emailReceivedTable;
-                $columns = "(UserID, EmailID)";
-                $values = "(:userID, :emailID)";
-                $insert = $this->insert($table, $columns, $values);
+                $verify   = $this->verify_user($received);
+                $existing = $verify[0];
+                $nonUser  = $verify[1];
+
+                $insert   = $this->insert($this->emailReceivedTable,
+                                          '(UserID, EmailID)',
+                                          '(:userID, :emailID)');
                 $this->query($insert);
-                $this->bind(':userID', $extracted_user);
+                $this->stmt->bindParam(':userID', $extracted_0, PDO::PARAM_INT);
                 $this->bind(':emailID', $emailID);
+                var_dump ($existing);
+                foreach ($existing as $user) {
+                    // Results in $extracted_0 due to the fact that each
+                    // element in $existing is a key-value array with
+                    // a key of 0.
+                    extract($user, EXTR_PREFIX_ALL, 'extracted');
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
+                }
+                // This statement will set each user's User_Received_Email row
+                // to point to their 'Inbox' row in User_Categories.
+                $update = "UPDATE $this->emailReceivedTable tbl1
+                           INNER JOIN
+                           $this->userCategoriesTable tbl2
+                           ON tbl1.UserID = tbl2.UserID
+                           SET tbl1.User_CategoriesID = tbl2.User_CategoriesID
+                           WHERE tbl2.CategoriesID = 1 AND
+                                 tbl2.UserID = :userID";
+                $this->query($update);
+                $this->stmt->bindParam(':userID', $extracted_0, PDO::PARAM_INT);
                 foreach ($existing as $user) {
                     extract($user, EXTR_PREFIX_ALL, 'extracted');
-                    $this->execute();
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
                 }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
+            return true;
         }
 
-        private function verify_user($emailOrArray) {
-            if(getType($emailOrArray) !== 'array') {
-                $table = $this->userTable;
-                $where = "email = {$emailOrArray}";
-                //TODO: Waiting on question above get_exisiting_field
-                $userExists = $this->get_existing_field($table, 'UserID'.
-                                                        $where);
-                if(getType($userExists) === 'array') {
-                    throw new Exception($userExists);
-                }
-
-                return $userExists;
+        /**
+         * Called in insert_received_email() to check if email exists
+         * within the User table.
+         *
+         * @param $emails ARRAY
+         *        An array of one or many emails
+         *        [STRING, STRING, STRING]
+         *
+         * @return MULTIDIMENSIONAL ARRAY
+         *         [0] contains one or more associate arrays of verified
+         *             email addresses.
+         *         [1] will be an array of nonexistant email addresses or NULL.
+         *         [[[0 => INT], [0 => INT]], [STRING, STRING, STRING]]
+         */
+        private function verify_user($emails) {
+            $oneOrMany = [];
+            // The for loop and implode simply create a string of question
+            // marks separated by commas.
+            for($i = 0; $i < count($emails); $i++) {
+                $oneOrMany[] = '?';
+            }
+            $oneOrMany = implode($oneOrMany, ', ');
+            $where = "email IN ({$oneOrMany})";
+            // And we get back an array of all emails that do, infact, exist
+            $userExists = $this->get_existing_field($this->userTable, 'email',
+                                                    $where, $emails,
+                                                    true);
+            if(getType($userExists) !== 'array') {
+                throw new Exception($userExists);
+            }
+            // Flatten out the resultant array and get the difference from
+            // our original list of email addresses.
+            $userExists = array_merge(...$userExists);
+            $nonUser = array_diff($emails, $userExists);
+            // Repeat the pattern from up there (because it works)
+            $oneOrMany = [];
+            for($i = 0; $i < count($userExists); $i++) {
+                $oneOrMany[] = '?';
+            }
+            //TODO: LATER -- Make this cleaner, pls. Dannae wanta repeat
+            $oneOrMany = implode($oneOrMany, ', ');
+            $where = "email IN ({$oneOrMany})";
+            $userIDs = $this->get_existing_field($this->userTable, 'UserID',
+                                                 $where, $userExists,
+                                                 true);
+            if(count($nonUser) > 0){
+                return [$userIDs, $nonUser];
             }
 
-            $user = [];
-            $fake = [];
-            foreach ($emailOrArray as $email) {
-                # code...
-            }
+            return [$userIDs, NULL];
         }
 
         /**
@@ -324,18 +458,18 @@
          *            This is assumed to be the 'name' value
          *        [1] STRING
          *            This is assumed to be the 'email' value
-         * @param $details ARRAY
+         * @param $details ASSOC ARRAY
          *        This is to be an associative array in the form of:
-         *        'type'         => STRING,
-         *        'nickname'     => STRING,
-         *        'company'      => STRING,
-         *        'jobTitle'     => STRING,
-         *        'phone'        => STRING,
-         *        'address'      => STRING,
-         *        'birthday'     => STRING,
-         *        'relationship' => STRING,
-         *        'website'      => STRING,
-         *        'notes'        => STRING
+         *            'type'         => STRING,
+         *            'nickname'     => STRING,
+         *            'company'      => STRING,
+         *            'jobTitle'     => STRING,
+         *            'phone'        => STRING,
+         *            'address'      => STRING,
+         *            'birthday'     => STRING,
+         *            'relationship' => STRING,
+         *            'website'      => STRING,
+         *            'notes'        => STRING
          */
         public function insert_contact($id, $contact, $details) {
             $this->transaction();
@@ -345,8 +479,8 @@
                 $contactID = $this->get_existing_field($this->contactsTable,
                                                        'ContactsID',
                                                        $where, $contact);
-                if(getType($contactID) === 'array') {
-                    throw new Exception($contactID[0]);
+                if(getType($contactID) !== 'array' && $contactID !== false) {
+                    throw new Exception($contactID);
                 }
 
                 if(!$contactID) {
@@ -356,6 +490,9 @@
                     }
 
                     $contactID = $this->lastInsertId();
+                }
+                else {
+                    $contactID = $contactID[0];
                 }
                 // Phase #2
                 $insertDetails = $this->insert_contact_details($id, $details);
@@ -424,18 +561,18 @@
          *
          * @param $id INT
          *        A unique UserID from the User table
-         * @param $details ARRAY
+         * @param $details ASSOC ARRAY
          *        This is to be an associative array in the form of:
-         *        'type'         => STRING,
-         *        'nickname'     => STRING,
-         *        'company'      => STRING,
-         *        'jobTitle'     => STRING,
-         *        'phone'        => STRING,
-         *        'address'      => STRING,
-         *        'birthday'     => STRING,
-         *        'relationship' => STRING,
-         *        'website'      => STRING,
-         *        'notes'        => STRING
+         *            'type'         => STRING,
+         *            'nickname'     => STRING,
+         *            'company'      => STRING,
+         *            'jobTitle'     => STRING,
+         *            'phone'        => STRING,
+         *            'address'      => STRING,
+         *            'birthday'     => STRING,
+         *            'relationship' => STRING,
+         *            'website'      => STRING,
+         *            'notes'        => STRING
          */
         private function insert_contact_details($id, $details) {
             try{
@@ -489,8 +626,8 @@
                 $where = "email = ?";
                 $blockedID = $this->get_existing_field($table, 'BlockedID',
                                                        $where, [$email]);
-                if(getType($blockedID) === 'array') {
-                    throw new Exception($blockedID[0]);
+                if(getType($blockedID) !== 'array') {
+                    throw new Exception($blockedID);
                 }
 
                 if(!$blockedID) {
@@ -500,6 +637,9 @@
                     }
 
                     $blockedID = $this->lastInsertId();
+                }
+                else {
+                    $blockedID = $blockedID[0];
                 }
 
                 $insert  = $this->insert($this->userBlockedTable,
@@ -616,8 +756,8 @@
                 $where   = "name = ?";
                 $labelID = $this->get_existing_field($table, 'LabelsID',
                                                      $where, [$name]);
-                if(getType($labelID) === 'array') {
-                    throw new Exception($labelID[0]);
+                if(getType($labelID) !== 'array') {
+                    throw new Exception($labelID);
                 }
 
                 if(!$labelID) {
@@ -627,6 +767,9 @@
                     }
 
                     $labelID = $this->lastInsertId();
+                }
+                else {
+                    $labelID = $labelID[0];
                 }
 
                 $insert  = $this->insert($this->userLabelsTable,
@@ -677,11 +820,27 @@
             return true;
         }
 
-        private function edit_fields($id, $table, $changesBundle) {
+        /**
+         * A method to UPDATE an arbitrary number of fields
+         *
+         * @param $id INT
+         *
+         * @param $table STRING
+         *        The table that is to be updated
+         * @param $changesBundle ASSOC ARRAY
+         *        Contains at least one column to update and one value
+         *            [
+         *                'column' => STRING,
+         *                'value'  => STRING
+         *            ],
+         *            [
+         *                ...
+         *            ]
+         */
+        private function edit_fields($id, $table, $whereID, $changesBundle) {
             try {
                 $columns = [];
                 $values  = [];
-
                 foreach ($changesBundle as $arr) {
                     $columns[] = "{$arr['column']} = ?";
                     $values[]  = $arr['value'];
@@ -692,7 +851,7 @@
 
                 $change = "UPDATE {$table}
                            SET {$allColumns}
-                           WHERE UserID = {$id}";
+                           WHERE {$whereID} = {$id}";
                 $this->query($change);
                 for ($i=0; $i < count($values); $i++) {
                     $this->bind($i+1, $values[$i]);
@@ -715,16 +874,15 @@
          *
          * @param $id INT
          *
-         * @param $changesBundle ARRAY
+         * @param $changesBundle ASSOC ARRAY
          *        An array of arbitrary length with pattern:
-         *        [
          *            [
          *                'column' => STRING,
          *                'value'  => STRING
          *            ],
          *            [
          *                ...
-         *        ]
+         *            ]
          */
         public function edit_user($id, $changesBundle) {
             $this->transaction();
@@ -737,7 +895,8 @@
                 });
 
                 $exec =
-                    $this->edit_fields($id, $this->userTable, $filtered_array);
+                    $this->edit_fields($id, $this->userTable, 'UserID',
+                                       $filtered_array);
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
@@ -793,25 +952,48 @@
             return "<h1>Your icon has been updated.</h1>";
         }
 
-        public function edit_contact($id, $contact = NULL, $details = NULL) {
+        public function edit_contact($id, $oldContactID, $contact = NULL,
+                                     $details = NULL) {
             $this->transaction();
             try {
-                if(!isset($contact)) {
-                    $table = $this->contactTable;
-                    $where = "name = ? AND email = ?";
+                if(is_null($contact) && is_null($details)) {
+                    return;
+                }
+
+                if(isset($contact)) {
+                    $column = 'ContactsID';
+                    $where  = "name = ? AND email = ?";
                     $contactID =
-                        $this->get_existing_field($table, 'ContactsID',
+                        $this->get_existing_field($this->contactsTable,
+                                                  $column,
                                                   $where, $contact);
-                        if(getType($contactID) === 'array') {
-                            throw new Exception($contactID[0]);
-                        }
+                    if(getType($contactID) === 'string') {
+                        throw new Exception($contactID);
+                    }
+
                     if(!$contactID) {
+                        // Since we are changing contact within User_Contacts,
+                        // check to see if anyone else is using oldContactID
+                        // inside User_Contacts. If not, it will be deleted
+                        // from Contacts, as it is a useless row.
+                        $juncTable = $this->userContactsTable;
+                        $table     = $this->contactTable;
+                        $gc = $this->maybe_delete_unused_row($oldContactID,
+                                                             $juncTable,
+                                                             $table, $column);
+                        if(getType($gc) !== 'boolean') {
+                         throw new Exception($gc);
+                        }
+                        // Now, insert the new contact within Contacts
                         $result = $this->insert_new_contact($contact);
                         if(getType($result) !== 'boolean') {
                             throw new Exception($result);
                         }
+
                         $contactID = $this->lastInsertId();
-                        //TODO: Garbage collect a possibly useless row
+                    }
+                    else {
+                        $contactID = $contactID[0];
                     }
 
                     $change = "UPDATE {$this->userContactsTable}
@@ -819,13 +1001,18 @@
                                WHERE UserID = :userID";
                     $this->query($change);
                     $this->bind(':contactID', $contactID);
-                    $this->bind(':userID', $UserID);
-                    $this->execute();
+                    $this->bind(':userID', $id);
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
                 }
 
-                if(!isset($detailsBundle)) {
+                if(isset($details)) {
                     $table = $this->contactDetailsTable;
-                    $result = $this->edit_fields($id, $table, $details);
+                    // TODO: edit_fields() should get ID with get_existing_field()
+                    $result = $this->edit_fields($id, $table,
+                                                 'Contact_DetailsID', $details);
                     if(getType($result) !== 'boolean') {
                         throw new Exception($result);
                     }
@@ -833,7 +1020,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'contact');
             }
@@ -850,15 +1037,19 @@
                 $blockedID =
                     $this->get_existing_field($table, 'BlockedID',
                                               $where, [$blocked]);
-                if(getType($blockedID) === 'array') {
-                    throw new Exception($blockedID[0]);
+                if(getType($blockedID) !== 'array') {
+                    throw new Exception($blockedID);
                 }
+
                 if(!$blockedID) {
                     $result = $this->insert_new_blocked($blocked);
                     if(getType($result) !== 'boolean') {
                         throw new Exception($result);
                     }
                     $blockedID = $this->lastInsertId();
+                }
+                else {
+                    $blockedID = $blockedID[0];
                 }
 
                 $change = "UPDATE {$this->userBlockedTable}
@@ -969,8 +1160,8 @@
                 $settingsID = $this->get_existing_field($this->settingsTable,
                                                         'SettingsID',
                                                         $where, $settings);
-                if(getType($settingsID) === 'array') {
-                    throw new Exception($settingsID[0]);
+                if(getType($settingsID) !== 'array') {
+                    throw new Exception($settingsID);
                 }
 
                 if(!$settingsID) {
@@ -981,6 +1172,10 @@
 
                     $settingsID = $this->lastInsertId();
                 }
+                else {
+                    $settingsID = $settingsID[0];
+                }
+
                 $change = $this->update($this->userSettingsTable,
                                         'SettingsID', ':settingsID',
                                         "UserID = {$id}");
@@ -1010,8 +1205,8 @@
                 $labelID =
                     $this->get_existing_field($table, 'LabelsID',
                                               $where, [$name]);
-                if(getType($labelID) === 'array') {
-                    throw new Exception($labelID[0]);
+                if(getType($labelID) !== 'array') {
+                    throw new Exception($labelID);
                 }
 
                 if(!$labelID) {
@@ -1021,6 +1216,9 @@
                     }
 
                     $labelID = $this->lastInsertId();
+                }
+                else {
+                    $labelID = $labelID[0];
                 }
 
                 $juncTable = $this->userLabelsTable;
@@ -1113,7 +1311,7 @@
             try {
                 $juncTable = $this->userLabelsTable;
                 $where = "UserID = {$id} AND LabelsID = {$labelID}";
-                $delete = $this->delete($table, $where);
+                $delete = $this->delete($juncTable, $where);
                 $this->query($delete);
                 $this->execute();
 
@@ -1138,25 +1336,27 @@
             return "<h1>Label removed.</h1>";
         }
 
-        private function maybe_delete_unused_row($id, $juncTable,
+        private function maybe_delete_unused_row($value, $juncTable,
                                                  $table, $column) {
             try {
-                $where = "{$column} = {$id}";
+                $where = "{$column} = ?";
                 // Check to see if anyone is using a row in a
                 // many-to-many table.
-                $usedRow = $this->get_existing_field($juncTable, $id, $where);
-                if(getType($usedRow) === 'array') {
-                    throw new Exception($usedRow[0]);
+                $usedRow = $this->get_existing_field($juncTable, $value,
+                                                     $where, [$value]);
+                if(getType($usedRow) !== 'array') {
+                    throw new Exception($usedRow);
                 }
                 // If no one is, delete it!
                 if(!$usedRow) {
                     $delete = $this->delete($table, $where);
                     $this->query($delete);
+                    $this->bind(1, $value);
                     $this->execute();
                 }
             }
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
@@ -1303,30 +1503,55 @@
 
             return $result;
         }
-        //TODO: Should this method check for arrays and perform differently,
-        //      or should get_existing_fields be written?
+
+        /**
+         * SELECTS from arbitrary table for arbitrary field and arbitrary WHERE.
+         *
+         * @param $table STRING
+         *        Name of the table that is queried
+         * @param $field STRING
+         *        Value that is being queried for
+         * @param $where STRING
+         *        Where clause
+         * @param $bind ARRAY or NULL
+         *        These are the values that will be bound using PDO::bindValue
+         *        [0] STRING/INT
+         *        [1] STRING/INT
+         *        ...
+         * @param $outputMany BOOL or NULL
+         *        A flag to determine whether the method will fetchAll or fetch.
+         *
+         * @return ARRAY (or STRING on failure)
+         *         Can be one or many, depending on what $outputMany is set to.
+         */
         public function get_existing_field($table, $field, $where,
-                                           $bind = NULL) {
+                                           $bind = NULL, $outputMany = NULL) {
             try {
                 $select = $this->select($table, $field, $where);
                 $this->query($select);
+                // This binds for placeholders within $where.
                 if(isset($bind)) {
                     for ($i=0; $i < count($bind); $i++) {
                         $this->bind($i+1, $bind[$i]);
                     }
                 }
-                $exec = $this->single(PDO::FETCH_NUM);
+
+                if(is_null($outputMany)) {
+                    $exec = $this->single(PDO::FETCH_NUM);
+                }
+                else {
+                    $exec = $this->resultSet(PDO::FETCH_NUM);
+                }
+
                 if(getType($exec) !== 'array' && $exec !== false) {
                     throw new Exception($exec);
                 }
 
                 $existingID = sizeOf($exec) > 0
-                    ? $exec[0] : false;
+                    ? $exec : false;
             }
             catch (Exception $err) {
-                // I am turning this exception into an array for a quick
-                // and dirty check where it is called.
-                return [$err->getMessage()];
+                return $err->getMessage();
             }
 
             return $existingID;
