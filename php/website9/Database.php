@@ -35,7 +35,7 @@ class Database {
      * what type of data the column accepts.
 	 */
     public function bind($placeholder, $value, $type=NULL) {
-        echo "<br />BEGIN BIND <br />";
+        // echo "<br />BEGIN BIND <br />";
         if(is_null($type)) {
             switch (true) {
                 case is_bool($value):
@@ -51,10 +51,8 @@ class Database {
                     $type = PDO::PARAM_STR;
             }
         }
-        var_dump($placeholder);
-        var_dump($value);
         $this->stmt->bindValue($placeholder, $value, $type);
-        echo "<br />END BIND<br />";
+        // echo "<br />END BIND<br />";
         return true;
     }
     // TODO: Why can I use $this->stmt->bindParam, but not this method?
@@ -123,7 +121,7 @@ class Database {
     }
 
     protected function selectJoin($table1, $table2, $value,
-                                $common, $maybeWhere = NULL) {
+                                  $common, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
             $select = "SELECT {$table1}.{$value}
                        FROM {$table1} tb1

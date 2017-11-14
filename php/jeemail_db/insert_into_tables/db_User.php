@@ -294,7 +294,7 @@
                 $where = "UserID = ? AND CategoriesID = 2";
                 $catID = $this->get_existing_field($this->userCategoriesTable,
                                                    'User_CategoriesID',
-                                                   $where, [$id]);
+                                                   $where, $id);
                 if(getType($catID) !== 'array') {
                     throw new Exception($catID);
                 }
@@ -625,7 +625,7 @@
                 $table = $this->blockedTable;
                 $where = "email = ?";
                 $blockedID = $this->get_existing_field($table, 'BlockedID',
-                                                       $where, [$email]);
+                                                       $where, $email);
                 if(getType($blockedID) !== 'array') {
                     throw new Exception($blockedID);
                 }
@@ -752,11 +752,10 @@
         public function insert_user_label($id, $name) {
             $this->transaction();
             try {
-                $table   = $this->labelsTable;
                 $where   = "name = ?";
-                $labelID = $this->get_existing_field($table, 'LabelsID',
-                                                     $where, [$name]);
-                if(getType($labelID) !== 'array') {
+                $labelID = $this->get_existing_field($this->labelsTable,
+                                                     'LabelsID', $where, $name);
+                if(getType($labelID) === 'string') {
                     throw new Exception($labelID);
                 }
 
@@ -824,7 +823,7 @@
          * A method to UPDATE an arbitrary number of fields
          *
          * @param $id INT
-         *
+         *        A unique UserID from the User table
          * @param $table STRING
          *        The table that is to be updated
          * @param $changesBundle ASSOC ARRAY
@@ -837,21 +836,32 @@
          *                ...
          *            ]
          */
-        private function edit_fields($id, $table, $whereID, $changesBundle) {
+        private function edit_fields($table, $changesBundle, $where) {
             try {
                 $columns = [];
                 $values  = [];
+                // This will allow an arbitrary number of columns
+                // to be prepared before binding values in the for loop.
                 foreach ($changesBundle as $arr) {
                     $columns[] = "{$arr['column']} = ?";
                     $values[]  = $arr['value'];
                 }
-                // This will allow an arbitrary number of columns
-                // to be prepared before binding values in the for loop.
                 $allColumns = implode(', ', $columns);
+                // This allows us to construct the WHERE clause within $change
+                // by getting the correct $valueID for the value of $columnID
+                // for the given $id.
+                // $where = "WHERE UserID = {$id}";
+                // $valueID = get_existing_field($table, $columnID, $where);
+                // if(getType($valueID) !== 'array') {
+                //     throw new Exception($valueID);
+                // }
 
+                // $change = "UPDATE {$table}
+                //            SET {$allColumns}
+                //            WHERE {$columnID} = {$valueID}";
                 $change = "UPDATE {$table}
                            SET {$allColumns}
-                           WHERE {$whereID} = {$id}";
+                           WHERE {$where}";
                 $this->query($change);
                 for ($i=0; $i < count($values); $i++) {
                     $this->bind($i+1, $values[$i]);
@@ -873,7 +883,7 @@
          * Allows editing of user attributes in the User table
          *
          * @param $id INT
-         *
+         *        A unique UserID from the User table
          * @param $changesBundle ASSOC ARRAY
          *        An array of arbitrary length with pattern:
          *            [
@@ -894,9 +904,8 @@
                     }
                 });
 
-                $exec =
-                    $this->edit_fields($id, $this->userTable, 'UserID',
-                                       $filtered_array);
+                $exec = $this->edit_fields($this->userTable, $filtered_array,
+                                           "UserID = {$id}");
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
@@ -952,39 +961,56 @@
             return "<h1>Your icon has been updated.</h1>";
         }
 
-        public function edit_contact($id, $oldContactID, $contact = NULL,
+        /**
+         * UPDATE contact by:
+         *      1) See if there is a contact with the given name and email.
+         *         If there is, use it. If not, create a new row in Contacts.
+         *      2) Update row in User_Contacts for the given $id.
+         *      3) Garbage collect old row in Contacts if no one else is
+         *         using it.
+         *      4) If $details is not null, pass it to edit_fields(),
+         *         which allows changing of an arbitrary number of columns.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $oldID INT
+         *        The ContactsID that is being changed.
+         * @param $contact ARRAY (or NULL)
+         *        This will always have a length of two:
+         *        [0] STRING
+         *            The name of the contact
+         *        [1] STRING
+         *            The email of the contact
+         * @param $details ASSOC ARRAY (or NULL)
+         *        The length of this array will vary, but will appear as:
+         *            [
+         *                'column' => STRING,
+         *                'value'  => STRING
+         *            ],
+         *            [
+         *                ...
+         *            ]
+         */
+        public function edit_contact($id, $oldID, $contact = NULL,
                                      $details = NULL) {
             $this->transaction();
             try {
                 if(is_null($contact) && is_null($details)) {
+                    $this->rollBack();
                     return;
                 }
 
                 if(isset($contact)) {
-                    $column = 'ContactsID';
                     $where  = "name = ? AND email = ?";
-                    $contactID =
-                        $this->get_existing_field($this->contactsTable,
-                                                  $column,
-                                                  $where, $contact);
+                    $contactID = $this->get_existing_field($this->contactsTable,
+                                                           'ContactsID',
+                                                           $where, $contact);
                     if(getType($contactID) === 'string') {
                         throw new Exception($contactID);
                     }
 
                     if(!$contactID) {
-                        // Since we are changing contact within User_Contacts,
-                        // check to see if anyone else is using oldContactID
-                        // inside User_Contacts. If not, it will be deleted
-                        // from Contacts, as it is a useless row.
-                        $juncTable = $this->userContactsTable;
-                        $table     = $this->contactTable;
-                        $gc = $this->maybe_delete_unused_row($oldContactID,
-                                                             $juncTable,
-                                                             $table, $column);
-                        if(getType($gc) !== 'boolean') {
-                         throw new Exception($gc);
-                        }
-                        // Now, insert the new contact within Contacts
+                        // Insert the new contact within Contacts
                         $result = $this->insert_new_contact($contact);
                         if(getType($result) !== 'boolean') {
                             throw new Exception($result);
@@ -996,23 +1022,41 @@
                         $contactID = $contactID[0];
                     }
 
-                    $change = "UPDATE {$this->userContactsTable}
-                               SET ContactsID = :contactID
-                               WHERE UserID = :userID";
+                    $where = "ContactsID = {$oldID} AND UserID = {$id}";
+                    $change = $this->update($this->userContactsTable,
+                                            'ContactsID', $contactID, $where);
                     $this->query($change);
-                    $this->bind(':contactID', $contactID);
-                    $this->bind(':userID', $id);
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
                         throw new Exception($exec);
                     }
+                    // Since we are changing ContactsID within User_Contacts,
+                    // check to see if anyone else is using oldContactID
+                    // inside User_Contacts. If not, it will be deleted
+                    // from Contacts, as it is a useless row.
+                    $juncTable = $this->userContactsTable;
+                    $table     = $this->contactsTable;
+                    $gc = $this->maybe_delete_unused_row($oldID,
+                                                         $juncTable, $table,
+                                                         'ContactsID');
+                    if(getType($gc) !== 'boolean') {
+                        throw new Exception($gc);
+                    }
                 }
 
                 if(isset($details)) {
-                    $table = $this->contactDetailsTable;
-                    // TODO: edit_fields() should get ID with get_existing_field()
-                    $result = $this->edit_fields($id, $table,
-                                                 'Contact_DetailsID', $details);
+                    $select = $this->select($this->userContactsTable,
+                                            'Contact_DetailsID',
+                                            "UserID = {$id}");
+                    $this->query($select);
+                    $detailsID = $this->single(PDO::FETCH_NUM);
+                    if(getType($detailsID) !== 'array') {
+                        throw new Exception($detailsID);
+                    }
+
+                    $where = "Contact_DetailsID = {$detailsID[0]}";
+                    $result = $this->edit_fields($this->contactDetailsTable,
+                                                 $details, $where);
                     if(getType($result) !== 'boolean') {
                         throw new Exception($result);
                     }
@@ -1020,7 +1064,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                $err->getMessage();
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'contact');
             }
@@ -1029,15 +1073,29 @@
             return "<h1>Changes saved.</h1>";
         }
 
+        /**
+         * UPDATE blocked email by:
+         *      1) Check to see if email has already been blocked.
+         *         If it has, use it. If not, create a new row in Blocked.
+         *      2) Update row in User_Blocked for the given $id.
+         *      3) Garbage collect old row in Blocked if no one else is
+         *         using it.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $oldID INT
+         *        The BlockedID that is being changed.
+         * @param $blocked STRING (or NULL)
+         *        This is the email that is being changed to
+         */
         public function edit_blocked($id, $oldID, $blocked) {
             $this->transaction();
             try {
-                $table = $this->blockedTable;
                 $where = "email = ?";
-                $blockedID =
-                    $this->get_existing_field($table, 'BlockedID',
-                                              $where, [$blocked]);
-                if(getType($blockedID) !== 'array') {
+                $blockedID = $this->get_existing_field($this->blockedTable,
+                                                       'BlockedID', $where,
+                                                       $blocked);
+                if(getType($blockedID) === 'string') {
                     throw new Exception($blockedID);
                 }
 
@@ -1046,32 +1104,35 @@
                     if(getType($result) !== 'boolean') {
                         throw new Exception($result);
                     }
+
                     $blockedID = $this->lastInsertId();
                 }
                 else {
                     $blockedID = $blockedID[0];
                 }
-
-                $change = "UPDATE {$this->userBlockedTable}
-                           SET BlockedID = :blockedID
-                           WHERE UserID = :userID";
+                $where = "BlockedID = {$oldID} AND UserID = {$id}";
+                $change = $this->update($this->userBlockedTable, 'BlockedID',
+                                        $blockedID, $where);
                 $this->query($change);
-                $this->bind(':blockedID', $blockedID);
-                $this->bind(':userID', $UserID);
-                $this->execute();
-
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
+                // Since we are changing BlockedID within User_Blocked,
+                // check to see if anyone else is using oldID
+                // inside User_Blocked. If not, it will be deleted
+                // from Blocked, as it is a useless row.
                 $juncTable = $this->userBlockedTable;
-                $deletedBlocked = $this->maybe_delete_unused_row($oldID,
-                                                                 $juncTable,
-                                                                 $table,
-                                                                 'BlockedID');
-                if(getType($deletedBlocked) === 'array') {
-                    throw new Exception($deletedBlocked[0]);
+                $table     = $this->blockedTable;
+                $gc = $this->maybe_delete_unused_row($oldID, $juncTable, $table,
+                                                     'BlockedID');
+                if(getType($gc) !== 'boolean') {
+                    throw new Exception($gc);
                 }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'blocked email');
             }
@@ -1200,12 +1261,10 @@
         public function edit_label($id, $oldID, $name) {
             $this->transaction();
             try {
-                $table   = $this->labelTable;
                 $where   = "name = ?";
-                $labelID =
-                    $this->get_existing_field($table, 'LabelsID',
-                                              $where, [$name]);
-                if(getType($labelID) !== 'array') {
+                $labelID = $this->get_existing_field($this->labelsTable,
+                                                     'LabelsID', $where, $name);
+                if(getType($labelID) === 'string') {
                     throw new Exception($labelID);
                 }
 
@@ -1220,24 +1279,23 @@
                 else {
                     $labelID = $labelID[0];
                 }
-
+                $table = $this->labelsTable;
                 $juncTable = $this->userLabelsTable;
                 $where     = "UserID = {$id}";
-                $update    = $this->update($table, 'LabelsID', $labelID, $where);
+                $update    = $this->update($juncTable, 'LabelsID', $labelID,
+                                           $where);
                 $this->query($update);
                 $this->execute();
 
-                $deletedContact = $this->maybe_delete_unused_row($oldID,
-                                                                 $juncTable,
-                                                                 $table,
-                                                                 'LabelsID');
-                if(getType($deletedContact) === 'array') {
-                    throw new Exception($deletedContact[0]);
+                $gc = $this->maybe_delete_unused_row($oldID, $juncTable,
+                                                     $table, 'LabelsID');
+                if(getType($gc) !== 'boolean') {
+                    throw new Exception($gc);
                 }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'blocked email');
             }
@@ -1317,10 +1375,12 @@
 
                 $table = $this->labelsTable;
                 // Might or might not delete the row from the Labels table.
+                $where = "UserID = {$id}";
                 $deleteLabel = $this->maybe_delete_unused_row($labelID,
                                                               $juncTable,
                                                               $table,
-                                                              'LabelsID');
+                                                              'LabelsID',
+                                                              $where);
                 if(getType($deleteLabel !== 'boolean')) {
                     throw new Exception($deleteLabel);
                 }
@@ -1336,24 +1396,28 @@
             return "<h1>Label removed.</h1>";
         }
 
-        private function maybe_delete_unused_row($value, $juncTable,
+        private function maybe_delete_unused_row($id, $juncTable,
                                                  $table, $column) {
             try {
                 $where = "{$column} = ?";
                 // Check to see if anyone is using a row in a
                 // many-to-many table.
-                $usedRow = $this->get_existing_field($juncTable, $value,
-                                                     $where, [$value]);
-                if(getType($usedRow) !== 'array') {
+                $usedRow = $this->get_existing_field($juncTable, $column,
+                                                     $where, $id, true);
+                if(getType($usedRow) === 'string') {
                     throw new Exception($usedRow);
                 }
+                echo "<br />FROM MAYBE_DELETE: ";
+                var_dump($usedRow);
+                echo "<br />";
                 // If no one is, delete it!
                 if(!$usedRow) {
                     $delete = $this->delete($table, $where);
                     $this->query($delete);
-                    $this->bind(1, $value);
+                    $this->bind(1, $id);
                     $this->execute();
                 }
+                echo "{$id}, {$juncTable}, {$table}, {$column}";
             }
             catch (Exception $err) {
                 return $err->getMessage();
@@ -1361,6 +1425,7 @@
 
             return true;
         }
+        /*First, Check to see if this is used in the many-to-many. Then, delete it from main table if not*/
 
         private function err($reason, $field = NULL) {
             switch ($reason) {
@@ -1418,11 +1483,11 @@
                                             'ImagesID', $where);
 
                 $this->query($select);
-                $result = $this->single();
+                $result = $this->resultSet();
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                $err->getMessage();
                 return $this->err('unsuccessful-get', 'user details');
             }
 
@@ -1490,10 +1555,13 @@
 
         private function get_pass($id) {
             try {
-            $select = "SELECT pass FROM {$this->userTable} AS pass
+            $select = "SELECT pass FROM {$this->userTable}
                           WHERE UserID = {$id}";
             $this->query($select);
-            $result = $this->single()['pass'];
+            $result = $this->single(PDO::FETCH_NUM);
+            if(getType($result) === 'string') {
+                throw new Exception($result);
+            }
             }
             catch (Exception $err) {
                 // I am turning this exception into an array for a quick
@@ -1501,7 +1569,7 @@
                 return [$err];
             }
 
-            return $result;
+            return $result[0];
         }
 
         /**
@@ -1528,11 +1596,19 @@
                                            $bind = NULL, $outputMany = NULL) {
             try {
                 $select = $this->select($table, $field, $where);
-                $this->query($select);
+                echo "<br />SELECT: {$select}";
+                $butt = $this->query($select);
+                var_dump($butt);
+                echo "<br />";
                 // This binds for placeholders within $where.
                 if(isset($bind)) {
-                    for ($i=0; $i < count($bind); $i++) {
-                        $this->bind($i+1, $bind[$i]);
+                    if(getType($bind) === 'array') {
+                        for ($i=0; $i < count($bind); $i++) {
+                            $this->bind($i+1, $bind[$i]);
+                        }
+                    }
+                    else {
+                        $this->bind(1, $bind);
                     }
                 }
 

@@ -26,7 +26,7 @@ $user2 = [
 ];
 
 $contact = ['Billy Bob Joe Plantation', 'onlythebest@gradual.decline'];
-$editContact = ['Billy Bob Joe Plantation', 'goodemail.jeemail.com'];
+$editContact = ['Billy Bob Joe', 'goodemail@jeemail.com'];
 
 $details = [
     'type' => 'Personal',
@@ -101,14 +101,13 @@ $testID = 4;
 // $foo = $db->edit_user($testID, $changesBundle);
 // 11-10
 // $foo = $db->insert_email($testID, $email, $received);
+// 11-13
+// $foo = $db->edit_contact(3, 78, $editContact, $editDetails);
+// $foo = $db->edit_blocked(3, 8, 'orangegrass@bad.net');
+// $foo = $db->edit_label(3, 10, 'Bibble Babble');
 /***********************************Testing************************************/
  /****************************************************************************/
- $foo = $db->edit_contact($testID, 27, $editContact, $editDetails);
- // ($id, $oldContactID, $contact = NULL,
- //                              $details = NULL) {
- // $foo = $db->edit_blocked();
  // $foo = $db->edit_user_image();
- // $foo = $db->edit_label();
 
  // $foo = $db->delete_contact();
  // $foo = $db->delete_blocked();
