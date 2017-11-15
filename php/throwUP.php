@@ -1,4 +1,5 @@
 <?php
+// TODO: recreate User table
 require './website9/Database.php';
 require './jeemail_db/insert_into_tables/config/config.php';
 require './jeemail_db/insert_into_tables/db_User.php';
@@ -18,6 +19,8 @@ $user = [
 $user2 = [
     'firstName' => 'Helen',
     'lastName'  => 'Melen',
+    'gender'    => 'female',
+    'birthday'  => '1968-12-25',
     'address'   => '1234 Blue',
     'phone'     => '555-555-5555',
     'username'  => 'MsHelen',
@@ -105,21 +108,25 @@ $testID = 4;
 // $foo = $db->edit_contact(3, 78, $editContact, $editDetails);
 // $foo = $db->edit_blocked(3, 8, 'orangegrass@bad.net');
 // $foo = $db->edit_label(3, 10, 'Bibble Babble');
+// 11-14
+// $foo = $db->delete_contact($testID, 79);
+// $foo = $db->delete_blocked($testID, 16);
+// $foo = $db->delete_label($testID, 9);
+// $foo = $db->get_user($testID);
+// $foo = $db->get_contacts($testID);
+// $foo = $db->get_blocked($testID);
+// $foo = $db->get_labels($testID);
+// $foo = $db->get_system_labels($testID);
+// $foo = $db->get_categories($testID);
 /***********************************Testing************************************/
  /****************************************************************************/
- // $foo = $db->edit_user_image();
 
- // $foo = $db->delete_contact();
- // $foo = $db->delete_blocked();
- // $foo = $db->delete_label();
 
- // $foo = $db->get_user();
- // $foo = $db->get_contacts();
- // $foo = $db->get_blocked();
- // $foo = $db->get_labels();
+ // $foo = $db->get_emails();
 
  // $foo = $db->toggle_visibility();
 
+ // $foo = $db->edit_user_image();
  // $foo = $db->insert_user_image();
  // TODO: Turn logging off MySQL : SET GLOBAL general_log = 'OFF';
  //                                SET GLOBAL log_output = 'TABLE';

@@ -85,6 +85,8 @@ class Database {
             $this->stmt = $this->pdo->prepare($query);
         }
         catch (Exception $err) {
+            echo "<br />{$query}";
+            var_dump($err->getMessage());
             return $err;
         }
 
@@ -123,13 +125,13 @@ class Database {
     protected function selectJoin($table1, $table2, $value,
                                   $common, $maybeWhere = NULL) {
         if(!isset($maybeWhere)) {
-            $select = "SELECT {$table1}.{$value}
+            $select = "SELECT {$value}
                        FROM {$table1} tb1
                        LEFT JOIN {$table2} tb2
                        ON tb1.{$common} = tb2.{$common}";
         }
         else {
-            $select = "SELECT {$table1}.{$value}
+            $select = "SELECT {$value}
                        FROM {$table1} tb1
                        LEFT JOIN {$table2} tb2
                        ON tb1.{$common} = tb2.{$common}
@@ -183,6 +185,7 @@ class Database {
         if(getType($exec) !== 'boolean') {
             return $exec;
         }
+        echo "<br />RESULTSET A-ok<br />";
 
         return $this->stmt->fetchAll($fetchType);
     }
