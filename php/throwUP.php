@@ -88,9 +88,7 @@ $received = ['oneEmail', 'TwoEmail', 'helenmelen', 'no', 'hehhehehe'];
 $img = [
     'path'     => '/home/thatman/Documents/__Code_Personal/react-clones/' .
                   'jeemail/php/jeemail_db/insert_into_tables',
-    'name'     => 'DEFAULT',
-    'tempFile' => 'DEFAULT',
-    'format'   => 'jpg'
+    'tempFile' => 'heh'
 ];
 
 $settings = ['100', '250', 0, 1, 0, 'Cozy'];
@@ -131,16 +129,16 @@ $testID = 4;
 // $foo = $db->get_sent_emails(3);
 // $foo = $db->get_all_user($testID);
 // $foo = $db->toggle_visibility(3, 'User_Categories', 'CategoriesID', 2);
+// $foo = $db->insert_user_image($img);
 /***********************************Testing************************************/
  /****************************************************************************/
- $foo = $db->insert_user_image($img);
+ $foo = $db->edit_user_image($testID, $img);
  // TODO: chmod 777 /home/thatman/Documents/__Code_Personal/react-clones/jeemail/php/jeemail_db/insert_into_tables/DEFAULT
  //       Need to find a way to do this in a not-so-sledgehammery way.
  //       (755) is set to me and root being able to write here?
 
 
 
- // $foo = $db->edit_user_image();
  // TODO: Turn logging off MySQL : SET GLOBAL general_log = 'OFF';
  //                                SET GLOBAL log_output = 'TABLE';
  //                                TRUNCATE TABLE mysql.general_log;

@@ -49,9 +49,7 @@
          *        This array will be sent as argument to insert_user_image().
          *        It contains:
          *            'path'     => STRING,
-         *            'name'     => STRING,
-         *            'tempFile' => STRING,
-         *            'format'   => STRING
+         *            'tempFile' => STRING
          */
         public function insert_user($user, $img = NULL) {
             // TODO: Plaintext password can be no longer than 72 characters
@@ -145,7 +143,7 @@
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
                 }
-                echo "<br /><br />HUUUUH<br /><br />";
+
                 // These two are defined up here in order to not interfere with
                 // the statements that come next.
                 $lables     = $this->get_system_labels();
@@ -198,41 +196,35 @@
          *         into small, medium, and large sizes.
          *      2) Insert!
          *
+         * @param $id INT
+         *        A unique UserID from the User table
          * @param $img ASSOC ARRAY
          *        It contains:
          *            'path'     => STRING,
-         *            'name'     => STRING,
-         *            'tempFile' => STRING,
-         *            'format'   => STRING
+         *            'tempFile' => STRING
          */
-        // TODO: Imagick nonsense, I guess (in Database.php::resizeImage())
-        public function insert_user_image($img) {
-            // TODO: $name is going to be generated using uniqid() in some way
+        private function insert_user_image($img) {
             try {
                 $path     = $img['path'];
                 $tempFile = $img['tempFile'];
-                $name     = $img['name'];
-                $format   = $img['format'];
+                $name     = uniqid("", true);
+                // Specifies the squared size of each type of image
+                $large    = 128;
+                $medium   = 72;
+                $small    = 48;
 
-                $imgSmall =
-                    $this->resizeImage($path, $tempFile, $name, 0.25, $format);
-                $imgMed   =
-                    $this->resizeImage($path, $tempFile, $name, 0.5,  $format);
-                $imgLarge =
-                    $this->resizeImage($path, $tempFile, $name, 1.0,  $format);
-                    echo "<br />GOOD BREAK<br />";
-                // deleteFiles is located in Database.php and expects an array
-                // $this->deleteFiles(["{$path}/{$tempFile}.{$format}"]);
-                //
-                // $insert = "INSERT INTO {$this->imagesTable}
-                //               (icon_small, icon_medium, icon_large)
-                //            VALUES
-                //               (:iconSm, :iconMd, :iconLg)";
-                // $this->query($insert);
-                // $this->bind(':iconSm', $imgSmall);
-                // $this->bind(':iconMd', $imgMed);
-                // $this->bind(':iconLg', $imgLarge);
-                // $this->execute();
+                $imgSmall = $this->resizeImage($path, $tempFile, $name, $large);
+                $imgMed = $this->resizeImage($path, $tempFile, $name, $medium);
+                $imgLarge = $this->resizeImage($path, $tempFile, $name, $small);
+
+                $this->deleteFiles(["{$path}/{$tempFile}"]);
+                $insert = $this->insert('(icon_small, icon_medium, icon_large),
+                                         (:iconSm, :iconMd, :iconLg)');
+                $this->query($insert);
+                $this->bind(':iconSm', $imgSmall);
+                $this->bind(':iconMd', $imgMed);
+                $this->bind(':iconLg', $imgLarge);
+                $this->execute();
             }
 
             catch (Exception $err) {
@@ -429,6 +421,7 @@
             }
             $oneOrMany = implode($oneOrMany, ', ');
             $where = "email IN ({$oneOrMany})";
+            // TODO: Can swap 'email' for 'email, UserID' to solve TODO below
             // And we get back an array of all emails that do, infact, exist
             $userExists = $this->get_existing_field($this->userTable, 'email',
                                                     $where, $emails,
@@ -935,38 +928,65 @@
             return "<h1>Changes saved.</h1>";
         }
 
+        /**
+         * Allows the user to change their icon.
+         *
+         * @param $id INT
+         *        A unique UserID from the User table
+         * @param $img ASSOC ARRAY
+         *        It contains:
+         *            'path'     => STRING,
+         *            'tempFile' => STRING
+         */
         public function edit_user_image($id, $img) {
             $this->transaction();
             try{
                 // First, select the id of the current image row
-                $select = "SELECT ImagesID FROM {$this->userTable} AS imgID
-                           WHERE UserID = {$id}";
+                // TODO: selectJoin Pls
+                $select = $this->select($this->userTable, 'ImagesID, name',
+                                        'UserID = :userID');
                 $this->query($select);
-                $oldImgID = $this->single()['imgID'];
-                // Second, remove that row
-                $remove = "DELETE FROM {$this->imagesTable}
-                           WHERE ImagesID = :imgID";
-                $this->query($remove);
-                $this->execute();
+                $this->bind(':userID', $id);
+                echo "<br />BROKEN???";
+                $oldImgID = $this->single();
+                if(getType($oldImgID) === 'string') {
+                    throw new Exception($oldImgID);
+                }
+
+                $oldImgID = $oldImgID['ImagesID'];
+                if($oldImgID !== 0) {
+                    // Second, remove that row (if not the DEFAULT icon)
+                    $remove = "DELETE FROM {$this->imagesTable}
+                    WHERE ImagesID = :imgID";
+                    $remove = $this->delete($this->imagesTable,
+                                            'ImagesID = :imgID');
+                    $this->query($remove);
+                    $this->bind('imgID', $oldImgID);
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
+                }
                 // Next, add a new row
                 $result = $this->insert_user_image($img);
                 if(getType($result) !== 'boolean') {
                     throw new Exception($result);
                 }
-                // Finally, update User to have the new row's ID as
-                // a foreign key.
+                // Finally, update User to have the new row's ID in ImagesID.
                 $newImgID = $this->lastInsertId();
-                $change = "UPDATE {$this->userTable}
-                           SET ImagesID = :imgID
-                           WHERE UserID = :userID";
+                $change = $this->update($this->userTable, 'ImagesID', ':imgID',
+                                        'UserID = :userID');
                 $this->query($change);
-                $this->bind(':imgID', $imgID);
+                $this->bind(':imgID', $newImgID);
                 $this->bind(':userID', $id);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'icon');
             }
@@ -1920,7 +1940,6 @@
 
             return $existingID;
         }
-
 
         public function toggle_visibility($id, $table, $column, $otherID) {
             $this->transaction();

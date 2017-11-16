@@ -250,7 +250,7 @@ class Database {
         // If any files fail to be deleted, collect them
         $result =
             array_filter(array_map('deleteFile', $files), function($el) {
-                if(getType($el) !== 'boolean') {
+                if(getType($el) === 'string') {
                     return $el;
                 }
             });
@@ -272,30 +272,34 @@ class Database {
         return $result;
     }
 
-    protected function resizeImage($path, $origName, $name, $size, $format) {
+    protected function resizeImage($path, $origName, $name, $size) {
         $img = new Imagick("{$path}/{$origName}");
-        echo "<br />{$path}/{$origName}<br />";
-        $width = $img->getImageWidth() * $size;
-
+        $format = 'jpg';
+        // $width = $img->getImageWidth() * 0.5;
         // Setting height to 0 automatically maintains a square aspect ratio
-        $img->newImage($width, 0);
+        // $img->cropImage($width, $width);
+        // $img->resizeImage($width, 0, Imagick::FILTER_LANCZOS, 1);
         $img->setImageFormat($format);
         switch ($size) {
-            case 1.0:
+            case 128:
+            $img->cropThumbnailImage($size, $size);
                 $newName = "{$name}_LARGE";
                 break;
 
-            case 0.5:
+            case 72:
+            $img->cropThumbnailImage($size, $size);
                 $newName = "{$name}_MEDIUM";
                 break;
 
-            case 0.25:
+            case 48:
+            $img->cropThumbnailImage($size, $size);
                 $newName = "{$name}_SMALL";
                 break;
         }
 
         // file_put_contents("{$path}/{$newName}.{$format}", $img);
         $img->writeImage("{$path}/{$newName}.{$format}");
+        $img->clear();
         return "{$path}/{$newName}.{$format}";
     }
 }
