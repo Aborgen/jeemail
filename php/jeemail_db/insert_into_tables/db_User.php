@@ -1,7 +1,5 @@
 <?php
 // TODO: TODO: TODO: Search for todos!
-
-
     class db_User extends Database {
         public $blockedTable          = 'Blocked';
         public $categoriesTable       = 'Categories';
@@ -193,29 +191,48 @@
 
             return true;
         }
+
+        /**
+         * INSERT into the Images table by:
+         *      1) Convert the already-saved $tempFile using Imagick
+         *         into small, medium, and large sizes.
+         *      2) Insert!
+         *
+         * @param $img ASSOC ARRAY
+         *        It contains:
+         *            'path'     => STRING,
+         *            'name'     => STRING,
+         *            'tempFile' => STRING,
+         *            'format'   => STRING
+         */
         // TODO: Imagick nonsense, I guess (in Database.php::resizeImage())
         public function insert_user_image($img) {
             // TODO: $name is going to be generated using uniqid() in some way
-            list($path, $name, $tempFile, $format) = $img;
             try {
+                $path     = $img['path'];
+                $tempFile = $img['tempFile'];
+                $name     = $img['name'];
+                $format   = $img['format'];
+
                 $imgSmall =
                     $this->resizeImage($path, $tempFile, $name, 0.25, $format);
                 $imgMed   =
                     $this->resizeImage($path, $tempFile, $name, 0.5,  $format);
                 $imgLarge =
                     $this->resizeImage($path, $tempFile, $name, 1.0,  $format);
+                    echo "<br />GOOD BREAK<br />";
                 // deleteFiles is located in Database.php and expects an array
-                $this->deleteFiles(["{$path}/{$tempFile}.{$format}"]);
-
-                $insert = "INSERT INTO {$this->imagesTable}
-                              (icon_small, icon_medium, icon_large)
-                           VALUES
-                              (:iconSm, :iconMd, :iconLg)";
-                $this->query($insert);
-                $this->bind(':iconSm', $imgSmall);
-                $this->bind(':iconMd', $imgMed);
-                $this->bind(':iconLg', $imgLarge);
-                $this->execute();
+                // $this->deleteFiles(["{$path}/{$tempFile}.{$format}"]);
+                //
+                // $insert = "INSERT INTO {$this->imagesTable}
+                //               (icon_small, icon_medium, icon_large)
+                //            VALUES
+                //               (:iconSm, :iconMd, :iconLg)";
+                // $this->query($insert);
+                // $this->bind(':iconSm', $imgSmall);
+                // $this->bind(':iconMd', $imgMed);
+                // $this->bind(':iconLg', $imgLarge);
+                // $this->execute();
             }
 
             catch (Exception $err) {
@@ -245,6 +262,9 @@
          *        A list of emails to receive the email
          *        [STRING, STRING, STRING, STRING]
          */
+        // TODO: Automatically supply sent email
+        // TODO: Fail sending an email if not valid recepient(s)
+        // TODO: Need to check if user receiving email has blocked sender
         public function insert_email($id, $email, $received) {
             $this->transaction();
             try {
@@ -1563,6 +1583,39 @@
         // $foo = $db->get_system_labels();
         // $foo = $db->get_categories();
         // $foo = $db->get_emails();
+        public function get_all_user($id) {
+            try {
+                $user = $this->get_user($id);
+                $contacts = $this->get_contacts($id);
+                $blocked = $this->get_blocked($id);
+                $labels = $this->get_labels($id);
+                $sysLabels = $this->get_system_labels($id);
+                $categories = $this->get_categories($id);
+                $received = $this->get_received_emails($id);
+                $sent = $this->get_sent_emails($id);
+
+            }
+            catch (Exception $err) {
+                echo 'Exception -> ';
+                echo $err->getMessage();
+                return $this->err('unsuccessful-get', 'user details');
+            }
+
+            return [
+                'user' => $user,
+                'contacts' => $contacts,
+                'blocked' => $blocked,
+                'labels' => [
+                    'user' => $labels,
+                    'system' => $sysLabels
+                ],
+                'categories' => $categories,
+                'emails' => [
+                    'sent' => $sent,
+                    'received' => $received
+                ]
+            ];
+        }
         public function get_user($id) {
             try{
                 $user   = $this->userTable;
@@ -1578,17 +1631,73 @@
 
                 $this->query($select);
                 $result = $this->resultSet();
-                // Rename key to be more explicit
-                $result['user'] = $result[0];
-                unset($result[0]);
+                $result = $result[0];
             }
             catch (Exception $err) {
-                echo 'Exception -> ';
-                echo $err->getMessage();
-                return $this->err('unsuccessful-get', 'user details');
+                return NULL;
             }
 
             return $result;
+        }
+
+        public function get_received_emails($id) {
+            try{
+                $emails         = $this->emailTable;
+                $received       = $this->emailReceivedTable;
+                $userCategories = $this->userCategoriesTable;
+                $categories     = $this->categoriesTable;
+                $where   = "tb2.UserID = {$id}";
+                $columns = 'CONCAT(sent_by, "@jeemail.com") AS sender,
+                            CONCAT(reply_to_email, "@jeemail.com") AS reply,
+                            subject, body, important, starred,
+                            tb4.name AS category, labels, time_sent AS time';
+                $select = "SELECT {$columns}
+                         FROM {$emails} tb1
+                         LEFT JOIN {$received} tb2
+                         ON tb1.EmailID = tb2.EmailID
+                         LEFT JOIN {$userCategories} tb3
+                         ON tb2.User_CategoriesID = tb3.User_CategoriesID
+                         LEFT JOIN {$categories} tb4
+                         ON tb3.CategoriesID = tb4.CategoriesID
+                         WHERE {$where}";
+                $this->query($select);
+                $result = $this->resultSet();
+            }
+            catch (Exception $err) {
+                return NULL;
+            }
+
+                return $result;
+        }
+
+        public function get_sent_emails($id) {
+            try{
+                $emails         = $this->emailTable;
+                $sent           = $this->emailSentTable;
+                $userCategories = $this->userCategoriesTable;
+                $categories     = $this->categoriesTable;
+                $where   = "tb2.UserID = {$id}";
+                $columns = 'CONCAT(sent_by, "@jeemail.com") AS sender,
+                            CONCAT(reply_to_email, "@jeemail.com") AS reply,
+                            subject, body, important, starred,
+                            tb4.name AS category, labels, time_sent AS time';
+                $select = "SELECT {$columns}
+                         FROM {$emails} tb1
+                         LEFT JOIN {$sent} tb2
+                         ON tb1.EmailID = tb2.EmailID
+                         LEFT JOIN {$userCategories} tb3
+                         ON tb2.User_CategoriesID = tb3.User_CategoriesID
+                         LEFT JOIN {$categories} tb4
+                         ON tb3.CategoriesID = tb4.CategoriesID
+                         WHERE {$where}";
+                $this->query($select);
+                $result = $this->resultSet();
+            }
+            catch (Exception $err) {
+                return NULL;
+            }
+
+                return $result;
         }
 
         public function get_contacts($id) {
@@ -1612,9 +1721,7 @@
                 $result = $this->resultSet();
             }
             catch (Exception $err) {
-                echo 'Exception -> ';
-                echo $err->getMessage();
-                return $this->err('unsuccessful-get', 'contacts');
+                return NULL;
             }
 
                 return $result;
@@ -1635,9 +1742,7 @@
                 }
             }
             catch (Exception $err) {
-                echo 'Exception -> ';
-                echo $err->getMessage();
-                return $this->err('unsuccessful-get', 'blocked email list');
+                return NULL;
             }
 
                 return $result;
@@ -1656,12 +1761,83 @@
                 $result = $this->resultSet();
             }
             catch (Exception $err) {
-                echo 'Exception -> ';
-                var_dump($err->getMessage());
-                return $this->err('unsuccessful-get', 'labels');
+                return NULL;
             }
 
                 return $result;
+        }
+
+
+        /**
+     	 * Queries System_Labels table for all results
+     	 *
+         * @param $id INT/NULL
+         *        A unique UserID from the User table. If it is NULL,
+         *        this method is being used in insert_user()
+         *
+     	 * @return ARRAY (or STRING if it errors out)
+    	 */
+        public function get_system_labels($id = NULL) {
+            try {
+                if(is_null($id)) {
+                    $select = $this->select($this->systemLabelsTable,
+                              'System_LabelsID');
+                    $this->query($select);
+                    $labels = $this->resultSet();
+                }
+                else {
+                    $labels     = $this->systemLabelsTable;
+                    $userLabels = $this->userSystemLabelsTable;
+                    $where      = "UserID = {$id}";
+                    $columns    = 'name, visibility';
+                    $select = $this->selectJoin($labels, $userLabels, $columns,
+                                                'System_LabelsID', $where);
+
+                    $this->query($select);
+                    $labels = $this->resultSet();
+                }
+            }
+            catch (Exception $err) {
+                return NULL;
+            }
+
+            return $labels;
+        }
+
+        /**
+         * Queries Categories for all results
+         *
+         * @param $id INT/NULL
+         *        A unique UserID from the User table. If it is NULL,
+         *        this method is being used in insert_user()
+         *
+         * @return ARRAY (or STRING if it errors out)
+         */
+        public function get_categories($id = NULL) {
+            try {
+                if(is_null($id)) {
+                    $select = $this->select($this->categoriesTable,
+                                            'CategoriesID');
+                    $this->query($select);
+                    $categories = $this->resultSet();
+                }
+                else {
+                    $cats     = $this->categoriesTable;
+                    $userCats = $this->userCategoriesTable;
+                    $where    = "UserID = {$id}";
+                    $columns  = 'name, visibility';
+                    $select = $this->selectJoin($cats, $userCats, $columns,
+                                                'CategoriesID', $where);
+
+                    $this->query($select);
+                    $categories = $this->resultSet();
+                }
+            }
+            catch (Exception $err) {
+                return NULL;
+            }
+
+            return $categories;
         }
 
         private function get_pass($id) {
@@ -1745,84 +1921,42 @@
             return $existingID;
         }
 
-        /**
-     	 * Queries System_Labels table for all results
-     	 *
-         * @param $column STRING
-         *
-         *
-     	 * @return ARRAY (or STRING if it errors out)
-    	 */
-        public function get_system_labels($id = NULL) {
+
+        public function toggle_visibility($id, $table, $column, $otherID) {
+            $this->transaction();
             try {
-                if(is_null($id)) {
-                    $select = $this->select($this->systemLabelsTable,
-                              'System_LabelsID');
-                    $this->query($select);
-                    $labels = $this->resultSet();
+                $where = "UserID = {$id} AND {$column} = {$otherID}";
+                $select = $this->select($table, 'visibility', $where);
+                $this->query($select);
+                $state = $this->single(PDO::FETCH_NUM);
+                if(getType($state) === 'string') {
+                    throw new Exception($state);
+                }
+
+                $state = $state[0];
+                $update = $this->update($table, 'visibility', '?', $where);
+                $this->query($update);
+                if($state === 0) {
+                    $this->bind(1, 1);
                 }
                 else {
-                    $labels     = $this->systemLabelsTable;
-                    $userLabels = $this->userSystemLabelsTable;
-                    $where      = "UserID = {$id}";
-                    $columns    = 'name, visibility';
-                    $select = $this->selectJoin($labels, $userLabels, $columns,
-                                                'System_LabelsID', $where);
-
-                    $this->query($select);
-                    $labels = $this->resultSet();
+                    $this->bind(1, 0);
                 }
-            }
-            catch (Exception $err) {
-                return $err->getMessage();
-            }
 
-            return $labels;
-        }
-
-        /**
-         * Queries Categories for all results
-         *
-         * @return ARRAY (or STRING if it errors out)
-         */
-        public function get_categories($id = NULL) {
-            try {
-                if(is_null($id)) {
-                    $select = $this->select($this->categoriesTable,
-                                            'CategoriesID');
-                    $this->query($select);
-                    $categories = $this->resultSet();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
                 }
-                else {
-                    $cats     = $this->categoriesTable;
-                    $userCats = $this->userCategoriesTable;
-                    $where    = "UserID = {$id}";
-                    $columns  = 'name, visibility';
-                    $select = $this->selectJoin($cats, $userCats, $columns,
-                                                'CategoriesID', $where);
-
-                    $this->query($select);
-                    $categories = $this->resultSet();
-                }
-            }
-            catch (Exception $err) {
-                return $err;
-            }
-
-            return $categories;
-        }
-
-        public function toggle_visibility($id, $typeID, $value, $elementID) {
-            try {
-                $table = $this->userLabelsTable;
-                $where = "UserID = {$id} AND {$typeID} = {$elementID}";
-                $update = $this->update($table, 'visibility', $value, $where);
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
+                $this->rollBack();
                 return $this->err('unsuccessful-toggle', 'visibility');
             }
+
+            $this->commit();
+            return "<h1>Good toggle.</h1>";
         }
 
         private function validate_password($id, $inputPass) {

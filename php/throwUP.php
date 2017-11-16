@@ -83,7 +83,15 @@ $email = [
     'subject'      => 'Hey, anybody out there?',
     'body'         => 'It is a cold, dark night. I can\'t see a thing...'
 ];
-$received = ['oneEmail', 'TwoEmail', 'helenmelen', 'no', 'hehhehehe', 'bobbartTheMan'];
+$received = ['oneEmail', 'TwoEmail', 'helenmelen', 'no', 'hehhehehe'];
+
+$img = [
+    'path'     => '/home/thatman/Documents/__Code_Personal/react-clones/' .
+                  'jeemail/php/jeemail_db/insert_into_tables',
+    'name'     => 'DEFAULT',
+    'tempFile' => 'DEFAULT',
+    'format'   => 'jpg'
+];
 
 $settings = ['100', '250', 0, 1, 0, 'Cozy'];
 $testID = 4;
@@ -103,7 +111,7 @@ $testID = 4;
 // $foo = $db->insert_user_label($testID, 'GExelent??');
 // $foo = $db->edit_user($testID, $changesBundle);
 // 11-10
-// $foo = $db->insert_email($testID, $email, $received);
+// $foo = $db->insert_email(3, $email, $received);
 // 11-13
 // $foo = $db->edit_contact(3, 78, $editContact, $editDetails);
 // $foo = $db->edit_blocked(3, 8, 'orangegrass@bad.net');
@@ -118,16 +126,21 @@ $testID = 4;
 // $foo = $db->get_labels($testID);
 // $foo = $db->get_system_labels($testID);
 // $foo = $db->get_categories($testID);
+// 11-15
+// $foo = $db->get_received_emails($testID);
+// $foo = $db->get_sent_emails(3);
+// $foo = $db->get_all_user($testID);
+// $foo = $db->toggle_visibility(3, 'User_Categories', 'CategoriesID', 2);
 /***********************************Testing************************************/
  /****************************************************************************/
+ $foo = $db->insert_user_image($img);
+ // TODO: chmod 777 /home/thatman/Documents/__Code_Personal/react-clones/jeemail/php/jeemail_db/insert_into_tables/DEFAULT
+ //       Need to find a way to do this in a not-so-sledgehammery way.
+ //       (755) is set to me and root being able to write here?
 
 
- // $foo = $db->get_emails();
-
- // $foo = $db->toggle_visibility();
 
  // $foo = $db->edit_user_image();
- // $foo = $db->insert_user_image();
  // TODO: Turn logging off MySQL : SET GLOBAL general_log = 'OFF';
  //                                SET GLOBAL log_output = 'TABLE';
  //                                TRUNCATE TABLE mysql.general_log;

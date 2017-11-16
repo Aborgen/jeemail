@@ -185,7 +185,6 @@ class Database {
         if(getType($exec) !== 'boolean') {
             return $exec;
         }
-        echo "<br />RESULTSET A-ok<br />";
 
         return $this->stmt->fetchAll($fetchType);
     }
@@ -275,7 +274,9 @@ class Database {
 
     protected function resizeImage($path, $origName, $name, $size, $format) {
         $img = new Imagick("{$path}/{$origName}");
+        echo "<br />{$path}/{$origName}<br />";
         $width = $img->getImageWidth() * $size;
+
         // Setting height to 0 automatically maintains a square aspect ratio
         $img->newImage($width, 0);
         $img->setImageFormat($format);
@@ -293,7 +294,8 @@ class Database {
                 break;
         }
 
-        file_put_contents("{$path}/{$newName}.{$format}", $img);
+        // file_put_contents("{$path}/{$newName}.{$format}", $img);
+        $img->writeImage("{$path}/{$newName}.{$format}");
         return "{$path}/{$newName}.{$format}";
     }
 }
