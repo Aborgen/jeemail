@@ -220,6 +220,9 @@ class Database {
     public function transaction() {
         return $this->pdo->beginTransaction();
     }
+    public function inTransaction() {
+        return $this->pdo->inTransaction();
+    }
     public function commit() {
         return $this->pdo->commit();
     }

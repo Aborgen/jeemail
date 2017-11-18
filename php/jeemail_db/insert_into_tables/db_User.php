@@ -56,12 +56,11 @@
             // when using PASSWORD_BCRYPT
             $this->transaction();
             try {
-                // Phase #1
                 $hashpass = $this->encrypt($user['pass']);
                 if(!$hashpass) {
                     throw new Exception("Error in password encryption");
                 }
-                // Phase #2
+
                 $columns = "(first_name, last_name, gender, address, phone,
                              username, email, pass)";
                 $values  = "(:fname, :lname, :gender, :address, :phone,
@@ -76,9 +75,11 @@
                 $this->bind(':uname', $user['username']);
                 $this->bind(':email', $user['email']);
                 $this->bind(':pass',  $hashpass);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
 
-                // Phase #3
                 $userID  = $this->lastInsertId();
                 $newUser = $this->insert_defaults($userID);
                 if(getType($newUser) !== 'boolean') {
@@ -86,12 +87,11 @@
                 }
 
                 if(isset($img)) {
-                    // Phase #4 OPTIONAL
                     $newImg = $this->insert_user_image($img);
                     if(getType($newImg) !== 'boolean') {
                         throw new Exception($newImg);
                     }
-                    // Phase #5 OPTIONAL
+
                     $imgID  = $this->lastInsertId();
                     $change = "UPDATE {$this->userTable}
                                SET ImagesID = :imgID
@@ -147,7 +147,7 @@
                 // These two are defined up here in order to not interfere with
                 // the statements that come next.
                 $lables     = $this->get_system_labels();
-                $categories = $this->get_categories('CategoriesID');
+                $categories = $this->get_categories();
 
                 $columns = "(UserID, System_LabelsID)";
                 $values  = "(:userID, :sysLabelID)";
@@ -224,11 +224,14 @@
                 $this->bind(':iconSm', $imgSmall);
                 $this->bind(':iconMd', $imgMed);
                 $this->bind(':iconLg', $imgLarge);
-                $this->execute();
+                $exec = $this->execute();
+                if(getType($exec) !== 'boolean') {
+                    throw new Exception($exec);
+                }
             }
 
             catch (Exception $err) {
-                return $err;
+                return $err->getMessage();
             }
 
             return true;
@@ -254,12 +257,19 @@
          *        A list of emails to receive the email
          *        [STRING, STRING, STRING, STRING]
          */
-        // TODO: Automatically supply sent email
-        // TODO: Fail sending an email if not valid recepient(s)
-        // TODO: Need to check if user receiving email has blocked sender
         public function insert_email($id, $email, $received) {
-            $this->transaction();
+            // If we ARE in a transaction, that means that the automated
+            // account 'noreply' is sending an email telling the user
+            // that they have tried to send an email to an accout that
+            // does not exist.
+            if(!$this->inTransaction()) {
+                $this->transaction();
+            }
+
             try {
+                echo "HERE WE GO: ";
+                var_dump($email);
+                echo "<br /><br />";
                 $columns = "(reply_to_email, sent_by, subject, body)";
                 $values  = "(:reply, :sent, :subject, :body)";
                 $insert  = $this->insert($this->emailTable, $columns, $values);
@@ -275,20 +285,30 @@
                     throw new Exception($sent);
                 }
 
-                $received = $this->insert_received_email($emailID, $received);
+                $received = $this->insert_received_email($id, $emailID,
+                                                         $received,
+                                                         $email['sentByEmail']);
                 if(getType($received) !== 'boolean') {
                     throw new Exception($received);
                 }
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                $err->getMessage();
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-email');
             }
+            // This allows this function to be recursive. -1 is the id of
+            // the 'noreply' account, meaning a user has attempted to send
+            // an email to an email address that does not exist. The noreply
+            // automatically uses this method to send an email informing
+            // the user.
+            if($id !== -1) {
+                $this->commit();
+                return "<h2>Email successfully sent!</h2>";
+            }
 
-            $this->commit();
-            return "<h2>Email successfully sent!</h2>";
+            return true;
         }
 
         /**
@@ -349,28 +369,34 @@
          *
          * @return BOOL (or STRING on failure)
          */
-        private function insert_received_email($emailID, $received) {
+        private function insert_received_email($id, $emailID, $received,
+                                               $sender) {
             try {
-                $verify   = $this->verify_user($received);
+                $verify   = $this->verify_user($received, $sender);
                 $existing = $verify[0];
+                // If there are no 'non-users,' $nonUser will be NULL
                 $nonUser  = $verify[1];
 
                 $insert   = $this->insert($this->emailReceivedTable,
                                           '(UserID, EmailID)',
                                           '(:userID, :emailID)');
                 $this->query($insert);
-                $this->stmt->bindParam(':userID', $extracted_0, PDO::PARAM_INT);
+                $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                 $this->bind(':emailID', $emailID);
-                var_dump ($existing);
                 foreach ($existing as $user) {
-                    // Results in $extracted_0 due to the fact that each
-                    // element in $existing is a key-value array with
-                    // a key of 0.
-                    extract($user, EXTR_PREFIX_ALL, 'extracted');
+                    $userID = $user;
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
                         throw new Exception($exec);
                     }
+                }
+
+                if(!is_null($nonUser)) {
+                    $badEmail = $this->failed_to_receive($sender, $nonUser);
+                    if(getType($badEmail) !== 'boolean') {
+                        throw new Exception($badEmail);
+                    }
+                    echo "<br />{$update}<br />";
                 }
                 // This statement will set each user's User_Received_Email row
                 // to point to their 'Inbox' row in User_Categories.
@@ -380,11 +406,21 @@
                            ON tbl1.UserID = tbl2.UserID
                            SET tbl1.User_CategoriesID = tbl2.User_CategoriesID
                            WHERE tbl2.CategoriesID = 1 AND
-                                 tbl2.UserID = :userID";
+                                 tbl2.UserID = :userID AND
+                                 tbl1.EmailID = :emailID";
                 $this->query($update);
-                $this->stmt->bindParam(':userID', $extracted_0, PDO::PARAM_INT);
+                $this->bind(':emailID', $emailID);
+                $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                 foreach ($existing as $user) {
-                    extract($user, EXTR_PREFIX_ALL, 'extracted');
+                    $userID = $user;
+                    $exec = $this->execute();
+                    if(getType($exec) !== 'boolean') {
+                        throw new Exception($exec);
+                    }
+                }
+
+                $userID = $id;
+                foreach($nonUser as $user) {
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
                         throw new Exception($exec);
@@ -392,6 +428,37 @@
                 }
             }
             catch (Exception $err) {
+                return $err->getMessage();
+            }
+
+            return true;
+        }
+
+        private function failed_to_receive($sender, $nonUser) {
+            try {
+                $email = [
+                    'replyToEmail' => 'noreply@admin',
+                    'sentByEmail'  => 'noreply@admin',
+                    'subject'      => "",
+                    'body'         => ""
+                ];
+
+                foreach ($nonUser as $user) {
+                    $email['subject'] = "Cannot Send Email to \"{$user}\"";
+                    $email['body'] = "There was an error in sending your email
+                        to \"{$user}\". Email doesn't seem to
+                        belong to anybody. Please do not reply
+                        to this email, as no one will be there
+                        to read it!";
+                    $email['body'] = trim(preg_replace('/\s+/', ' ',
+                                                       $email['body']));
+                    $insert = $this->insert_email(-1, $email, [$sender]);
+                    if(getType($insert) !== 'boolean') {
+                        throw new Exception($insert);
+                    }
+                }
+            }
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -412,42 +479,51 @@
          *         [1] will be an array of nonexistant email addresses or NULL.
          *         [[[0 => INT], [0 => INT]], [STRING, STRING, STRING]]
          */
-        private function verify_user($emails) {
+        private function verify_user($emails, $sender) {
             $oneOrMany = [];
-            // The for loop and implode simply create a string of question
+            // The loop and implode simply create a string of question
             // marks separated by commas.
             for($i = 0; $i < count($emails); $i++) {
                 $oneOrMany[] = '?';
             }
             $oneOrMany = implode($oneOrMany, ', ');
             $where = "email IN ({$oneOrMany})";
-            // TODO: Can swap 'email' for 'email, UserID' to solve TODO below
-            // And we get back an array of all emails that do, infact, exist
-            $userExists = $this->get_existing_field($this->userTable, 'email',
-                                                    $where, $emails,
-                                                    true);
+            $userExists = $this->get_existing_field($this->userTable,
+                                                    'UserID, email', $where,
+                                                    $emails, true);
             if(getType($userExists) === 'string') {
                 throw new Exception($userExists);
             }
             // Flatten out the resultant array and get the difference from
             // our original list of email addresses.
-            $userExists = array_merge(...$userExists);
-            $nonUser = array_diff($emails, $userExists);
-            // Repeat the pattern from up there (because it works)
-            $oneOrMany = [];
-            for($i = 0; $i < count($userExists); $i++) {
-                $oneOrMany[] = '?';
-            }
-            //TODO: LATER -- Make this cleaner, pls. Dannae wanta repeat
-            $oneOrMany = implode($oneOrMany, ', ');
-            $where = "email IN ({$oneOrMany})";
-            $userIDs = $this->get_existing_field($this->userTable, 'UserID',
-                                                 $where, $userExists,
-                                                 true);
-            if(getType($userIDs) === 'string') {
-                throw new Exception($userIDs);
+            $userIDs    = [];
+            $userEmails = [];
+
+            $select = $this->selectJoin($this->blockedTable,
+                                        $this->userBlockedTable,
+                                        'email', 'BlockedID',
+                                        'UserID = :userID AND
+                                         email IN (:email)');
+            $this->query($select);
+            $this->stmt->bindParam(':userID', $id, PDO::PARAM_INT);
+            $this->bind(':email', $sender);
+            foreach ($userExists as $user) {
+                // Check to see if $user has blocked $sender. If so, do not
+                // add $user[0] to $userIDs.
+                $id = $user[0];
+                $blocked = $this->single();
+                if(getType($blocked) === 'string') {
+                    throw new Exception($blocked);
+                }
+
+                if(!$blocked) {
+                    $userIDs[] = $user[0];
+                }
+
+                $userEmails[] = $user[1];
             }
 
+            $nonUser = array_diff($emails, $userEmails);
             if(count($nonUser) > 0){
                 return [$userIDs, $nonUser];
             }
@@ -943,11 +1019,13 @@
             try{
                 // First, select the id of the current image row
                 // TODO: selectJoin Pls
-                $select = $this->select($this->userTable, 'ImagesID, name',
+                // 11-17 No idea what this means. I was left with
+                // 'ImagesID, name' instead of 'ImagesID.' No idea where 'name'
+                // was meant to come from :(
+                $select = $this->select($this->userTable, 'ImagesID',
                                         'UserID = :userID');
                 $this->query($select);
                 $this->bind(':userID', $id);
-                echo "<br />BROKEN???";
                 $oldImgID = $this->single();
                 if(getType($oldImgID) === 'string') {
                     throw new Exception($oldImgID);
@@ -956,12 +1034,10 @@
                 $oldImgID = $oldImgID['ImagesID'];
                 if($oldImgID !== 0) {
                     // Second, remove that row (if not the DEFAULT icon)
-                    $remove = "DELETE FROM {$this->imagesTable}
-                    WHERE ImagesID = :imgID";
                     $remove = $this->delete($this->imagesTable,
                                             'ImagesID = :imgID');
                     $this->query($remove);
-                    $this->bind('imgID', $oldImgID);
+                    $this->bind(':imgID', $oldImgID);
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
                         throw new Exception($exec);
@@ -1212,7 +1288,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 return $this->err('unsuccessful-edit', 'password');
             }
 
@@ -1273,9 +1349,10 @@
 
                 $change = $this->update($this->userSettingsTable,
                                         'SettingsID', ':settingsID',
-                                        "UserID = {$id}");
+                                        "UserID = :userID");
                 $this->query($change);
                 $this->bind(':settingsID', $settingsID);
+                $this->bind(':userID', $id);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
@@ -1283,7 +1360,7 @@
             }
             catch(Exception $err) {
                 echo 'Exception -> ';
-                var_dump($err->getMessage());
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit', 'settings');
             }
@@ -1520,9 +1597,6 @@
                 if(getType($usedRow) === 'string') {
                     throw new Exception($usedRow);
                 }
-                echo "<br />FROM MAYBE_DELETE: ";
-                var_dump($usedRow);
-                echo "<br />";
                 // If no one is, delete it!
                 if(!$usedRow) {
                     $delete = $this->delete($table, $where);
@@ -1530,8 +1604,6 @@
                     $this->bind(1, $value);
                     $this->execute();
                 }
-
-                echo "{$value}, {$juncTable}, {$table}, {$column}";
             }
             catch (Exception $err) {
                 return $err->getMessage();
@@ -1904,10 +1976,7 @@
                                            $bind = NULL, $outputMany = NULL) {
             try {
                 $select = $this->select($table, $field, $where);
-                echo "<br />SELECT: {$select}";
-                $butt = $this->query($select);
-                var_dump($butt);
-                echo "<br />";
+                $this->query($select);
                 // This binds for placeholders within $where.
                 if(isset($bind)) {
                     if(getType($bind) === 'array') {

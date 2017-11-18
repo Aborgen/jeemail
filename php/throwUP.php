@@ -27,6 +27,17 @@ $user2 = [
     'email'     => 'helenmelen',
     'pass'      => '1234password'
 ];
+$noreply = [
+    'firstName' => 'noreply',
+    'lastName'  => 'noreply',
+    'gender'    => '',
+    'birthday'  => '',
+    'address'   => '',
+    'phone'     => '',
+    'username'  => 'noreply',
+    'email'     => 'noreply',
+    'pass'      => '1234password'
+];
 
 $contact = ['Billy Bob Joe Plantation', 'onlythebest@gradual.decline'];
 $editContact = ['Billy Bob Joe', 'goodemail@jeemail.com'];
@@ -83,8 +94,7 @@ $email = [
     'subject'      => 'Hey, anybody out there?',
     'body'         => 'It is a cold, dark night. I can\'t see a thing...'
 ];
-$received = ['oneEmail', 'TwoEmail', 'helenmelen', 'no', 'hehhehehe'];
-
+$received = ['no', 'hehhehehe', 'helenmelen'];
 $img = [
     'path'     => '/home/thatman/Documents/__Code_Personal/react-clones/' .
                   'jeemail/php/jeemail_db/insert_into_tables',
@@ -92,10 +102,12 @@ $img = [
 ];
 
 $settings = ['100', '250', 0, 1, 0, 'Cozy'];
+$editSettings = ['100', '250', 0, 1, 0, 'Cozy'];
 $testID = 4;
 
 /**********************************Good to go**********************************/
  /****************************************************************************/
+// 11-7
 // $foo = $db->edit_password(5, 'password', 'NEW');
 // $foo = $db->insert_user($user2);
 // $foo = $db->get_system_labels('System_LabelsID');
@@ -109,7 +121,7 @@ $testID = 4;
 // $foo = $db->insert_user_label($testID, 'GExelent??');
 // $foo = $db->edit_user($testID, $changesBundle);
 // 11-10
-// $foo = $db->insert_email(3, $email, $received);
+// $foo = $db->insert_email(4, $email, $received);
 // 11-13
 // $foo = $db->edit_contact(3, 78, $editContact, $editDetails);
 // $foo = $db->edit_blocked(3, 8, 'orangegrass@bad.net');
@@ -127,18 +139,18 @@ $testID = 4;
 // 11-15
 // $foo = $db->get_received_emails($testID);
 // $foo = $db->get_sent_emails(3);
-// $foo = $db->get_all_user($testID);
+// $foo = $db->get_all_user(3);
 // $foo = $db->toggle_visibility(3, 'User_Categories', 'CategoriesID', 2);
+// 11-16
 // $foo = $db->insert_user_image($img);
+// $foo = $db->edit_user_image($testID, $img);
+// $foo = $db->edit_settings($testID, $editSettings);
 /***********************************Testing************************************/
  /****************************************************************************/
- $foo = $db->edit_user_image($testID, $img);
  // TODO: chmod 777 /home/thatman/Documents/__Code_Personal/react-clones/jeemail/php/jeemail_db/insert_into_tables/DEFAULT
  //       Need to find a way to do this in a not-so-sledgehammery way.
  //       (755) is set to me and root being able to write here?
-
-
-
+ // TODO: Start populating DB with users! :O
  // TODO: Turn logging off MySQL : SET GLOBAL general_log = 'OFF';
  //                                SET GLOBAL log_output = 'TABLE';
  //                                TRUNCATE TABLE mysql.general_log;
@@ -174,5 +186,6 @@ $testID = 4;
         <?php else: ?>
             <pre><?php var_dump ($foo) ?></pre>
         <?php endif; ?>
+        <pre><?php echo $foo['emails']['received'][4]['body'] ?></pre>
     </body>
 </html>
