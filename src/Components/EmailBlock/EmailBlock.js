@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 //Components
-import Email                from '../Email/Email';
-import EmailList            from './components/EmailList/EmailList';
-import getEmails            from '../../Services/GetEmails';
+import Email                   from './components/Email/Email';
+import EmailList               from './components/EmailList/EmailList';
+import { getReceived, getSent} from '../../Services/GetEmails';
 
 class EmailBlock extends Component {
     constructor() {
@@ -13,7 +13,7 @@ class EmailBlock extends Component {
             emails_available: false
         };
 
-        getEmails().then(emails => {
+        getReceived(3).then((emails) => {
             this.setState({emails, emails_available: true});
         });
 

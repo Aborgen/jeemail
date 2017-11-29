@@ -1,11 +1,11 @@
-import React, { Component }           from 'react';
+import React, { Component } from 'react';
 
 // Components
-import AdditionalApps                 from './components/AdditionalApps/AdditionalApps';
-import Logo                           from './components/Logo/Logo';
-import Notifications                  from './components/Notifications/Notifications';
-import ProfileMenu                    from './components/ProfileMenu/ProfileMenu';
-import SearchForm                     from '../../Components/SearchForm/SearchForm';
+import AdditionalApps       from './components/AdditionalApps/AdditionalApps';
+import Logo                 from './components/Logo/Logo';
+import Notifications        from './components/Notifications/Notifications';
+import ProfileMenu          from './components/ProfileMenu/ProfileMenu';
+import SearchForm           from '../../Components/SearchForm/SearchForm';
 
 class Header extends Component {
 

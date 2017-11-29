@@ -6,7 +6,7 @@ class Database {
     private $charset = 'utf8mb4';
     private $dbname  = DB_NAME;
 
-    protected $pdo;
+    private $pdo;
     private $error;
 
     protected $stmt;
@@ -26,16 +26,15 @@ class Database {
     }
     /**
  	 * Initial preparation of sql statements.
- 	 * @param string $placeholder
+ 	 * @param $placeholder STRING
      * Used as a placeholder for the actual value is from as in ':name'
- 	 * @param string $value
+ 	 * @param $value STRING
      * Value to be assigned to corresponding $placeholder as in 'John Doe'
- 	 * @param string $type
+ 	 * @param $type STRING
      * While $placeholder expects a string, $type determines
      * what type of data the column accepts.
 	 */
     public function bind($placeholder, $value, $type=NULL) {
-        // echo "<br />BEGIN BIND <br />";
         if(is_null($type)) {
             switch (true) {
                 case is_bool($value):
@@ -52,41 +51,14 @@ class Database {
             }
         }
         $this->stmt->bindValue($placeholder, $value, $type);
-        // echo "<br />END BIND<br />";
         return true;
     }
-    // TODO: Why can I use $this->stmt->bindParam, but not this method?
-    //       It appears that it does not retain reference to a variable
-    //       in db_User::insert_defaults(). Work-around is making stmt
-    //       protected, which might not be ideal. I honestly don't know.
-    /*public function bindFluid($placeholder, $value, $type=NULL) {
-        $length = count($value);
-        if(is_null($type)) {
-            switch (true) {
-                case is_bool($value):
-                    $type = PDO::PARAM_BOOL;
-                    break;
-                case is_int($value):
-                    $type = PDO::PARAM_INT;
-                    break;
-                case is_null($value):
-                    $type = PDO::PARAM_NULL;
-                    break;
-                default:
-                    $type = PDO::PARAM_STR;
-            }
-        }
-        echo "THIS IS FLUID VALUE: {$value}";
-        $this->stmt->bindParam($placeholder, $value, $type, $length);
-    }*/
 
     public function query($query) {
         try {
             $this->stmt = $this->pdo->prepare($query);
         }
         catch (Exception $err) {
-            echo "<br />{$query}";
-            var_dump($err->getMessage());
             return $err;
         }
 
@@ -230,25 +202,6 @@ class Database {
         return $this->pdo->rollBack();
     }
 
-    public function lockOne($value, $type) {
-        $this->pdo->exec("LOCK TABLE {$value} {$type};");
-    }
-
-    public function unlock() {
-        $this->pdo->exec("UNLOCK TABLES;");
-    }
-
-    /**
-     * @return (?) Doesn't return anything, but will INSERT debug info (?)
-     */
-    public function debugDumpParams(){
-        return $this->stmt->debugDumpParams();
-    }
-
-    public function clearCursor() {
-        return $this->pdo->clearCursor();
-    }
-
     protected function deleteFiles($files) {
         // If any files fail to be deleted, collect them
         $result =
@@ -278,10 +231,7 @@ class Database {
     protected function resizeImage($path, $origName, $name, $size) {
         $img = new Imagick("{$path}/{$origName}");
         $format = 'jpg';
-        // $width = $img->getImageWidth() * 0.5;
-        // Setting height to 0 automatically maintains a square aspect ratio
-        // $img->cropImage($width, $width);
-        // $img->resizeImage($width, 0, Imagick::FILTER_LANCZOS, 1);
+
         $img->setImageFormat($format);
         switch ($size) {
             case 128:
@@ -300,7 +250,6 @@ class Database {
                 break;
         }
 
-        // file_put_contents("{$path}/{$newName}.{$format}", $img);
         $img->writeImage("{$path}/{$newName}.{$format}");
         $img->clear();
         return "{$path}/{$newName}.{$format}";

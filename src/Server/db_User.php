@@ -1,5 +1,4 @@
 <?php
-// TODO: TODO: TODO: Search for todos!
     class db_User extends Database {
         public $blockedTable          = 'Blocked';
         public $categoriesTable       = 'Categories';
@@ -131,7 +130,6 @@
                 $this->bind(':userID', $id);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
-                    echo "no";
                     throw new Exception($exec);
                 }
                 // Settings defaults
@@ -205,6 +203,7 @@
          */
         private function insert_user_image($img) {
             try {
+                // TODO: Make sure $path works!
                 $path     = $img['path'];
                 $tempFile = $img['tempFile'];
                 $name     = uniqid("", true);
@@ -267,15 +266,12 @@
             }
 
             try {
-                echo "HERE WE GO: ";
-                var_dump($email);
-                echo "<br /><br />";
-                $columns = "(reply_to_email, sent_by, subject, body)";
-                $values  = "(:reply, :sent, :subject, :body)";
+                $columns = "(UserID, reply_to_email, subject, body)";
+                $values  = "(:id, :reply, :subject, :body)";
                 $insert  = $this->insert($this->emailTable, $columns, $values);
                 $this->query($insert);
+                $this->bind(':id', $id);
                 $this->bind(':reply', $email['replyToEmail']);
-                $this->bind(':sent', $email['sentByEmail']);
                 $this->bind(':subject', $email['subject']);
                 $this->bind(':body', $email['body']);
                 $this->execute();
@@ -286,8 +282,7 @@
                 }
 
                 $received = $this->insert_received_email($id, $emailID,
-                                                         $received,
-                                                         $email['sentByEmail']);
+                                                         $received);
                 if(getType($received) !== 'boolean') {
                     throw new Exception($received);
                 }
@@ -332,13 +327,14 @@
                     throw new Exception($catID);
                 }
 
+                $catID = $catID[0];
                 $insert = $this->insert($this->emailSentTable,
                                         '(UserID, EmailID, User_CategoriesID)',
                                         '(:userID, :emailID, :catID)');
                 $this->query($insert);
                 $this->bind(':userID', $id);
                 $this->bind(':emailID', $emailID);
-                $this->bind(':catID', $catID[0]);
+                $this->bind(':catID', $catID);
                 $exec = $this->execute();
                 if(getType($exec) !== 'boolean') {
                     throw new Exception($exec);
@@ -369,34 +365,48 @@
          *
          * @return BOOL (or STRING on failure)
          */
-        private function insert_received_email($id, $emailID, $received,
-                                               $sender) {
+        // TODO: Add column in User_Received_Emails to determine if emailID
+        //       has been read or not.
+        private function insert_received_email($id, $emailID, $received) {
             try {
-                $verify   = $this->verify_user($received, $sender);
+                $sender = $this->get_existing_field($this->userTable, 'email',
+                                                    'UserID = ?', $id);
+                if(getType($sender) === 'string') {
+                    throw new Exception($sender);
+                }
+                // Something has gone horribly wrong!
+                if(!$sender) {
+                    return;
+                }
+
+                $sender   = $sender[0];
+                $verify   = $this->verify_user($sender, $received);
+                // If there are no existing users, $existing will be NULL
                 $existing = $verify[0];
                 // If there are no 'non-users,' $nonUser will be NULL
                 $nonUser  = $verify[1];
 
-                $insert   = $this->insert($this->emailReceivedTable,
-                                          '(UserID, EmailID)',
-                                          '(:userID, :emailID)');
-                $this->query($insert);
-                $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-                $this->bind(':emailID', $emailID);
-                foreach ($existing as $user) {
-                    $userID = $user;
-                    $exec = $this->execute();
-                    if(getType($exec) !== 'boolean') {
-                        throw new Exception($exec);
+                if(isset($existing)) {
+                    $insert = $this->insert($this->emailReceivedTable,
+                                            '(UserID, EmailID)',
+                                            '(:userID, :emailID)');
+                    $this->query($insert);
+                    $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
+                    $this->bind(':emailID', $emailID);
+                    foreach ($existing as $user) {
+                        $userID = $user;
+                        $exec = $this->execute();
+                        if(getType($exec) !== 'boolean') {
+                            throw new Exception($exec);
+                        }
                     }
                 }
 
-                if(!is_null($nonUser)) {
+                if(isset($nonUser)) {
                     $badEmail = $this->failed_to_receive($sender, $nonUser);
                     if(getType($badEmail) !== 'boolean') {
                         throw new Exception($badEmail);
                     }
-                    echo "<br />{$update}<br />";
                 }
                 // This statement will set each user's User_Received_Email row
                 // to point to their 'Inbox' row in User_Categories.
@@ -418,14 +428,6 @@
                         throw new Exception($exec);
                     }
                 }
-
-                $userID = $id;
-                foreach($nonUser as $user) {
-                    $exec = $this->execute();
-                    if(getType($exec) !== 'boolean') {
-                        throw new Exception($exec);
-                    }
-                }
             }
             catch (Exception $err) {
                 return $err->getMessage();
@@ -437,8 +439,8 @@
         private function failed_to_receive($sender, $nonUser) {
             try {
                 $email = [
-                    'replyToEmail' => 'noreply@admin',
-                    'sentByEmail'  => 'noreply@admin',
+                    'replyToEmail' => 'noreply',
+                    'sentByEmail'  => 'noreply',
                     'subject'      => "",
                     'body'         => ""
                 ];
@@ -479,7 +481,7 @@
          *         [1] will be an array of nonexistant email addresses or NULL.
          *         [[[0 => INT], [0 => INT]], [STRING, STRING, STRING]]
          */
-        private function verify_user($emails, $sender) {
+        private function verify_user($sender, $emails) {
             $oneOrMany = [];
             // The loop and implode simply create a string of question
             // marks separated by commas.
@@ -494,10 +496,10 @@
             if(getType($userExists) === 'string') {
                 throw new Exception($userExists);
             }
-            // Flatten out the resultant array and get the difference from
-            // our original list of email addresses.
-            $userIDs    = [];
-            $userEmails = [];
+
+            if(!$userExists) {
+                return [NULL, NULL];
+            }
 
             $select = $this->selectJoin($this->blockedTable,
                                         $this->userBlockedTable,
@@ -505,12 +507,15 @@
                                         'UserID = :userID AND
                                          email IN (:email)');
             $this->query($select);
-            $this->stmt->bindParam(':userID', $id, PDO::PARAM_INT);
+            $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
             $this->bind(':email', $sender);
+
+            $userIDs    = [];
+            $userEmails = [];
             foreach ($userExists as $user) {
                 // Check to see if $user has blocked $sender. If so, do not
                 // add $user[0] to $userIDs.
-                $id = $user[0];
+                $userID = $user[0];
                 $blocked = $this->single();
                 if(getType($blocked) === 'string') {
                     throw new Exception($blocked);
@@ -611,7 +616,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                $err->getMessage();
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-contact');
             }
@@ -995,7 +1000,7 @@
             }
             catch (Exception $err) {
                 echo 'Exception -> ';
-                $err->getMessage();
+                echo $err->getMessage();
                 $this->rollBack();
                 return $this->err('unsuccessful-edit');
             }
@@ -1358,7 +1363,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch(Exception $err) {
+            catch (Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1734,23 +1739,27 @@
 
         public function get_received_emails($id) {
             try{
+                $user           = $this->userTable;
                 $emails         = $this->emailTable;
                 $received       = $this->emailReceivedTable;
                 $userCategories = $this->userCategoriesTable;
                 $categories     = $this->categoriesTable;
-                $where   = "tb2.UserID = {$id}";
-                $columns = 'CONCAT(sent_by, "@jeemail.com") AS sender,
+                $where   = "tb3.UserID = {$id}";
+                $columns = 'User_Received_EmailsID AS id,
+                            username, CONCAT(email, "@jeemail.com") AS sender,
                             CONCAT(reply_to_email, "@jeemail.com") AS reply,
                             subject, body, important, starred,
-                            tb4.name AS category, labels, time_sent AS time';
+                            tb5.name AS category, labels, time_sent AS time';
                 $select = "SELECT {$columns}
                          FROM {$emails} tb1
-                         LEFT JOIN {$received} tb2
-                         ON tb1.EmailID = tb2.EmailID
-                         LEFT JOIN {$userCategories} tb3
-                         ON tb2.User_CategoriesID = tb3.User_CategoriesID
-                         LEFT JOIN {$categories} tb4
-                         ON tb3.CategoriesID = tb4.CategoriesID
+                         LEFT JOIN {$user} tb2
+                         ON tb1.UserID = tb2.UserID
+                         LEFT JOIN {$received} tb3
+                         ON tb1.EmailID = tb3.EmailID
+                         LEFT JOIN {$userCategories} tb4
+                         ON tb3.User_CategoriesID = tb4.User_CategoriesID
+                         LEFT JOIN {$categories} tb5
+                         ON tb4.CategoriesID = tb5.CategoriesID
                          WHERE {$where}";
                 $this->query($select);
                 $result = $this->resultSet();
@@ -2058,7 +2067,6 @@
                 return true;
             }
 
-            echo '<br />uhoh<br />';
             return false;
         }
 

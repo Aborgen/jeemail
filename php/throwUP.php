@@ -1,8 +1,8 @@
 <?php
 // TODO: recreate User table
-require './website9/Database.php';
-require './jeemail_db/insert_into_tables/config/config.php';
-require './jeemail_db/insert_into_tables/db_User.php';
+require '../src/Server/config.php';
+require '../src/Server/Database.php';
+require '../src/Server/db_User.php';
 echo 'Testing all the live long day'."<br />";
 echo "<hr />";
 $db = new db_User();
@@ -90,9 +90,8 @@ $changesBundle = [
 
 $email = [
     'replyToEmail' => 'bobbartTheMan',
-    'sentByEmail'  => 'bobbartTheMan',
     'subject'      => 'Hey, anybody out there?',
-    'body'         => 'It is a cold, dark night. I can\'t see a thing...'
+    'body'         => 'It is a cold, dark night. I can\'t see a thing... I would be indebted to you if you would be my friend'
 ];
 $received = ['no', 'hehhehehe', 'helenmelen'];
 $img = [
@@ -121,7 +120,7 @@ $testID = 4;
 // $foo = $db->insert_user_label($testID, 'GExelent??');
 // $foo = $db->edit_user($testID, $changesBundle);
 // 11-10
-// $foo = $db->insert_email(4, $email, $received);
+// $foo = $db->insert_email(3, $email, $received);
 // 11-13
 // $foo = $db->edit_contact(3, 78, $editContact, $editDetails);
 // $foo = $db->edit_blocked(3, 8, 'orangegrass@bad.net');
@@ -137,7 +136,7 @@ $testID = 4;
 // $foo = $db->get_system_labels($testID);
 // $foo = $db->get_categories($testID);
 // 11-15
-// $foo = $db->get_received_emails($testID);
+$foo = $db->get_received_emails($testID);
 // $foo = $db->get_sent_emails(3);
 // $foo = $db->get_all_user(3);
 // $foo = $db->toggle_visibility(3, 'User_Categories', 'CategoriesID', 2);
