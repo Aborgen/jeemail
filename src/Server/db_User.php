@@ -529,7 +529,7 @@
             }
 
             $nonUser = array_diff($emails, $userEmails);
-            if(count($nonUser) > 0){
+            if(count($nonUser) > 0) {
                 return [$userIDs, $nonUser];
             }
 
@@ -1274,7 +1274,7 @@
                     throw new Exception($validated);
                 }
 
-                if (!$validated) {
+                if(!$validated) {
                     return $this->err('bad-password');
                 }
 
@@ -1629,7 +1629,7 @@
          * @return STRING
          */
         private function err($reason, $field = NULL) {
-            switch ($reason) {
+            switch($reason) {
                 case 'unsuccessful-get':
                     return "<h1>There was a problem getting {$field}.
                             Please try again.</h1>";
