@@ -1,6 +1,6 @@
 const getAllUser = (id) => {
     try {
-        let user = fetch(`http://localhost:8080/public/getUser.php/api/alluser/${id}`)
+        let user = fetch(`/public/getUser.php/api/alluser/${id}`)
             .then((data) => {
                 return data.json();
         });

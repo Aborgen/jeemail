@@ -22,6 +22,40 @@
         public $userSystemLabelsTable = 'User_System_Labels';
         public $userThemesTable       = 'User_Themes';
 
+        public function login($userPackage) {
+            try {
+                $username = $userPackage['user'];
+                $pass = $userPackage['pass'];
+
+                $userID = $this->get_existing_field($this->userTable, 'UserID',
+                                                    'username = :username',
+                                                    $username);
+                if(getType($userID) === 'string') {
+                    throw new Exception($userID);
+                }
+
+                if(!$userID) {
+                    return $this->err('bad-login');
+                }
+
+                $userID = $userID[0];
+
+                $validated = $this->validate_password($userID, $pass);
+                if(getType($validated) !== 'boolean') {
+                    throw new Exception($validated);
+                }
+
+                if(!$validated) {
+                    return $this->err('bad-login');
+                }
+
+            }
+            catch(Exception $err) {
+                return $this->err();
+            }
+
+            return "<h2>SIGNED ON IN???</h2>";
+        }
         /**
          * INSERT a new user. There are five phases, two of which are optional:
          *      1) The provided password will be hashed.
@@ -102,7 +136,7 @@
                     $this->execute();
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -156,7 +190,7 @@
                 $this->stmt->bindParam(':sysLabelID', $looped_System_LabelsID,
                                        PDO::PARAM_INT);
 
-                foreach ($lables as $label) {
+                foreach($lables as $label) {
                     extract($label, EXTR_PREFIX_ALL, 'looped');
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
@@ -173,7 +207,7 @@
                 $this->stmt->bindParam(':categoriesID', $extracted_CategoriesID,
                                        PDO::PARAM_INT);
 
-                foreach ($categories as $category) {
+                foreach($categories as $category) {
                     extract($category, EXTR_PREFIX_ALL, 'extracted');
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
@@ -181,7 +215,7 @@
                     }
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -229,7 +263,7 @@
                 }
             }
 
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -287,7 +321,7 @@
                     throw new Exception($received);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -341,7 +375,7 @@
                 }
 
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -393,7 +427,7 @@
                     $this->query($insert);
                     $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
                     $this->bind(':emailID', $emailID);
-                    foreach ($existing as $user) {
+                    foreach($existing as $user) {
                         $userID = $user;
                         $exec = $this->execute();
                         if(getType($exec) !== 'boolean') {
@@ -421,7 +455,7 @@
                 $this->query($update);
                 $this->bind(':emailID', $emailID);
                 $this->stmt->bindParam(':userID', $userID, PDO::PARAM_INT);
-                foreach ($existing as $user) {
+                foreach($existing as $user) {
                     $userID = $user;
                     $exec = $this->execute();
                     if(getType($exec) !== 'boolean') {
@@ -429,7 +463,7 @@
                     }
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -445,7 +479,7 @@
                     'body'         => ""
                 ];
 
-                foreach ($nonUser as $user) {
+                foreach($nonUser as $user) {
                     $email['subject'] = "Cannot Send Email to \"{$user}\"";
                     $email['body'] = "There was an error in sending your email
                         to \"{$user}\". Email doesn't seem to
@@ -512,7 +546,7 @@
 
             $userIDs    = [];
             $userEmails = [];
-            foreach ($userExists as $user) {
+            foreach($userExists as $user) {
                 // Check to see if $user has blocked $sender. If so, do not
                 // add $user[0] to $userIDs.
                 $userID = $user[0];
@@ -614,7 +648,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -648,7 +682,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -699,7 +733,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -752,7 +786,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -782,7 +816,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -881,7 +915,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -911,7 +945,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -941,7 +975,7 @@
                 $values  = [];
                 // This will allow an arbitrary number of columns
                 // to be prepared before binding values in the for loop.
-                foreach ($changesBundle as $arr) {
+                foreach($changesBundle as $arr) {
                     $columns[] = "{$arr['column']} = ?";
                     $values[]  = $arr['value'];
                 }
@@ -951,7 +985,7 @@
                            SET {$allColumns}
                            WHERE {$where}";
                 $this->query($change);
-                for ($i=0; $i < count($values); $i++) {
+                for($i=0; $i < count($values); $i++) {
                     $this->bind($i+1, $values[$i]);
                 }
 
@@ -960,7 +994,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 $err->getMessage();
             }
 
@@ -998,7 +1032,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1065,7 +1099,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1177,7 +1211,7 @@
                     }
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1245,7 +1279,7 @@
                     throw new Exception($gc);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1291,7 +1325,7 @@
                 $this->bind(':userID', $id);
                 $this->execute();
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 return $this->err('unsuccessful-edit', 'password');
@@ -1363,7 +1397,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1419,7 +1453,7 @@
                     throw new Exception($gc);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1479,7 +1513,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1520,7 +1554,7 @@
                     throw new Exception($gc);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1562,7 +1596,7 @@
                     throw new Exception($gc);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
@@ -1610,7 +1644,7 @@
                     $this->execute();
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -1631,7 +1665,7 @@
         private function err($reason, $field = NULL) {
             switch($reason) {
                 case 'unsuccessful-get':
-                    return "<h1>There was a problem getting {$field}.
+                    return "<h1>There was an issue getting your details.
                             Please try again.</h1>";
                     break;
 
@@ -1651,12 +1685,12 @@
                     break;
 
                 case 'unsuccessful-blocked':
-                    return "<h1>There was an issue in blocking this email
+                    return "<h1>There was an issue blocking this email
                             address. Please try again.</h1>";
                     break;
 
                 case 'unsuccessful-label':
-                    return "<h1>There was an issue in creating the label.
+                    return "<h1>There was an issue creating the label.
                             Please try again.</h1>";
                     break;
 
@@ -1667,6 +1701,11 @@
 
                 case 'bad-password':
                     return "<h1>Passwords do not match.</h1>";
+                    break;
+
+                case 'bad-login':
+                    return "<h1>There's a problem with your username or
+                            password.</h1>";
                     break;
 
                 default:
@@ -1692,7 +1731,7 @@
                 $sent = $this->get_sent_emails($id);
 
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 return $this->err('unsuccessful-get', 'user details');
@@ -1730,7 +1769,7 @@
                 $result = $this->resultSet();
                 $result = $result[0];
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1764,7 +1803,7 @@
                 $this->query($select);
                 $result = $this->resultSet();
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1794,7 +1833,7 @@
                 $this->query($select);
                 $result = $this->resultSet();
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1821,7 +1860,7 @@
                 $this->query($select);
                 $result = $this->resultSet();
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1838,11 +1877,11 @@
                 $this->query($select);
                 $result = $this->resultSet();
                 // Change array into single dimensional
-                foreach ($result as &$key) {
+                foreach($result as &$key) {
                     $key = $key['email'];
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1861,7 +1900,7 @@
                 $this->query($select);
                 $result = $this->resultSet();
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1898,7 +1937,7 @@
                     $labels = $this->resultSet();
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1934,7 +1973,7 @@
                     $categories = $this->resultSet();
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return NULL;
             }
 
@@ -1951,7 +1990,7 @@
                 throw new Exception($result);
             }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 // I am turning this exception into an array for a quick
                 // and dirty check within validate_password.
                 return [$err];
@@ -1989,7 +2028,7 @@
                 // This binds for placeholders within $where.
                 if(isset($bind)) {
                     if(getType($bind) === 'array') {
-                        for ($i=0; $i < count($bind); $i++) {
+                        for($i=0; $i < count($bind); $i++) {
                             $this->bind($i+1, $bind[$i]);
                         }
                     }
@@ -2012,7 +2051,7 @@
                 $existingID = sizeOf($exec) > 0
                     ? $exec : false;
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 return $err->getMessage();
             }
 
@@ -2045,7 +2084,7 @@
                     throw new Exception($exec);
                 }
             }
-            catch (Exception $err) {
+            catch(Exception $err) {
                 echo 'Exception -> ';
                 echo $err->getMessage();
                 $this->rollBack();
