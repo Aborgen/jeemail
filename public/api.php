@@ -16,14 +16,18 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
-            ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+            ->withHeader('Access-Control-Allow-Origin', 'https://jeemail.ssl')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With,
                           Content-Type, Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT,
                           DELETE, OPTIONS');
 });
+$app->get('/hi', function (Request $request, Response $response) {
+    $response->getBody()->write('Hey there!');
+    return $response;
+});
 
-$app->get('/api/alluser/{id}', function (Request $request, Response $response) {
+$app->post('/api/alluser/{id}', function (Request $request, Response $response) {
     global $db;
 
     $id   = $request->getAttribute('id');
@@ -33,21 +37,18 @@ $app->get('/api/alluser/{id}', function (Request $request, Response $response) {
     return $response;
 });
 
-$app->post('/api/authorize', function (Request $request, Response $response) {
-    global $db;
 
-    $query = $request->getQueryParams();
-    $data  = $db->login($query);
-    $response->getBody()->write($data);
-    return $response;
-});
 
-$app->get('/api/emails/{type}/{id}', function (Request $request,
+$app->post('/emails/{type}', function (Request $request,
                                                Response $response) {
     global $db;
+    $id   = $request->getQueryParams();
+    if(count($id) > 1 || count($id) === 0) {
+        return $response;
+    }
 
+    $id   = $id['id'];
     $type = $request->getAttribute('type');
-    $id   = $request->getAttribute('id');
     switch ($type) {
         case 'received':
             $data = $db->get_received_emails($id);
@@ -61,12 +62,22 @@ $app->get('/api/emails/{type}/{id}', function (Request $request,
             return false;
             break;
     }
+
     $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     $response->getBody()->write($data);
     return $response;
 });
 
+$app->post('/api/authorize', function (Request $request, Response $response) {
+
+
+    $query = $request->getQueryParams();
+    $data  = $db->login($query);
+    $response->getBody()->write($data);
+    return $response;
+});
 $app->post('/login', function (Request $request, Response $response) {
+    global $db;
     // First, get the Authorization header from the request
     $auth = $request->getHeaders()['HTTP_AUTHORIZATION'][0];
     // The header is in the form of 'Basic xxxxxxxx'. This explode is done
@@ -76,9 +87,7 @@ $app->post('/login', function (Request $request, Response $response) {
     // Then, separate provided username from password
     $split   = explode("%3A", $decoded);
     $package = ["username" => $split[0], "pass" => $split[1]];
-    // Convert to JSON and we're done.
-    $data    = json_encode($package,
-                        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $data    = $db->login($package);
     $response->getBody()->write($data);
     return $response;
 });

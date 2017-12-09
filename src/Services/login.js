@@ -1,7 +1,7 @@
 const login = (user, pass) => {
     // This will prevent unwanted behavior when converting Unicode characters.
     let bluh = window.btoa((encodeURIComponent(`${user}:${pass}`)));
-    return fetch('/public/getUser.php/login', {
+    return fetch('https://jeemail.api/login', {
         method: 'POST',
         headers: {
                'Content-Type': 'application/x-www-form-urlencoded',

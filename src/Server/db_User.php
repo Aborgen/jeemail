@@ -24,9 +24,8 @@
 
         public function login($userPackage) {
             try {
-                $username = $userPackage['user'];
-                $pass = $userPackage['pass'];
-
+                $username = $userPackage['username'];
+                $pass     = $userPackage['pass'];
                 $userID = $this->get_existing_field($this->userTable, 'UserID',
                                                     'username = :username',
                                                     $username);

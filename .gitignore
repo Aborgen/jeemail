@@ -62,4 +62,4 @@ typings/
 .sass-cache
 
 # apache
-.htaccess
+#.htaccess
