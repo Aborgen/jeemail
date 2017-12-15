@@ -2102,7 +2102,9 @@
             if(getType($currentPass) === 'array') {
                 return $currentPass[0];
             }
-            if(password_verify($inputPass, $currentPass)) {
+
+            $preHash = base64_encode(hash('sha384', $inputPass, true));
+            if(password_verify($preHash, $currentPass)) {
                 // TODO:Check hash and rehash if necessary
                 // if (password_needs_rehash($currentPass, PASSWORD_DEFAULT)) {
                 //
@@ -2114,11 +2116,13 @@
         }
 
         private function encrypt($pass) {
+            // TODO: Password minimum!
             // As of OCT 25 2017, DEFAULT is bcrypt algorithym,
             // which will output a 60 char string or false on failure.
-            $alg = PASSWORD_DEFAULT;
-            $hash = password_hash($pass, $alg);
-            return $hash;
+            // Bcrypt will truncate the plaintext password to 72 characters
+            // or when it encounters a NULL byte. To prevent this behavior,
+            $preHash = base64_encode(hash('sha384', $pass, true));
+            return password_hash($preHash, PASSWORD_DEFAULT);
         }
     }
  ?>
