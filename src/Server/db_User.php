@@ -1,4 +1,5 @@
 <?php
+//TODO: Edit User_Received_Emails to indicate whether an email has been read or not
     class db_User extends Database {
         public $blockedTable          = 'Blocked';
         public $categoriesTable       = 'Categories';
@@ -47,7 +48,6 @@
                 if(!$validated) {
                     return $this->err('bad-login');
                 }
-
             }
             catch(Exception $err) {
                 return $this->err();
@@ -248,7 +248,8 @@
                 $imgSmall = $this->resizeImage($path, $tempFile, $name, $large);
                 $imgMed = $this->resizeImage($path, $tempFile, $name, $medium);
                 $imgLarge = $this->resizeImage($path, $tempFile, $name, $small);
-
+                // TODO: DELETE uploaded file regardless whether resize is successful.
+                // TODO: Ensure that downloaded file is read or read-write NOT exec.
                 $this->deleteFiles(["{$path}/{$tempFile}"]);
                 $insert = $this->insert('(icon_small, icon_medium, icon_large),
                                          (:iconSm, :iconMd, :iconLg)');
@@ -2102,6 +2103,10 @@
                 return $currentPass[0];
             }
             if(password_verify($inputPass, $currentPass)) {
+                // TODO:Check hash and rehash if necessary
+                // if (password_needs_rehash($currentPass, PASSWORD_DEFAULT)) {
+                //
+                // }
                 return true;
             }
 

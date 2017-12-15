@@ -10,24 +10,4 @@ const login = (user, pass) => {
         });
 }
 
-/**
- * Will either set up a session or provide the client with an error.
- *
- * @param userPackage OBJECT
- *        {
- *          "username": STRING,
- *          "pass"    : STRING
- *        }
- */
-const authorize = (userPackage) => {
-    const {"username": user, "pass": pass} = userPackage;
-    return fetch(`/public/getUser.php/api/authorize?user=${user}&pass=${pass}`,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
-}
-
-export { login, authorize };
+export default login;

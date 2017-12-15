@@ -18,18 +18,18 @@ $app->add(function ($req, $res, $next) {
     return $response
             ->withHeader('Access-Control-Allow-Origin', 'https://jeemail.ssl')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With,
-                          Content-Type, Accept, Origin, Authorization')
-            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT,
-                          DELETE, OPTIONS');
+                          Accept, Origin, Authorization')
+            ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 });
+
 $app->get('/hi', function (Request $request, Response $response) {
     $response->getBody()->write('Hey there!');
     return $response;
 });
 
-$app->post('/api/alluser/{id}', function (Request $request, Response $response) {
+$app->post('/api/alluser/{id}', function (Request $request,
+                                          Response $response) {
     global $db;
-
     $id   = $request->getAttribute('id');
     $data = $db->get_all_user($id);
     $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -39,10 +39,9 @@ $app->post('/api/alluser/{id}', function (Request $request, Response $response) 
 
 
 
-$app->post('/emails/{type}', function (Request $request,
-                                               Response $response) {
+$app->post('/emails/{type}', function (Request $request, Response $response) {
     global $db;
-    $id   = $request->getQueryParams();
+    $id = $request->getQueryParams();
     if(count($id) > 1 || count($id) === 0) {
         return $response;
     }
@@ -63,19 +62,16 @@ $app->post('/emails/{type}', function (Request $request,
             break;
     }
 
-    $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    $response->getBody()->write($data);
-    return $response;
+    // $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    // return $response->withStatus(200)
+    //                 ->withHeader('Content-Type', 'application/json')
+    //                 ->getBody()->write(json_encode($data));
+    // withJson is the newer way to do the above. It wraps around the native
+    // json_encode as well.
+    return $response->withJson($data, 200,
+                               JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 });
 
-$app->post('/api/authorize', function (Request $request, Response $response) {
-
-
-    $query = $request->getQueryParams();
-    $data  = $db->login($query);
-    $response->getBody()->write($data);
-    return $response;
-});
 $app->post('/login', function (Request $request, Response $response) {
     global $db;
     // First, get the Authorization header from the request
