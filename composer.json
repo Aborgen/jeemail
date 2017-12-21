@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "^3.0",
-        "paragonie/csp-builder": "^2.3.0"
+        "paragonie/csp-builder": "^2.3.0",
+        "guzzlehttp/guzzle": "~6.0"
     }
 }

@@ -1327,7 +1327,7 @@
             }
             catch(Exception $err) {
                 echo 'Exception -> ';
-                echo $err->getMessage();
+                // echo $err->getMessage();
                 return $this->err('unsuccessful-edit', 'password');
             }
 

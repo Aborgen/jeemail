@@ -5,6 +5,7 @@ require '../vendor/autoload.php';
 require '../src/Server/config.php';
 require '../src/Server/Database.php';
 require '../src/Server/db_User.php';
+// require './guzzleRequest.php';
 
 $app = new \Slim\App;
 $db = new db_User();
@@ -16,7 +17,7 @@ $app->options('/{routes:.+}', function ($request, $response, $args) {
 $app->add(function ($req, $res, $next) {
     $response = $next($req, $res);
     return $response
-            ->withHeader('Access-Control-Allow-Origin', 'https://jeemail.ssl')
+            ->withHeader('Access-Control-Allow-Origin', 'https://jeemail.com')
             ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With,
                           Accept, Origin, Authorization')
             ->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -75,13 +76,14 @@ $app->post('/emails/{type}', function (Request $request, Response $response) {
 $app->post('/login', function (Request $request, Response $response) {
     global $db;
     // First, get the Authorization header from the request
+    // $auth = $request->getHeaders();
     $auth = $request->getHeaders()['HTTP_AUTHORIZATION'][0];
     // The header is in the form of 'Basic xxxxxxxx'. This explode is done
     // to allow us to decode everything after the 'Basic' scheme.
     $removedAuthScheme = explode(" ", $auth)[1];
     $decoded = base64_decode($removedAuthScheme);
     // Then, separate provided username from password
-    $split   = explode("%3A", $decoded);
+    $split   = explode(":", $decoded);
     $package = ["username" => $split[0], "pass" => $split[1]];
     $data    = $db->login($package);
     $response->getBody()->write($data);
