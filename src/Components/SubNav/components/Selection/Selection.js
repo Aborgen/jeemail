@@ -16,7 +16,7 @@ class Selection extends Component {
                     </li>
         });
         return (
-            <DropDown>
+            <DropDown className="subNavDropdown">
                 <Trigger className="selection">
                     <span><input type="checkbox"></input></span>
                     <div>&#9660;</div>

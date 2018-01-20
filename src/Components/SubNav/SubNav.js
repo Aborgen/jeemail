@@ -28,13 +28,13 @@ class SubNav extends Component {
     render() {
         return (
             <div className="subNav">
-                <div className="subNav__left">
+                <div className="subNavPiece subNavLeft">
                     <EmailViews />
                     <Selection selectionOpt={this.selectionOpt.bind(this)} />
                     <Refresh refreshEmails={this.refresh.bind(this)} />
                     <MoreOptions />
                 </div>
-                <div className="subNav__right">
+                <div className="subNavPiece subNavRight">
                     <Pages />
                     <InputTools />
                     <Settings />

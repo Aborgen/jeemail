@@ -7,7 +7,7 @@ class AdditonalApps extends Component {
 
     render() {
         return (
-            <DropDown>
+            <DropDown className='headerDropdown'>
                 <Trigger className="additionalApps">
                     <span>?</span>
                 </Trigger>

@@ -10,7 +10,7 @@ class MoreOptions extends Component {
             return <li key={link.name}><div>{link.name}</div></li>
         });
         return (
-            <DropDown>
+            <DropDown className="subNavDropdown">
                 <Trigger className="moreOptions">
                     <span>More</span>
                     <div>&#9660;</div>

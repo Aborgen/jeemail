@@ -19,6 +19,7 @@ class DropDown extends Component {
 
     componentDidMount() {
         window.addEventListener('click', this.handleClick);
+        window.addEventListener('touchend', this.handleClick);
     }
 
     hideContent() {
@@ -41,20 +42,21 @@ class DropDown extends Component {
         const dropdown = findDOMNode(this);
         if(e.target !== dropdown && !dropdown.contains(e.target)) {
             this.hideContent();
-            dropdown.classList.remove('drop__focus');
+            dropdown.classList.remove('dropdown__focus');
         }
 
         else {
             this.showContent();
-            dropdown.classList.add('drop__focus');
+            dropdown.classList.add('dropdown__focus');
         }
     }
 
 
     render() {
-        const [trigger, content] = React.Children.toArray(this.props.children)
+        const [trigger, content] = React.Children.toArray(this.props.children);
+        const { className } = this.props;
         return (
-            <div className="dropdown-container">
+            <div className={`dropdownContainer ${className}`}>
                 {trigger}
                 {this.state.content_visible && content}
             </div>

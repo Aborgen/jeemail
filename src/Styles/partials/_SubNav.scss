@@ -1,324 +1,170 @@
 @import "../variables/Colors";
 
 .subNav {
-    height: 3.5rem;
+    height: 56px;
     position: relative;
-    width: 100%;
-    // background: green;
     white-space: nowrap;
     border-top: solid thin green;
     border-bottom: solid thin green;
+}
 
-    .subNav__left, .subNav__right {
-        // background: #eee;
-        position: relative;
-        height: 100%;
-        white-space: nowrap;
-    }
-    .subNav__left {
-        width: 29rem;
-        float: left;
+.subNavPiece {
+    position: relative;
+    height: 100%;
+    white-space: nowrap;
+}
 
-        .dropdown-container:first-child {
-            margin: 0 10% 0 6%;
-        }
-    }
-    .subNav__right {
-        width: 40%;
-        float: right;
+.subNavLeft {
+    float: left;
+    margin-left: 2%;
+    padding-right: 22px;
+    .dropdownContainer:first-child {
+        margin-right: 40px;
     }
 }
 
+.subNavRight {
+    float: right;
+    margin-right: 2%;
+    padding-right: 12px;
+    .dropdownContainer:last-child {
+        margin-right: 0;
+    }
+}
 
-
-
-
-
-.dropdown-container, .refresh, .pages, .languageConfig {
+.subNavDropdown, .refresh, .pages, .languageConfig  {
     background: #fff;
+    box-sizing: border-box;
+    height: 70%;
+    width: 80px;
+    border: 1px solid grey;
+    margin: 0 1%;
+}
+
+.refresh, .pages, .languageConfig {
     display: inline-block;
     position: relative;
-    float: left;
-    height: 2rem;
-    width: 5rem;
-    border: 1px solid grey;
-    font-size: .8rem;
-    margin: 0 1%;
-    padding: 3px;
-    top: 15%;
-
-    .emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
-        // background: orange;
-        display: inline-block;
-        height: 60%;
-        width: 80%;
-        text-align: center;
-        vertical-align: middle;
-
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin: -0.5rem 0 0 -40%;
-    }
-
     &:hover {
         cursor: pointer;
     }
 }
 
-.emailViews div, .selection div, .moreOptions div, .settings div {
+.emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
     display: inline-block;
+    position: absolute;
+    height: 60%;
+    width: 80%;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -40%;
+    div {
+        display: inline-block;
+    }
 }
 
 .refresh, .settings span {
-    font-size: 1.50rem;
+    font-size: 1.5em;
 }
 
 ////
 //
 //DropDown rules
-.drop__focus {
-    background: $dropDown_Background;
-    cursor: default
-}
-
-.dropdownContent {
-    background: $dropDown_Background;
-    box-sizing: border-box;
-    border: 2px solid grey;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-
-    font-size: 0.90rem;
-    line-height: 0.5rem;
-    text-align: left;
-
-    position: absolute;
-    top: 2.3rem;
-
-    z-index: 5;
-    cursor: default;
-
-}
-
-.emailViews__dropdown {
-    left: -2px;
-
-    ol {
-        padding: 0;
-
-        li {
-            padding: 0.5rem;
-            padding-right: 3rem;
-
-            &:hover {
-                background: $dropDown_Background__hover;
-                cursor: pointer;
-            }
+.emailViews__dropdown, .selection__dropdown, .moreOptions__dropdown,
+.inputTools__dropdown, .settings__dropdown {
+    ol li {
+        &:hover {
+            background: $dropDown_Background__hover;
+            cursor: pointer;
         }
+    }
+}
+
+.emailViews__dropdown, .selection__dropdown, .moreOptions__dropdown {
+    left: -2px;
+    ol li {
+        padding: 8px;
+        padding-right: 55px;
     }
 }
 
 .moreOptions__dropdown {
-    left: -2px;
-
-    ol {
-        padding: 0;
-
-        li {
-            padding: 0.5rem;
-            padding-right: 7rem;
-            white-space: nowrap;
-
-            &:hover {
-                background: $dropDown_Background__hover;
-                cursor: pointer;
-            }
+    ol li {
+            padding-right: 110px;
         }
+}
+
+.inputTools__dropdown, .settings__dropdown {
+    right: -2px;
+    ol li {
+        padding: 8px;
+        padding-right: 58px;
     }
 }
 
-.selection__dropdown {
-    left: -2px;
+.settings__dropdown {
+    ol li {
+        &:nth-child(4), &:nth-child(7) {
+            margin-top: 24px;
+        }
 
-    ol {
-        padding: 0;
-
-        li {
-            padding: 0.5rem;
-            padding-right: 2rem;
-            white-space: nowrap;
-
-            &:hover {
-                background: $dropDown_Background__hover;
-                cursor: pointer;
-            }
+        &:nth-child(4) {
+            margin-bottom: 24px;
         }
     }
 }
+.pages, .languageConfig {
+    float: left;
+    border: none;
+}
+
 .pages {
-    // background: maroon;
-    position: relative;
-    height: 2.35rem;
-    width: 9rem;
-    font-size: 1.02rem;
-    padding: 0;
-    margin: 0 1% 0 0;
-
+    width: 150px;
     .pageSort, .pagination {
         display: inline-block;
         height: 100%;
+        box-sizing: border-box;
     }
 
     .pageSort {
-        // background: green;
-        float: left;
+        border: 1px solid grey;
         width: 70%;
-
-        span {
-            display: inline-block;
-            height: 100%;
-
-            span {
-                height: 50%;
-
-            }
-        }
+        margin-right: -1px;
     }
 
     .pagination {
-        background: red;
-        float: left;
         width: 30%;
-        vertical-align: middle;
-
         .progressArrow {
             display: inline-block;
-            position: relative;
-            box-sizing: border-box;
             height: 100%;
+            margin-right: -1px;
+            box-sizing: border-box;
             width: 50%;
-            border: 3px solid grey;
-            text-align: center;
-        }
+            border: 1px solid grey;
 
-        .progressArrow-prev p, .progressArrow-next p {
-            position: absolute;
-            top: 50%;
-            margin-top: -50%;
-        }
-
-        .progressArrow-prev p {
-            left: 1px;
-        }
-
-        .progressArrow-next p {
-            left: 3px;
+            &:last-child {
+                margin: 0;
+            }
         }
     }
 }
 
 .languageConfig {
-    display: inline-block;
-    height: 2.5rem;
-    border: none;
-    margin: 0 2%;
-    padding: 0;
-    width: auto;
-
-    &:hover {
-        cursor: default;
-    }
-    .checky {
-        box-sizing: border-box;
-        position: relative;
-        display: block;
-        border: 1px solid grey;
-        height: 100%;
-        width: 3rem;
-        padding: 0;
-        margin: 0;
+    width: 70px;
+    .virtualKeyboard, .dropdownContainer {
         float: left;
-        font-size: 1.25rem;
-
-        &:hover {
-            cursor: pointer;
-        }
-
-        span {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin: -0.625rem 0 0 -0.88rem;
-        }
-    }
-    .dropdown-container {
-        box-sizing: border-box;
-        // position: relative;
-        // height: 2rem;
-        // border: 1px solid grey;
-        top: auto;
+        display: inherit;
         height: 100%;
-        width: 1rem;
-        // float: left;
-        margin: 0;
-        padding: 0;
-
-        .inputTools {
-            position: relative;
-            height: 100%;
-            padding: 0;
-
-            span {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-
-                margin: -0.40rem 0 0 -0.31rem;
-            }
-        }
-    }
-}
-
-.inputTools__dropdown {
-    right: -2px;
-    line-height: 1.2rem;
-
-    li {
-        padding: 0.5rem;
-        padding-right: 4rem;
-        white-space: nowrap;
-
-        &:hover {
-            background: $dropDown_Background__hover;
-            cursor: pointer;
-        }
-    }
-}
-
-.subNav__right .dropdown-container:last-child {
-    margin-right: 0;
-}
-.settings__dropdown {
-    right: -2px;
-    line-height: 1.2rem;
-
-    ol li:nth-child(4) {
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        border: 1px solid grey;
+        box-sizing: border-box;
     }
 
-    ol li:nth-child(7) {
-        margin-top: 1.5rem;
+    .virtualKeyboard {
+        width: 70%;
+        margin-right: -1px;
     }
 
-    li {
-        padding: 0.5rem;
-        padding-right: 4rem;
-        white-space: nowrap;
-
-        &:hover {
-            background: $dropDown_Background__hover;
-            cursor: pointer;
-        }
+    .dropdownContainer {
+        width: 30%;
     }
 }

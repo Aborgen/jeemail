@@ -75,6 +75,38 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 /*TODO: refactor dropdown code into here!*/
+/* line 4, ../partials/_Dropdown.scss */
+.dropdown__focus {
+  background: gold !important;
+}
+
+/* line 8, ../partials/_Dropdown.scss */
+.dropdownContainer {
+  max-height: 100%;
+  max-width: 100%;
+  display: inline-block;
+  position: relative;
+  font-size: .8em;
+}
+/* line 14, ../partials/_Dropdown.scss */
+.dropdownContainer:hover {
+  cursor: pointer;
+}
+
+/* line 19, ../partials/_Dropdown.scss */
+.dropdownContent {
+  background: gold;
+  position: absolute;
+  top: 38px;
+  box-sizing: border-box;
+  border: 2px solid grey;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+  font-size: 1.20em;
+  line-height: 0.5em;
+  z-index: 2;
+  cursor: default;
+}
+
 /* line 1, ../partials/_EmailBlock.scss */
 .mainBlock {
   width: auto;
@@ -131,165 +163,107 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   opacity: .4;
 }
 
-/* line 3, ../partials/_Header.scss */
+/* line 1, ../partials/_Header.scss */
 .header {
-  background: blue;
-  height: 4rem;
-  width: 100%;
+  height: 60px;
 }
-/* line 8, ../partials/_Header.scss */
-.header .logo {
-  background: red;
+
+/* line 5, ../partials/_Header.scss */
+.navPiece {
+  background: orange;
   height: 100%;
-  width: 12rem;
+  width: 180px;
+}
+
+/* line 11, ../partials/_Header.scss */
+.navLeft {
   float: left;
 }
 /* line 14, ../partials/_Header.scss */
-.header .logo div {
+.navLeft div {
   background: #fff;
   height: inherit;
   width: 60%;
   margin: auto;
 }
 
-/* line 24, ../partials/_Header.scss */
+/* line 22, ../partials/_Header.scss */
 .navRight {
-  background: red;
-  position: relative;
-  height: 100%;
-  width: 12rem;
   float: right;
 }
 
-/* line 32, ../partials/_Header.scss */
-.dropdown-group {
+/* line 26, ../partials/_Header.scss */
+.headerDropdown {
+  display: inline-block;
+  position: relative;
+  height: 32px;
+  width: 32px;
+}
+
+/* line 34, ../partials/_Header.scss */
+.additionalApps, .notifications, .profileMenu {
+  border: 3px solid #000;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 50%;
+}
+/* line 39, ../partials/_Header.scss */
+.additionalApps span, .notifications span, .profileMenu span {
+  display: block;
+  background: grey;
+  font-size: 2.5em;
+}
+
+/* line 46, ../partials/_Header.scss */
+.profileMenu__dropdown {
   position: relative;
   display: block;
   top: 25%;
-  white-space: nowrap;
-}
-/* line 39, ../partials/_Header.scss */
-.dropdown-group .dropdown-container {
-  background: transparent;
-  border: none;
-  position: static;
-  float: none;
-  top: auto;
-  width: auto;
-}
-/* line 47, ../partials/_Header.scss */
-.dropdown-group .drop__focus > div:first-child {
-  border-color: aqua;
-}
-
-/* line 52, ../partials/_Header.scss */
-.dropdown {
-  background: blue;
-  display: inline-block;
-  margin: 0 2%;
-}
-
-/* line 57, ../partials/_Header.scss */
-.profileMenu, .notifications, .additionalApps {
-  position: relative;
-  border: 3px solid #000;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 50%;
-  overflow: hidden;
-  text-align: center;
-  bottom: 0.23em;
-}
-/* line 67, ../partials/_Header.scss */
-.profileMenu > div img, .notifications > div img, .additionalApps > div img {
-  max-height: 100%;
-  max-width: 200%;
-  margin: 0 -100%;
-}
-/* line 73, ../partials/_Header.scss */
-.profileMenu > span, .notifications > span, .additionalApps > span {
-  display: block;
-  background: grey;
-  font-size: 2rem;
-}
-
-/* line 80, ../partials/_Header.scss */
-.profileMenu__dropdown {
   right: 50px;
+  white-space: nowrap;
 }
 
-/* line 84, ../partials/_Header.scss */
-.profile__info {
-  position: relative;
+/* line 54, ../partials/_Header.scss */
+.profileSection {
   white-space: nowrap;
-  line-height: 1rem;
-  text-align: left;
   border-bottom: 1px solid grey;
-  padding: 2%;
+  line-height: 25px;
 }
-/* line 92, ../partials/_Header.scss */
-.profile__info:last-child {
+/* line 59, ../partials/_Header.scss */
+.profileSection:last-child {
   border: none;
 }
-/* line 96, ../partials/_Header.scss */
-.profile__info span {
-  height: 100%;
+/* line 63, ../partials/_Header.scss */
+.profileSection span {
   display: inline-block;
-  line-height: 1.25rem;
 }
-/* line 102, ../partials/_Header.scss */
-.profile__info ol {
+
+/* line 69, ../partials/_Header.scss */
+.profile {
   width: auto;
-  padding-right: 10rem;
-}
-/* line 106, ../partials/_Header.scss */
-.profile__info ol li {
-  width: 100%;
-  position: relative;
-  padding: inherit;
+  padding-right: 5%;
   border-bottom: 1px solid rgba(10, 10, 10, 0.2);
 }
-/* line 112, ../partials/_Header.scss */
-.profile__info ol li:last-child {
+/* line 74, ../partials/_Header.scss */
+.profile:last-child {
   border: none;
 }
-/* line 116, ../partials/_Header.scss */
-.profile__info ol li .profileIcon {
-  height: 3rem;
-  width: 3rem;
-}
-/* line 121, ../partials/_Header.scss */
-.profile__info ol li > span:last-child {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -1rem 0 0 -5rem;
-}
-/* line 131, ../partials/_Header.scss */
-.profile__info .profileIcon {
-  background: orange;
-  position: static;
+
+/* line 79, ../partials/_Header.scss */
+.profileIcon {
   border: 3px solid #000;
-  height: 6rem;
-  width: 6rem;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
   overflow: hidden;
   text-align: center;
 }
 
-/* line 144, ../partials/_Header.scss */
-.profileIcon > img {
+/* line 88, ../partials/_Header.scss */
+.centeredImg {
   max-width: 200%;
   max-height: 100%;
   margin: 0 -100%;
-}
-
-/* line 150, ../partials/_Header.scss */
-.profile__info > span:last-child {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -1rem 0 0 -2rem;
 }
 
 /* line 1, ../partials/_SearchForm.scss */
@@ -349,321 +323,184 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /* line 3, ../partials/_SubNav.scss */
 .subNav {
-  height: 3.5rem;
+  height: 56px;
   position: relative;
-  width: 100%;
   white-space: nowrap;
   border-top: solid thin green;
   border-bottom: solid thin green;
 }
-/* line 12, ../partials/_SubNav.scss */
-.subNav .subNav__left, .subNav .subNav__right {
+
+/* line 11, ../partials/_SubNav.scss */
+.subNavPiece {
   position: relative;
   height: 100%;
   white-space: nowrap;
 }
-/* line 18, ../partials/_SubNav.scss */
-.subNav .subNav__left {
-  width: 29rem;
+
+/* line 17, ../partials/_SubNav.scss */
+.subNavLeft {
   float: left;
+  margin-left: 2%;
+  padding-right: 22px;
 }
-/* line 22, ../partials/_SubNav.scss */
-.subNav .subNav__left .dropdown-container:first-child {
-  margin: 0 10% 0 6%;
+/* line 21, ../partials/_SubNav.scss */
+.subNavLeft .dropdownContainer:first-child {
+  margin-right: 40px;
 }
+
 /* line 26, ../partials/_SubNav.scss */
-.subNav .subNav__right {
-  width: 40%;
+.subNavRight {
   float: right;
+  margin-right: 2%;
+  padding-right: 12px;
 }
-
-/* line 37, ../partials/_SubNav.scss */
-.dropdown-container, .refresh, .pages, .languageConfig {
-  background: #fff;
-  display: inline-block;
-  position: relative;
-  float: left;
-  height: 2rem;
-  width: 5rem;
-  border: 1px solid grey;
-  font-size: .8rem;
-  margin: 0 1%;
-  padding: 3px;
-  top: 15%;
-}
-/* line 50, ../partials/_SubNav.scss */
-.dropdown-container .emailViews, .dropdown-container .refresh__symbol, .dropdown-container .selection, .dropdown-container .moreOptions, .dropdown-container .settings, .refresh .emailViews, .refresh .refresh__symbol, .refresh .selection, .refresh .moreOptions, .refresh .settings, .pages .emailViews, .pages .refresh__symbol, .pages .selection, .pages .moreOptions, .pages .settings, .languageConfig .emailViews, .languageConfig .refresh__symbol, .languageConfig .selection, .languageConfig .moreOptions, .languageConfig .settings {
-  display: inline-block;
-  height: 60%;
-  width: 80%;
-  text-align: center;
-  vertical-align: middle;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -0.5rem 0 0 -40%;
-}
-/* line 64, ../partials/_SubNav.scss */
-.dropdown-container:hover, .refresh:hover, .pages:hover, .languageConfig:hover {
-  cursor: pointer;
-}
-
-/* line 69, ../partials/_SubNav.scss */
-.emailViews div, .selection div, .moreOptions div, .settings div {
-  display: inline-block;
-}
-
-/* line 73, ../partials/_SubNav.scss */
-.refresh, .settings span {
-  font-size: 1.50rem;
-}
-
-/* line 80, ../partials/_SubNav.scss */
-.drop__focus {
-  background: gold;
-  cursor: default;
-}
-
-/* line 85, ../partials/_SubNav.scss */
-.dropdownContent {
-  background: gold;
-  box-sizing: border-box;
-  border: 2px solid grey;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-  font-size: 0.90rem;
-  line-height: 0.5rem;
-  text-align: left;
-  position: absolute;
-  top: 2.3rem;
-  z-index: 5;
-  cursor: default;
-}
-
-/* line 103, ../partials/_SubNav.scss */
-.emailViews__dropdown {
-  left: -2px;
-}
-/* line 106, ../partials/_SubNav.scss */
-.emailViews__dropdown ol {
-  padding: 0;
-}
-/* line 109, ../partials/_SubNav.scss */
-.emailViews__dropdown ol li {
-  padding: 0.5rem;
-  padding-right: 3rem;
-}
-/* line 113, ../partials/_SubNav.scss */
-.emailViews__dropdown ol li:hover {
-  background: rgba(255, 255, 0, 0.8);
-  cursor: pointer;
-}
-
-/* line 121, ../partials/_SubNav.scss */
-.moreOptions__dropdown {
-  left: -2px;
-}
-/* line 124, ../partials/_SubNav.scss */
-.moreOptions__dropdown ol {
-  padding: 0;
-}
-/* line 127, ../partials/_SubNav.scss */
-.moreOptions__dropdown ol li {
-  padding: 0.5rem;
-  padding-right: 7rem;
-  white-space: nowrap;
-}
-/* line 132, ../partials/_SubNav.scss */
-.moreOptions__dropdown ol li:hover {
-  background: rgba(255, 255, 0, 0.8);
-  cursor: pointer;
-}
-
-/* line 140, ../partials/_SubNav.scss */
-.selection__dropdown {
-  left: -2px;
-}
-/* line 143, ../partials/_SubNav.scss */
-.selection__dropdown ol {
-  padding: 0;
-}
-/* line 146, ../partials/_SubNav.scss */
-.selection__dropdown ol li {
-  padding: 0.5rem;
-  padding-right: 2rem;
-  white-space: nowrap;
-}
-/* line 151, ../partials/_SubNav.scss */
-.selection__dropdown ol li:hover {
-  background: rgba(255, 255, 0, 0.8);
-  cursor: pointer;
-}
-
-/* line 158, ../partials/_SubNav.scss */
-.pages {
-  position: relative;
-  height: 2.35rem;
-  width: 9rem;
-  font-size: 1.02rem;
-  padding: 0;
-  margin: 0 1% 0 0;
-}
-/* line 167, ../partials/_SubNav.scss */
-.pages .pageSort, .pages .pagination {
-  display: inline-block;
-  height: 100%;
-}
-/* line 172, ../partials/_SubNav.scss */
-.pages .pageSort {
-  float: left;
-  width: 70%;
-}
-/* line 177, ../partials/_SubNav.scss */
-.pages .pageSort span {
-  display: inline-block;
-  height: 100%;
-}
-/* line 181, ../partials/_SubNav.scss */
-.pages .pageSort span span {
-  height: 50%;
-}
-/* line 188, ../partials/_SubNav.scss */
-.pages .pagination {
-  background: red;
-  float: left;
-  width: 30%;
-  vertical-align: middle;
-}
-/* line 194, ../partials/_SubNav.scss */
-.pages .pagination .progressArrow {
-  display: inline-block;
-  position: relative;
-  box-sizing: border-box;
-  height: 100%;
-  width: 50%;
-  border: 3px solid grey;
-  text-align: center;
-}
-/* line 204, ../partials/_SubNav.scss */
-.pages .pagination .progressArrow-prev p, .pages .pagination .progressArrow-next p {
-  position: absolute;
-  top: 50%;
-  margin-top: -50%;
-}
-/* line 210, ../partials/_SubNav.scss */
-.pages .pagination .progressArrow-prev p {
-  left: 1px;
-}
-/* line 214, ../partials/_SubNav.scss */
-.pages .pagination .progressArrow-next p {
-  left: 3px;
-}
-
-/* line 220, ../partials/_SubNav.scss */
-.languageConfig {
-  display: inline-block;
-  height: 2.5rem;
-  border: none;
-  margin: 0 2%;
-  padding: 0;
-  width: auto;
-}
-/* line 228, ../partials/_SubNav.scss */
-.languageConfig:hover {
-  cursor: default;
-}
-/* line 231, ../partials/_SubNav.scss */
-.languageConfig .checky {
-  box-sizing: border-box;
-  position: relative;
-  display: block;
-  border: 1px solid grey;
-  height: 100%;
-  width: 3rem;
-  padding: 0;
-  margin: 0;
-  float: left;
-  font-size: 1.25rem;
-}
-/* line 243, ../partials/_SubNav.scss */
-.languageConfig .checky:hover {
-  cursor: pointer;
-}
-/* line 247, ../partials/_SubNav.scss */
-.languageConfig .checky span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -0.625rem 0 0 -0.88rem;
-}
-/* line 254, ../partials/_SubNav.scss */
-.languageConfig .dropdown-container {
-  box-sizing: border-box;
-  top: auto;
-  height: 100%;
-  width: 1rem;
-  margin: 0;
-  padding: 0;
-}
-/* line 266, ../partials/_SubNav.scss */
-.languageConfig .dropdown-container .inputTools {
-  position: relative;
-  height: 100%;
-  padding: 0;
-}
-/* line 271, ../partials/_SubNav.scss */
-.languageConfig .dropdown-container .inputTools span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -0.40rem 0 0 -0.31rem;
-}
-
-/* line 282, ../partials/_SubNav.scss */
-.inputTools__dropdown {
-  right: -2px;
-  line-height: 1.2rem;
-}
-/* line 286, ../partials/_SubNav.scss */
-.inputTools__dropdown li {
-  padding: 0.5rem;
-  padding-right: 4rem;
-  white-space: nowrap;
-}
-/* line 291, ../partials/_SubNav.scss */
-.inputTools__dropdown li:hover {
-  background: rgba(255, 255, 0, 0.8);
-  cursor: pointer;
-}
-
-/* line 298, ../partials/_SubNav.scss */
-.subNav__right .dropdown-container:last-child {
+/* line 30, ../partials/_SubNav.scss */
+.subNavRight .dropdownContainer:last-child {
   margin-right: 0;
 }
 
-/* line 301, ../partials/_SubNav.scss */
-.settings__dropdown {
-  right: -2px;
-  line-height: 1.2rem;
+/* line 35, ../partials/_SubNav.scss */
+.subNavDropdown, .refresh, .pages, .languageConfig {
+  background: #fff;
+  box-sizing: border-box;
+  height: 70%;
+  width: 80px;
+  border: 1px solid grey;
+  margin: 0 1%;
 }
-/* line 305, ../partials/_SubNav.scss */
-.settings__dropdown ol li:nth-child(4) {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+
+/* line 44, ../partials/_SubNav.scss */
+.refresh, .pages, .languageConfig {
+  display: inline-block;
+  position: relative;
 }
-/* line 310, ../partials/_SubNav.scss */
-.settings__dropdown ol li:nth-child(7) {
-  margin-top: 1.5rem;
+/* line 47, ../partials/_SubNav.scss */
+.refresh:hover, .pages:hover, .languageConfig:hover {
+  cursor: pointer;
 }
-/* line 314, ../partials/_SubNav.scss */
-.settings__dropdown li {
-  padding: 0.5rem;
-  padding-right: 4rem;
-  white-space: nowrap;
+
+/* line 52, ../partials/_SubNav.scss */
+.emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
+  display: inline-block;
+  position: absolute;
+  height: 60%;
+  width: 80%;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  margin: -8px 0 0 -40%;
 }
-/* line 319, ../partials/_SubNav.scss */
-.settings__dropdown li:hover {
+/* line 61, ../partials/_SubNav.scss */
+.emailViews div, .refresh__symbol div, .selection div, .moreOptions div, .settings div {
+  display: inline-block;
+}
+
+/* line 66, ../partials/_SubNav.scss */
+.refresh, .settings span {
+  font-size: 1.5em;
+}
+
+/* line 76, ../partials/_SubNav.scss */
+.emailViews__dropdown ol li:hover, .selection__dropdown ol li:hover, .moreOptions__dropdown ol li:hover,
+.inputTools__dropdown ol li:hover, .settings__dropdown ol li:hover {
   background: rgba(255, 255, 0, 0.8);
   cursor: pointer;
+}
+
+/* line 83, ../partials/_SubNav.scss */
+.emailViews__dropdown, .selection__dropdown, .moreOptions__dropdown {
+  left: -2px;
+}
+/* line 85, ../partials/_SubNav.scss */
+.emailViews__dropdown ol li, .selection__dropdown ol li, .moreOptions__dropdown ol li {
+  padding: 8px;
+  padding-right: 55px;
+}
+
+/* line 92, ../partials/_SubNav.scss */
+.moreOptions__dropdown ol li {
+  padding-right: 110px;
+}
+
+/* line 97, ../partials/_SubNav.scss */
+.inputTools__dropdown, .settings__dropdown {
+  right: -2px;
+}
+/* line 99, ../partials/_SubNav.scss */
+.inputTools__dropdown ol li, .settings__dropdown ol li {
+  padding: 8px;
+  padding-right: 58px;
+}
+
+/* line 107, ../partials/_SubNav.scss */
+.settings__dropdown ol li:nth-child(4), .settings__dropdown ol li:nth-child(7) {
+  margin-top: 24px;
+}
+/* line 111, ../partials/_SubNav.scss */
+.settings__dropdown ol li:nth-child(4) {
+  margin-bottom: 24px;
+}
+
+/* line 116, ../partials/_SubNav.scss */
+.pages, .languageConfig {
+  float: left;
+  border: none;
+}
+
+/* line 121, ../partials/_SubNav.scss */
+.pages {
+  width: 150px;
+}
+/* line 123, ../partials/_SubNav.scss */
+.pages .pageSort, .pages .pagination {
+  display: inline-block;
+  height: 100%;
+  box-sizing: border-box;
+}
+/* line 129, ../partials/_SubNav.scss */
+.pages .pageSort {
+  border: 1px solid grey;
+  width: 70%;
+  margin-right: -1px;
+}
+/* line 135, ../partials/_SubNav.scss */
+.pages .pagination {
+  width: 30%;
+}
+/* line 137, ../partials/_SubNav.scss */
+.pages .pagination .progressArrow {
+  display: inline-block;
+  height: 100%;
+  margin-right: -1px;
+  box-sizing: border-box;
+  width: 50%;
+  border: 1px solid grey;
+}
+/* line 145, ../partials/_SubNav.scss */
+.pages .pagination .progressArrow:last-child {
+  margin: 0;
+}
+
+/* line 152, ../partials/_SubNav.scss */
+.languageConfig {
+  width: 70px;
+}
+/* line 154, ../partials/_SubNav.scss */
+.languageConfig .virtualKeyboard, .languageConfig .dropdownContainer {
+  float: left;
+  display: inherit;
+  height: 100%;
+  border: 1px solid grey;
+  box-sizing: border-box;
+}
+/* line 162, ../partials/_SubNav.scss */
+.languageConfig .virtualKeyboard {
+  width: 70%;
+  margin-right: -1px;
+}
+/* line 167, ../partials/_SubNav.scss */
+.languageConfig .dropdownContainer {
+  width: 30%;
 }
 
 /* line 1, ../partials/_VerticalList.scss */

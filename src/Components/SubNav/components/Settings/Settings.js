@@ -10,7 +10,7 @@ class Settings extends Component {
             return <li key={link.name}>{link.name}</li>
         })
         return (
-            <DropDown>
+            <DropDown className="subNavDropdown">
                 <Trigger className="settings">
                     <span>&#9881;</span>
                     <div>&#9660;</div>

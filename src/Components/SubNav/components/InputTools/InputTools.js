@@ -11,10 +11,10 @@ class InputTools extends Component {
         });
         return (
             <div className="languageConfig">
-                <div className="checky">
+                <div className="virtualKeyboard">
                     <span>&#9000;</span>
                 </div>
-                <DropDown>
+                <DropDown className="subNavDropdown">
                     <Trigger className="inputTools">
                         <span>&#9660;</span>
                     </Trigger>

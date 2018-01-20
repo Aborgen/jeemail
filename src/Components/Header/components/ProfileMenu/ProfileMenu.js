@@ -6,40 +6,42 @@ import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
 import Button                         from '../../../Button/Button';
 
 class ProfileMenu extends Component {
-
     render() {
         const users = this.props.signedInUsers.map((user) => {
-            return <li key={user.id}>
+            return <div className="profile" key={user.id}>
                        <span className="profileIcon">
-                           <img src={user.icon} alt="" />
+                           <img className="centeredImg"
+                                src={user.icon} alt="" />
                        </span>
                        <span>
                            <div className="profile__Name">{user.name}</div>
                            <div className="profile__Email">{user.email}</div>
                        </span>
-                   </li>
+                   </div>
         });
         return (
-            <DropDown>
+            <DropDown className='headerDropdown'>
                 <Trigger className="profileMenu">
-                    <div><img src={this.props.user.icon} alt="" /></div>
+                    <div>
+                        <img className="centeredImg"
+                             src={this.props.user.icon} alt="" />
+                    </div>
                 </Trigger>
                 <Content className="profileMenu__dropdown">
-                    <div className="profile__info">
+                    <div className="profileSection profile__primary">
                         <span className="profileIcon">
-                            <img src={this.props.user.icon} alt="" />
+                            <img className="centeredImg"
+                                 src={this.props.user.icon} alt="" />
                         </span>
                         <span>
                             <div className="profile__Name">{this.props.user.name}</div>
                             <div className="profile__Email">{this.props.user.email}</div>
                         </span>
                     </div>
-                    <div className="profile__info">
-                        <ol>
-                            {users}
-                        </ol>
+                    <div className="profileSection">
+                        {users}
                     </div>
-                    <div className="profile__info">
+                    <div className="profileSection">
                         <div>
                             <Button type="button" name="Add Account" text="Add Account" />
                             <Button type="button" name="Sign Out" text="Sign Out" />
@@ -49,7 +51,6 @@ class ProfileMenu extends Component {
             </DropDown>
         );
     }
-
 }
 
 export default ProfileMenu;
