@@ -7,7 +7,7 @@ class Notifications extends Component {
 
     render() {
         return (
-            <DropDown className='headerDropdown'>
+            <DropDown className="headerDropdown">
                 <Trigger className="notifications">
                     <span>!</span>
                 </Trigger>

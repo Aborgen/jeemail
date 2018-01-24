@@ -1,17 +1,15 @@
 .mainBlock {
-    width: auto;
     height: 100%;
-    // background: #007;
+    width: auto;
     overflow: hidden;
     z-index: 1;
 }
-
+//TODO: Compute in Mysql query n amount of letters to preview body
 .emailList {
-    table-layout:fixed;
     width:100%;
+    table-layout:fixed;
     white-space: nowrap;
     border-collapse: collapse;
-
     colgroup {
         .select {
             // background: yellow;
@@ -32,25 +30,21 @@
         }
     }
 
-    tbody {
-        .email {
+    tbody .email {
             background: none;
             color: green;
-            cursor: pointer;
             border-bottom: thin solid green;
-
+            cursor: pointer;
             td {
                 text-align: center;
             }
 
             .email-title-body {
                 overflow: hidden;
-
                 span:nth-child(2) {
                     color: grey;
                     opacity: .4;
                 }
             }
-        }
     }
 }

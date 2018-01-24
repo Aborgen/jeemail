@@ -10,7 +10,6 @@
 
 .navLeft {
     float: left;
-
     div {
         background: #fff;
         height: inherit;
@@ -24,17 +23,16 @@
 }
 
 .headerDropdown {
-    display: inline-block;
     position: relative;
     height: 32px;
     width: 32px;
-
+    margin-right: 5px;
 }
 
 .additionalApps, .notifications, .profileMenu {
-    border: 3px solid #000;
     overflow: hidden;
     text-align: center;
+    border: 3px solid #000;
     border-radius: 50%;
     span {
         display: block;
@@ -44,33 +42,28 @@
 }
 
 .profileMenu__dropdown {
-    position: relative;
     display: block;
-    top: 25%;
-    right: 50px;
+    right: -50px;
     white-space: nowrap;
 }
 
 .profileSection {
-    white-space: nowrap;
     border-bottom: 1px solid grey;
     line-height: 25px;
-
+    padding-right: 50px;
     &:last-child {
         border: none;
     }
 
     span {
         display: inline-block;
-
     }
 }
 
 .profile {
-    width: auto;
+    width: 200px;
     padding-right: 5%;
     border-bottom: 1px solid rgba(10, 10, 10, 0.2);
-
     &:last-child {
         border: none;
     }

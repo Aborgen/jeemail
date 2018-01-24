@@ -1,6 +1,6 @@
 const getReceived = (id) => {
-    const insecureTest = `http://jeemail.api/emails/received?id=${id}`;
-    const secureTest = `https://jeemail.api/emails/received?id=${id}`;
+    const insecureTest = `http://api.jeemail.com/emails/received?id=${id}`;
+    const secureTest = `https://api.jeemail.com/emails/received?id=${id}`;
     return fetch(secureTest, {
         method: 'POST',
         headers: {
@@ -10,8 +10,8 @@ const getReceived = (id) => {
 }
 
 const getSent = (id) => {
-    const insecureTest = `http://jeemail.api/emails/sent?id=${id}`;
-    const secureTest = `https://jeemail.api/emails/sent?id=${id}`;
+    const insecureTest = `http://api.jeemail.com/emails/sent?id=${id}`;
+    const secureTest = `https://api.jeemail.com/emails/sent?id=${id}`;
     return fetch(secureTest, {
         method: 'POST',
         headers: {

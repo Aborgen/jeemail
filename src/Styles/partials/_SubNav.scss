@@ -39,6 +39,9 @@
     width: 80px;
     border: 1px solid grey;
     margin: 0 1%;
+    &.dropdown__focus {
+        background: $dropDown_Background;
+    }
 }
 
 .refresh, .pages, .languageConfig {
@@ -113,9 +116,10 @@
         }
     }
 }
+
 .pages, .languageConfig {
-    float: left;
     border: none;
+    float: left;
 }
 
 .pages {
@@ -127,8 +131,8 @@
     }
 
     .pageSort {
-        border: 1px solid grey;
         width: 70%;
+        border: 1px solid grey;
         margin-right: -1px;
     }
 
@@ -136,12 +140,11 @@
         width: 30%;
         .progressArrow {
             display: inline-block;
-            height: 100%;
-            margin-right: -1px;
             box-sizing: border-box;
+            height: 100%;
             width: 50%;
             border: 1px solid grey;
-
+            margin-right: -1px;
             &:last-child {
                 margin: 0;
             }
@@ -152,11 +155,11 @@
 .languageConfig {
     width: 70px;
     .virtualKeyboard, .dropdownContainer {
-        float: left;
         display: inherit;
+        box-sizing: border-box;
         height: 100%;
         border: 1px solid grey;
-        box-sizing: border-box;
+        float: left;
     }
 
     .virtualKeyboard {

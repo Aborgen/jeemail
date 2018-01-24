@@ -55,8 +55,11 @@ class DropDown extends Component {
     render() {
         const [trigger, content] = React.Children.toArray(this.props.children);
         const { className } = this.props;
+        const classes = className !== undefined ?
+            `dropdownContainer ${className}`    :
+            `dropdownContainer`
         return (
-            <div className={`dropdownContainer ${className}`}>
+            <div className={classes}>
                 {trigger}
                 {this.state.content_visible && content}
             </div>
@@ -65,5 +68,4 @@ class DropDown extends Component {
 }
 
 export default DropDown;
-
 export { Trigger, Content };

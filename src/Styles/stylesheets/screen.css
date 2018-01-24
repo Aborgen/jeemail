@@ -68,7 +68,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   background: #5cdb7b;
   border-radius: 10%;
 }
-/* line 5, ../partials/_Button.scss */
+/* line 4, ../partials/_Button.scss */
 .btn:hover {
   background: #2ac94f;
   cursor: pointer;
@@ -76,88 +76,83 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /*TODO: refactor dropdown code into here!*/
 /* line 4, ../partials/_Dropdown.scss */
-.dropdown__focus {
-  background: gold !important;
-}
-
-/* line 8, ../partials/_Dropdown.scss */
 .dropdownContainer {
-  max-height: 100%;
-  max-width: 100%;
   display: inline-block;
   position: relative;
+  max-height: 100%;
+  max-width: 100%;
   font-size: .8em;
 }
-/* line 14, ../partials/_Dropdown.scss */
+/* line 10, ../partials/_Dropdown.scss */
 .dropdownContainer:hover {
   cursor: pointer;
 }
 
-/* line 19, ../partials/_Dropdown.scss */
+/* line 15, ../partials/_Dropdown.scss */
 .dropdownContent {
   background: gold;
   position: absolute;
-  top: 38px;
   box-sizing: border-box;
-  border: 2px solid grey;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
-  font-size: 1.20em;
   line-height: 0.5em;
+  font-size: 1.20em;
+  border: 2px solid grey;
+  top: 38px;
   z-index: 2;
   cursor: default;
 }
 
 /* line 1, ../partials/_EmailBlock.scss */
 .mainBlock {
-  width: auto;
   height: 100%;
+  width: auto;
   overflow: hidden;
   z-index: 1;
 }
 
-/* line 9, ../partials/_EmailBlock.scss */
+/* line 8, ../partials/_EmailBlock.scss */
 .emailList {
-  table-layout: fixed;
   width: 100%;
+  table-layout: fixed;
   white-space: nowrap;
   border-collapse: collapse;
 }
-/* line 16, ../partials/_EmailBlock.scss */
+/* line 14, ../partials/_EmailBlock.scss */
 .emailList colgroup .select {
   width: 2em;
 }
-/* line 20, ../partials/_EmailBlock.scss */
+/* line 18, ../partials/_EmailBlock.scss */
 .emailList colgroup .emailName {
   width: 12em;
 }
-/* line 23, ../partials/_EmailBlock.scss */
+/* line 21, ../partials/_EmailBlock.scss */
 .emailList colgroup .emailTitle {
   width: 100%;
 }
-/* line 26, ../partials/_EmailBlock.scss */
+/* line 24, ../partials/_EmailBlock.scss */
 .emailList colgroup .whiteSpace {
   width: 7em;
 }
-/* line 29, ../partials/_EmailBlock.scss */
+/* line 27, ../partials/_EmailBlock.scss */
 .emailList colgroup .dateTag {
   width: 10em;
 }
-/* line 36, ../partials/_EmailBlock.scss */
+/* line 33, ../partials/_EmailBlock.scss */
 .emailList tbody .email {
   background: none;
   color: green;
-  cursor: pointer;
   border-bottom: thin solid green;
+  cursor: pointer;
 }
-/* line 42, ../partials/_EmailBlock.scss */
+/* line 38, ../partials/_EmailBlock.scss */
 .emailList tbody .email td {
   text-align: center;
 }
-/* line 46, ../partials/_EmailBlock.scss */
+/* line 42, ../partials/_EmailBlock.scss */
 .emailList tbody .email .email-title-body {
   overflow: hidden;
 }
-/* line 49, ../partials/_EmailBlock.scss */
+/* line 44, ../partials/_EmailBlock.scss */
 .emailList tbody .email .email-title-body span:nth-child(2) {
   color: grey;
   opacity: .4;
@@ -179,7 +174,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 .navLeft {
   float: left;
 }
-/* line 14, ../partials/_Header.scss */
+/* line 13, ../partials/_Header.scss */
 .navLeft div {
   background: #fff;
   height: inherit;
@@ -187,69 +182,67 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin: auto;
 }
 
-/* line 22, ../partials/_Header.scss */
+/* line 21, ../partials/_Header.scss */
 .navRight {
   float: right;
 }
 
-/* line 26, ../partials/_Header.scss */
+/* line 25, ../partials/_Header.scss */
 .headerDropdown {
-  display: inline-block;
   position: relative;
   height: 32px;
   width: 32px;
+  margin-right: 5px;
 }
 
-/* line 34, ../partials/_Header.scss */
+/* line 32, ../partials/_Header.scss */
 .additionalApps, .notifications, .profileMenu {
-  border: 3px solid #000;
   overflow: hidden;
   text-align: center;
+  border: 3px solid #000;
   border-radius: 50%;
 }
-/* line 39, ../partials/_Header.scss */
+/* line 37, ../partials/_Header.scss */
 .additionalApps span, .notifications span, .profileMenu span {
   display: block;
   background: grey;
   font-size: 2.5em;
 }
 
-/* line 46, ../partials/_Header.scss */
+/* line 44, ../partials/_Header.scss */
 .profileMenu__dropdown {
-  position: relative;
   display: block;
-  top: 25%;
-  right: 50px;
+  right: -50px;
   white-space: nowrap;
 }
 
-/* line 54, ../partials/_Header.scss */
+/* line 50, ../partials/_Header.scss */
 .profileSection {
-  white-space: nowrap;
   border-bottom: 1px solid grey;
   line-height: 25px;
+  padding-right: 50px;
 }
-/* line 59, ../partials/_Header.scss */
+/* line 54, ../partials/_Header.scss */
 .profileSection:last-child {
   border: none;
 }
-/* line 63, ../partials/_Header.scss */
+/* line 58, ../partials/_Header.scss */
 .profileSection span {
   display: inline-block;
 }
 
-/* line 69, ../partials/_Header.scss */
+/* line 63, ../partials/_Header.scss */
 .profile {
-  width: auto;
+  width: 200px;
   padding-right: 5%;
   border-bottom: 1px solid rgba(10, 10, 10, 0.2);
 }
-/* line 74, ../partials/_Header.scss */
+/* line 67, ../partials/_Header.scss */
 .profile:last-child {
   border: none;
 }
 
-/* line 79, ../partials/_Header.scss */
+/* line 72, ../partials/_Header.scss */
 .profileIcon {
   border: 3px solid #000;
   height: 50px;
@@ -259,7 +252,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-align: center;
 }
 
-/* line 88, ../partials/_Header.scss */
+/* line 81, ../partials/_Header.scss */
 .centeredImg {
   max-width: 200%;
   max-height: 100%;
@@ -273,28 +266,28 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   height: 100%;
   overflow: hidden;
 }
-/* line 7, ../partials/_SearchForm.scss */
+/* line 6, ../partials/_SearchForm.scss */
 .searchForm form {
   position: absolute;
-  top: 30%;
   height: 50%;
   width: 100%;
+  top: 30%;
 }
-/* line 13, ../partials/_SearchForm.scss */
+/* line 11, ../partials/_SearchForm.scss */
 .searchForm form input {
   height: auto;
   width: 60%;
   border-color: grey;
 }
-/* line 18, ../partials/_SearchForm.scss */
+/* line 15, ../partials/_SearchForm.scss */
 .searchForm form input:hover {
   border-color: #000;
 }
-/* line 21, ../partials/_SearchForm.scss */
+/* line 18, ../partials/_SearchForm.scss */
 .searchForm form input:focus {
   border-color: #000;
 }
-/* line 26, ../partials/_SearchForm.scss */
+/* line 23, ../partials/_SearchForm.scss */
 .searchForm form .btn {
   height: 1.6em;
   width: 3em;
@@ -302,23 +295,41 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 /* line 1, ../partials/_Sidebar.scss */
 .sideBar {
-  background: #ddd;
-  height: 100vh;
-  width: 12rem;
+  width: 200px;
   float: left;
 }
 
-/* line 8, ../partials/_Sidebar.scss */
-.center {
-  position: relative;
-  height: 2rem;
+/* line 6, ../partials/_Sidebar.scss */
+.sideBar__button, .verticalList {
+  width: 70%;
+  margin: auto;
+}
+
+/* line 11, ../partials/_Sidebar.scss */
+.sideBar__button {
+  height: 33px;
 }
 /* line 13, ../partials/_Sidebar.scss */
-.center button[name="compose"] {
+.sideBar__button button[name="compose"] {
   height: 100%;
-  width: 70%;
-  position: absolute;
-  left: 15%;
+  width: 100%;
+}
+
+/* line 19, ../partials/_Sidebar.scss */
+.sideBar__currentSelection {
+  color: #5cdb7b;
+  border-left: 7px solid #5cdb7b;
+}
+
+/* line 24, ../partials/_Sidebar.scss */
+.verticalList li {
+  width: 80%;
+  margin-top: .5rem;
+}
+/* line 27, ../partials/_Sidebar.scss */
+.verticalList li:hover {
+  background: #aeeaad;
+  cursor: pointer;
 }
 
 /* line 3, ../partials/_SubNav.scss */
@@ -368,18 +379,22 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: 1px solid grey;
   margin: 0 1%;
 }
+/* line 42, ../partials/_SubNav.scss */
+.subNavDropdown.dropdown__focus, .refresh.dropdown__focus, .pages.dropdown__focus, .languageConfig.dropdown__focus {
+  background: gold;
+}
 
-/* line 44, ../partials/_SubNav.scss */
+/* line 47, ../partials/_SubNav.scss */
 .refresh, .pages, .languageConfig {
   display: inline-block;
   position: relative;
 }
-/* line 47, ../partials/_SubNav.scss */
+/* line 50, ../partials/_SubNav.scss */
 .refresh:hover, .pages:hover, .languageConfig:hover {
   cursor: pointer;
 }
 
-/* line 52, ../partials/_SubNav.scss */
+/* line 55, ../partials/_SubNav.scss */
 .emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
   display: inline-block;
   position: absolute;
@@ -390,146 +405,120 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 50%;
   margin: -8px 0 0 -40%;
 }
-/* line 61, ../partials/_SubNav.scss */
+/* line 64, ../partials/_SubNav.scss */
 .emailViews div, .refresh__symbol div, .selection div, .moreOptions div, .settings div {
   display: inline-block;
 }
 
-/* line 66, ../partials/_SubNav.scss */
+/* line 69, ../partials/_SubNav.scss */
 .refresh, .settings span {
   font-size: 1.5em;
 }
 
-/* line 76, ../partials/_SubNav.scss */
+/* line 79, ../partials/_SubNav.scss */
 .emailViews__dropdown ol li:hover, .selection__dropdown ol li:hover, .moreOptions__dropdown ol li:hover,
 .inputTools__dropdown ol li:hover, .settings__dropdown ol li:hover {
   background: rgba(255, 255, 0, 0.8);
   cursor: pointer;
 }
 
-/* line 83, ../partials/_SubNav.scss */
+/* line 86, ../partials/_SubNav.scss */
 .emailViews__dropdown, .selection__dropdown, .moreOptions__dropdown {
   left: -2px;
 }
-/* line 85, ../partials/_SubNav.scss */
+/* line 88, ../partials/_SubNav.scss */
 .emailViews__dropdown ol li, .selection__dropdown ol li, .moreOptions__dropdown ol li {
   padding: 8px;
   padding-right: 55px;
 }
 
-/* line 92, ../partials/_SubNav.scss */
+/* line 95, ../partials/_SubNav.scss */
 .moreOptions__dropdown ol li {
   padding-right: 110px;
 }
 
-/* line 97, ../partials/_SubNav.scss */
+/* line 100, ../partials/_SubNav.scss */
 .inputTools__dropdown, .settings__dropdown {
   right: -2px;
 }
-/* line 99, ../partials/_SubNav.scss */
+/* line 102, ../partials/_SubNav.scss */
 .inputTools__dropdown ol li, .settings__dropdown ol li {
   padding: 8px;
   padding-right: 58px;
 }
 
-/* line 107, ../partials/_SubNav.scss */
+/* line 110, ../partials/_SubNav.scss */
 .settings__dropdown ol li:nth-child(4), .settings__dropdown ol li:nth-child(7) {
   margin-top: 24px;
 }
-/* line 111, ../partials/_SubNav.scss */
+/* line 114, ../partials/_SubNav.scss */
 .settings__dropdown ol li:nth-child(4) {
   margin-bottom: 24px;
 }
 
-/* line 116, ../partials/_SubNav.scss */
+/* line 120, ../partials/_SubNav.scss */
 .pages, .languageConfig {
-  float: left;
   border: none;
+  float: left;
 }
 
-/* line 121, ../partials/_SubNav.scss */
+/* line 125, ../partials/_SubNav.scss */
 .pages {
   width: 150px;
 }
-/* line 123, ../partials/_SubNav.scss */
+/* line 127, ../partials/_SubNav.scss */
 .pages .pageSort, .pages .pagination {
   display: inline-block;
   height: 100%;
   box-sizing: border-box;
 }
-/* line 129, ../partials/_SubNav.scss */
+/* line 133, ../partials/_SubNav.scss */
 .pages .pageSort {
-  border: 1px solid grey;
   width: 70%;
+  border: 1px solid grey;
   margin-right: -1px;
 }
-/* line 135, ../partials/_SubNav.scss */
+/* line 139, ../partials/_SubNav.scss */
 .pages .pagination {
   width: 30%;
 }
-/* line 137, ../partials/_SubNav.scss */
+/* line 141, ../partials/_SubNav.scss */
 .pages .pagination .progressArrow {
   display: inline-block;
-  height: 100%;
-  margin-right: -1px;
   box-sizing: border-box;
+  height: 100%;
   width: 50%;
   border: 1px solid grey;
+  margin-right: -1px;
 }
-/* line 145, ../partials/_SubNav.scss */
+/* line 148, ../partials/_SubNav.scss */
 .pages .pagination .progressArrow:last-child {
   margin: 0;
 }
 
-/* line 152, ../partials/_SubNav.scss */
+/* line 155, ../partials/_SubNav.scss */
 .languageConfig {
   width: 70px;
 }
-/* line 154, ../partials/_SubNav.scss */
+/* line 157, ../partials/_SubNav.scss */
 .languageConfig .virtualKeyboard, .languageConfig .dropdownContainer {
-  float: left;
   display: inherit;
+  box-sizing: border-box;
   height: 100%;
   border: 1px solid grey;
-  box-sizing: border-box;
+  float: left;
 }
-/* line 162, ../partials/_SubNav.scss */
+/* line 165, ../partials/_SubNav.scss */
 .languageConfig .virtualKeyboard {
   width: 70%;
   margin-right: -1px;
 }
-/* line 167, ../partials/_SubNav.scss */
+/* line 170, ../partials/_SubNav.scss */
 .languageConfig .dropdownContainer {
   width: 30%;
 }
 
-/* line 1, ../partials/_VerticalList.scss */
-.verticalList {
-  height: auto;
-  width: 70%;
-  margin: auto;
-}
-/* line 6, ../partials/_VerticalList.scss */
-.verticalList ol {
-  height: 100%;
-  width: 100%;
-}
-/* line 11, ../partials/_VerticalList.scss */
-.verticalList ol li {
-  width: 80%;
-  margin-top: .5rem;
-}
-/* line 15, ../partials/_VerticalList.scss */
-.verticalList ol li:hover {
-  background: #aeeaad;
-  cursor: pointer;
-}
-/* line 21, ../partials/_VerticalList.scss */
-.verticalList ol li:nth-child(1) {
-  color: #5cdb7b;
-}
-
-/* line 14, ../sass/screen.scss */
+/* line 12, ../sass/screen.scss */
 body {
   height: 100%;
   width: 100%;
