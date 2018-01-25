@@ -13,6 +13,7 @@ class SideBar extends Component {
         };
 
         this.setSelection = this.setSelection.bind(this)
+        this.expandMenu = this.expandMenu.bind(this)
     }
 
     componentDidMount() {
@@ -21,18 +22,31 @@ class SideBar extends Component {
     }
 
     setSelection(selection) {
-        // TODO: Ensure that 'Categories' trigger cannot be highlighted.
-        //       Ensure that Sidebar remembers to highlight nodes that
-        //       are hidden with Ex[andCollapse!
         const current = document.querySelector('.sideBar__currentSelection');
-        if(current === null) {
-            selection.classList.add('sideBar__currentSelection');
+        const newNode = document.getElementById(selection);
+        if(!current) {
+            newNode.classList.add('sideBar__currentSelection');
+
         }
 
-        if(selection !== current && current !== null) {
+        if(current && current !== newNode) {
             current.classList.remove('sideBar__currentSelection');
-            selection.classList.add('sideBar__currentSelection');
+            newNode.classList.add('sideBar__currentSelection');
         }
+
+        this.setState((prevState) => {
+            return { currentSelection: selection }
+        })
+    }
+
+    expandMenu() {
+        const selectedItem
+            = document.getElementById(this.state.currentSelection);
+        if(!selectedItem) {
+            return;
+        }
+
+        selectedItem.classList.add('sideBar__currentSelection');
     }
 
     render() {
@@ -42,6 +56,7 @@ class SideBar extends Component {
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
                 <VerticalList setSelection={this.setSelection}
+                              expandMenu={this.expandMenu}
                               items={this.props.items} />
             </div>
         );
@@ -65,7 +80,12 @@ SideBar.defaultProps = {
             "Updates",
             "Forums"
         ],
-        "userDefined": []
+        "userDefined": [
+            "one",
+            "two",
+            "hullabaloo!",
+            "tan style bile kyle"
+        ]
     }
 };
 

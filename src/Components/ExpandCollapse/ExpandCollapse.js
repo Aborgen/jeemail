@@ -16,15 +16,13 @@ class ExpandCollapse extends Component {
     }
 
     componentDidMount() {
-        const parent = document.querySelector('.expandCollapseContainer');
+        const parent = findDOMNode(this);
         parent.addEventListener('click', this.handleClick);
         parent.addEventListener('touchend', this.handleClick);
     }
 
     handleClick(e) {
         const [trigger] = findDOMNode(this).children;
-        console.log(e.target);
-        console.log(trigger);
         if(e.target === trigger || trigger.contains(e.target)) {
             this.setState((prevState) => {
                 return {
