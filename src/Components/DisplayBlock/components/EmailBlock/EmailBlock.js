@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
 //Components
-import Email                   from './components/Email/Email';
-import EmailList               from './components/EmailList/EmailList';
-import { getReceived, getSent} from '../../Services/GetEmails';
+import Email                    from './components/Email/Email';
+import { getReceived, getSent } from '../../../../Services/GetEmails';
 
 class EmailBlock extends Component {
     constructor() {
@@ -67,7 +66,18 @@ class EmailBlock extends Component {
 
         return (
             <div className="mainBlock">
-                {this.state.emails_available && <EmailList emails={emails} />}
+                <table className="emailList">
+                    <colgroup>
+                        <col span="3" className="select" />
+                        <col className="emailName" />
+                        <col className="emailTitle" />
+                        <col className="whitespace" />
+                        <col className="dateTag" />
+                    </colgroup>
+                    <tbody>
+                        {emails}
+                    </tbody>
+                </table>
             </div>
         );
     }
