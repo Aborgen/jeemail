@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 // Components
-import EmailBlock           from '../../Components/EmailBlock/EmailBlock';
+import DisplayBlock         from '../../Components/DisplayBlock/DisplayBlock';
 import Header               from '../../Components/Header/Header';
 import Sidebar              from '../../Components/Sidebar/Sidebar';
 import SubNav               from '../../Components/SubNav/SubNav';
@@ -38,7 +38,8 @@ class Home extends Component {
                     refresh = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
                 <Sidebar />
-                <EmailBlock
+                <DisplayBlock
+                    blockType = {"email"}
                     refreshEmails = {this.state.emails}
                     selectionOpt = {this.state.selection} />
             </div>

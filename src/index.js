@@ -1,8 +1,8 @@
 import React                 from 'react';
 import ReactDOM              from 'react-dom';
-import Email                 from './Email';
+import Jeemail                 from './Jeemail';
 import registerServiceWorker from './registerServiceWorker';
 import './Styles/stylesheets/screen.css';
 
-ReactDOM.render(<Email />, document.getElementById('root'));
+ReactDOM.render(<Jeemail />, document.getElementById('root'));
 registerServiceWorker();
