@@ -322,12 +322,14 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 }
 
 /* line 24, ../partials/_Sidebar.scss */
-.verticalList li {
-  width: 80%;
-  margin-top: .5rem;
+.sideBar__item {
+  width: auto;
+  margin-top: 10px;
+  white-space: nowrap;
+  overflow: hidden;
 }
-/* line 27, ../partials/_Sidebar.scss */
-.verticalList li:hover {
+/* line 29, ../partials/_Sidebar.scss */
+.sideBar__item:hover {
   background: #aeeaad;
   cursor: pointer;
 }

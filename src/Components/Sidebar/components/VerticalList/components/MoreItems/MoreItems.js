@@ -13,7 +13,9 @@ class MoreItems extends Component {
                         <div onClick={this.props.handleClick} className="moreItems">More</div>
                     </Trigger>
                     <Content>
-                        {this.props.userDefined}
+                        <ol>
+                            {this.props.userDefined}
+                        </ol>
                     </Content>
                 </ExpandCollapse>
             </li>

@@ -21,9 +21,11 @@
     border-left: 7px solid #5cdb7b;
 }
 
-.verticalList li {
-    width: 80%;
-    margin-top: .5rem;
+.sideBar__item {
+    width: auto;
+    margin-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
     &:hover {
         background: #aeeaad;
         cursor: pointer;

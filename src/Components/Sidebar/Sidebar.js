@@ -9,7 +9,7 @@ class SideBar extends Component {
     constructor() {
         super();
         this.state = {
-            "currentSelection": "inbox"
+            "currentSelection": "sideBar0"
         };
 
         this.setSelection = this.setSelection.bind(this)
@@ -66,7 +66,7 @@ class SideBar extends Component {
 export default SideBar;
 SideBar.defaultProps = {
     items: {
-        "default": [
+        "defaultItems": [
             "Inbox",
             "Starred",
             "Important",
@@ -84,7 +84,8 @@ SideBar.defaultProps = {
             "one",
             "two",
             "hullabaloo!",
-            "tan style bile kyle"
+            "tan style bile kyle",
+            "long long long long long long long long long"
         ]
     }
 };

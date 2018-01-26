@@ -13,7 +13,9 @@ class Categories extends Component {
                         <div onClick={this.props.handleClick} className="categories">Categories</div>
                     </Trigger>
                     <Content>
-                        {this.props.categories}
+                        <ol>
+                            {this.props.categories}
+                        </ol>
                     </Content>
                 </ExpandCollapse>
             </li>

@@ -24,30 +24,31 @@ class VerticalList extends Component {
     }
 
     render() {
-        const defaultItems = this.props.items['default'].map((item) => {
-            return <li onClick={this.handleClick}
-                       key={item}
-                       id={item.toLowerCase()}>{item}</li>;
-        });
-        const categories = this.props.items['categories'].map((item) => {
-            return <li onClick={this.handleClick}
-                       key={item}
-                       id={item.toLowerCase()}>{item}</li>;
-        });
-        const userDefined = this.props.items['userDefined'].map((item) => {
-            return <li onClick={this.handleClick}
-                       key={item}
-                       id={item.toLowerCase()}>{item}</li>;
-        });
+        let items = {};
+        let len   = 0;
+        for(const group in this.props.items) {
+            // (no functions declared inside loop)
+            // eslint-disable-next-line
+            const domNodeGroup = this.props.items[group].map((item, i) => {
+                return <li onClick={this.handleClick}
+                           key={item}
+                           id={`sideBar${i + len}`}
+                           className="sideBar__item">{item}</li>;
+            });
+            items[group] = domNodeGroup;
+            len += domNodeGroup.length;
+        }
 
         return (
             <ol className="verticalList">
-                {defaultItems}
-                <Categories categories = {categories}
+                {items['defaultItems']}
+                <Categories categories = {items['categories']}
                             handleClick={this.handleClick} />
-                <MoreItems userDefined = {userDefined}
+                <MoreItems userDefined = {items['userDefined']}
                             handleClick={this.handleClick} />
-
+                <li>
+                    <a href="">Edit label</a>
+                </li>
             </ol>
         );
     }
@@ -57,8 +58,8 @@ export default VerticalList;
 
 VerticalList.propTypes = {
     items: PropTypes.shape({
-        default    : PropTypes.array,
-        categories : PropTypes.array,
-        userDefined: PropTypes.array
+        defaultItems : PropTypes.array,
+        categories   : PropTypes.array,
+        userDefined  : PropTypes.array
     })
 }
