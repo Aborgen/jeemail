@@ -1,5 +1,9 @@
 <?php
 //TODO: Edit User_Received_Emails to indicate whether an email has been read or not
+//TODO: Maybe change all mysql tables that use booleans as a column into enum?
+//      A user clicking on a button from end might result in a 0 or a 1. If they
+//      are able to intercept that and change the number, BOOLEAN (wrapper around tinyint)
+//      will accept it.
     class db_User extends Database {
         public $blockedTable          = 'Blocked';
         public $categoriesTable       = 'Categories';

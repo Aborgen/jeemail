@@ -18,6 +18,8 @@ class DropDown extends Component {
     }
 
     componentDidMount() {
+        // TODO: Why does this need touchend event? ExpandCollapse doesn't
+        //       and it is very similar.
         window.addEventListener('click', this.handleClick);
         window.addEventListener('touchend', this.handleClick);
     }
