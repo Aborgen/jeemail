@@ -21,6 +21,7 @@ class SubNav extends Component {
         this.props.refresh(/*getEmails(beginning, end)*/);
     }
 
+
     selectionOpt(e) {
         this.props.selectionOpt(e.target.innerText);
     }
@@ -37,7 +38,7 @@ class SubNav extends Component {
                 <div className="subNavPiece subNavRight">
                     <Pages />
                     <InputTools />
-                    <Settings />
+                    <Settings changeScene={this.props.changeScene} />
                 </div>
             </div>
         );

@@ -5,9 +5,16 @@ import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
 
 class Settings extends Component {
 
+    handleClick(e) {
+        const setting = e.target.innerText;
+        this.props.changeScene(setting)
+    }
+
     render() {
         const links = this.props.nav.map((link) => {
-            return <li key={link.name}>{link.name}</li>
+            return <li key={link.name} onClick={this.handleClick.bind(this)}>
+                    {link.name}
+                </li>
         })
         return (
             <DropDown className="subNavDropdown">

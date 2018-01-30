@@ -24,6 +24,10 @@ class DropDown extends Component {
         window.addEventListener('touchend', this.handleClick);
     }
 
+    componentWillUnmount() {
+        window.removeEventListener('click', this.handleClick);
+        window.removeEventListener('touchend', this.handleClick);
+    }
     hideContent() {
         this.setState((prevState) => {
             return {

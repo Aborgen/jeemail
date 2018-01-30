@@ -8,20 +8,30 @@ class Jeemail extends Component {
     constructor() {
         super();
         this.state = {
-            "currentPage": "settingsMenu"
+            "currentPage": "home"
         };
     }
 
+    changeScene(scene) {
+        const huh = scene === 'Settings' ? 'settingsMenu' : 'home';
+        // console.log(huh);
+        this.setState((prevState) => {
+            return({
+                "currentPage": huh
+            });
+        })
+
+    }
     render() {
         const scene = this.state.currentPage;
         let showIt;
         switch (scene) {
             case "settingsMenu":
-                showIt = <SettingsMenu />;
+                showIt = <SettingsMenu changeScene={this.changeScene.bind(this)} />;
                 break;
 
             default:
-                showIt = <Home />;
+                showIt = <Home changeScene={this.changeScene.bind(this)} />;
                 break;
         }
         return (
