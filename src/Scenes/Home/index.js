@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 // Components
 import DisplayBlock         from '../../Components/DisplayBlock/DisplayBlock';
+import Footer               from '../../Components/Footer/Footer';
 import Header               from '../../Components/Header/Header';
 import Sidebar              from '../../Components/Sidebar/Sidebar';
 import SubNav               from '../../Components/SubNav/SubNav';

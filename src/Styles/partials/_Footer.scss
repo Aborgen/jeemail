@@ -1,0 +1,36 @@
+.footer {
+    display: block;
+    height: 50%;
+    width: auto;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.footerContent {
+    margin: auto;
+}
+.footerPiece {
+    height: auto;
+    width: Calc(100% / 3);
+    float: left;
+    text-align: center;
+    &:first-child {
+        text-align: left;
+    }
+    &:last-child {
+        text-align: right;
+    }
+}
+
+.footerPiece, .footer__inline {
+    display: inline-block;
+}
+
+.footer__block, .footer__inline {
+    font-size: .8em;
+}
+.footer__block {
+    display: block;
+}
+
+.footer__inline {}
