@@ -1,4 +1,3 @@
-/* line 5, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,62 +19,51 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../../../var/lib/gems/2.4.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
 
-/* line 1, ../partials/_Button.scss */
 .btn {
   background: #5cdb7b;
   border-radius: 10%;
 }
-/* line 4, ../partials/_Button.scss */
 .btn:hover {
   background: #2ac94f;
   cursor: pointer;
 }
 
 /*TODO: refactor dropdown code into here!*/
-/* line 4, ../partials/_Dropdown.scss */
 .dropdownContainer {
   display: inline-block;
   position: relative;
@@ -83,12 +71,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   max-width: 100%;
   font-size: .8em;
 }
-/* line 10, ../partials/_Dropdown.scss */
 .dropdownContainer:hover {
   cursor: pointer;
 }
 
-/* line 15, ../partials/_Dropdown.scss */
 .dropdownContent {
   background: gold;
   position: absolute;
@@ -102,79 +88,107 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   cursor: default;
 }
 
-/* line 1, ../partials/_EmailBlock.scss */
-.mainBlock {
+.FOOgly {
   height: 100%;
   width: auto;
   overflow: hidden;
   z-index: 1;
 }
 
-/* line 8, ../partials/_EmailBlock.scss */
+.mainBlock {
+  background: gold;
+  height: auto;
+  min-height: 50%;
+}
+
 .emailList {
   width: 100%;
   table-layout: fixed;
   white-space: nowrap;
   border-collapse: collapse;
 }
-/* line 14, ../partials/_EmailBlock.scss */
 .emailList colgroup .select {
   width: 2em;
 }
-/* line 18, ../partials/_EmailBlock.scss */
 .emailList colgroup .emailName {
   width: 12em;
 }
-/* line 21, ../partials/_EmailBlock.scss */
 .emailList colgroup .emailTitle {
   width: 100%;
 }
-/* line 24, ../partials/_EmailBlock.scss */
 .emailList colgroup .whiteSpace {
   width: 7em;
 }
-/* line 27, ../partials/_EmailBlock.scss */
 .emailList colgroup .dateTag {
   width: 10em;
 }
-/* line 33, ../partials/_EmailBlock.scss */
 .emailList tbody .email {
   background: none;
   color: green;
   border-bottom: thin solid green;
   cursor: pointer;
 }
-/* line 38, ../partials/_EmailBlock.scss */
 .emailList tbody .email td {
   text-align: center;
 }
-/* line 42, ../partials/_EmailBlock.scss */
 .emailList tbody .email .email-title-body {
   overflow: hidden;
 }
-/* line 44, ../partials/_EmailBlock.scss */
 .emailList tbody .email .email-title-body span:nth-child(2) {
   color: grey;
   opacity: .4;
 }
 
-/* line 1, ../partials/_Header.scss */
+.footer {
+  display: block;
+  height: 50%;
+  width: auto;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.footerContent {
+  margin: auto;
+}
+
+.footerPiece {
+  height: auto;
+  width: Calc(100% / 3);
+  float: left;
+  text-align: center;
+}
+.footerPiece:first-child {
+  text-align: left;
+}
+.footerPiece:last-child {
+  text-align: right;
+}
+
+.footerPiece, .footer__inline {
+  display: inline-block;
+}
+
+.footer__block, .footer__inline {
+  font-size: .8em;
+}
+
+.footer__block {
+  display: block;
+}
+
 .header {
   height: 60px;
 }
 
-/* line 5, ../partials/_Header.scss */
 .navPiece {
   background: orange;
   height: 100%;
   width: 180px;
 }
 
-/* line 11, ../partials/_Header.scss */
 .navLeft {
   float: left;
 }
-/* line 13, ../partials/_Header.scss */
 .navLeft div {
   background: #fff;
   height: inherit;
@@ -182,12 +196,10 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin: auto;
 }
 
-/* line 21, ../partials/_Header.scss */
 .navRight {
   float: right;
 }
 
-/* line 25, ../partials/_Header.scss */
 .headerDropdown {
   position: relative;
   height: 32px;
@@ -195,54 +207,45 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   margin-right: 5px;
 }
 
-/* line 32, ../partials/_Header.scss */
 .additionalApps, .notifications, .profileMenu {
   overflow: hidden;
   text-align: center;
   border: 3px solid #000;
   border-radius: 50%;
 }
-/* line 37, ../partials/_Header.scss */
 .additionalApps span, .notifications span, .profileMenu span {
   display: block;
   background: grey;
   font-size: 2.5em;
 }
 
-/* line 44, ../partials/_Header.scss */
 .profileMenu__dropdown {
   display: block;
   right: -50px;
   white-space: nowrap;
 }
 
-/* line 50, ../partials/_Header.scss */
 .profileSection {
   border-bottom: 1px solid grey;
   line-height: 25px;
   padding-right: 50px;
 }
-/* line 54, ../partials/_Header.scss */
 .profileSection:last-child {
   border: none;
 }
-/* line 58, ../partials/_Header.scss */
 .profileSection span {
   display: inline-block;
 }
 
-/* line 63, ../partials/_Header.scss */
 .profile {
   width: 200px;
   padding-right: 5%;
   border-bottom: 1px solid rgba(10, 10, 10, 0.2);
 }
-/* line 67, ../partials/_Header.scss */
 .profile:last-child {
   border: none;
 }
 
-/* line 72, ../partials/_Header.scss */
 .profileIcon {
   border: 3px solid #000;
   height: 50px;
@@ -252,89 +255,76 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   text-align: center;
 }
 
-/* line 81, ../partials/_Header.scss */
 .centeredImg {
   max-width: 200%;
   max-height: 100%;
   margin: 0 -100%;
 }
 
-/* line 1, ../partials/_SearchForm.scss */
 .searchForm {
   background: red;
   position: relative;
   height: 100%;
   overflow: hidden;
 }
-/* line 6, ../partials/_SearchForm.scss */
 .searchForm form {
   position: absolute;
   height: 50%;
   width: 100%;
   top: 30%;
 }
-/* line 11, ../partials/_SearchForm.scss */
 .searchForm form input {
   height: auto;
   width: 60%;
   border-color: grey;
 }
-/* line 15, ../partials/_SearchForm.scss */
 .searchForm form input:hover {
   border-color: #000;
 }
-/* line 18, ../partials/_SearchForm.scss */
 .searchForm form input:focus {
   border-color: #000;
 }
-/* line 23, ../partials/_SearchForm.scss */
 .searchForm form .btn {
   height: 1.6em;
   width: 3em;
 }
 
-/* line 1, ../partials/_Sidebar.scss */
 .sideBar {
+  background: violet;
+  height: 100%;
   width: 200px;
   float: left;
 }
 
-/* line 6, ../partials/_Sidebar.scss */
 .sideBar__button, .verticalList {
   width: 70%;
   margin: auto;
 }
 
-/* line 11, ../partials/_Sidebar.scss */
 .sideBar__button {
   height: 33px;
 }
-/* line 13, ../partials/_Sidebar.scss */
 .sideBar__button button[name="compose"] {
   height: 100%;
   width: 100%;
 }
 
-/* line 19, ../partials/_Sidebar.scss */
 .sideBar__currentSelection {
   color: #5cdb7b;
   border-left: 7px solid #5cdb7b;
 }
 
-/* line 24, ../partials/_Sidebar.scss */
 .sideBar__item {
   width: auto;
   margin-top: 10px;
   white-space: nowrap;
   overflow: hidden;
 }
-/* line 29, ../partials/_Sidebar.scss */
 .sideBar__item:hover {
   background: #aeeaad;
   cursor: pointer;
 }
 
-/* line 3, ../partials/_SubNav.scss */
 .subNav {
   height: 56px;
   position: relative;
@@ -343,36 +333,30 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border-bottom: solid thin green;
 }
 
-/* line 11, ../partials/_SubNav.scss */
 .subNavPiece {
   position: relative;
   height: 100%;
   white-space: nowrap;
 }
 
-/* line 17, ../partials/_SubNav.scss */
 .subNavLeft {
   float: left;
-  margin-left: 2%;
+  margin-left: 27px;
   padding-right: 22px;
 }
-/* line 21, ../partials/_SubNav.scss */
 .subNavLeft .dropdownContainer:first-child {
   margin-right: 40px;
 }
 
-/* line 26, ../partials/_SubNav.scss */
 .subNavRight {
   float: right;
   margin-right: 2%;
   padding-right: 12px;
 }
-/* line 30, ../partials/_SubNav.scss */
 .subNavRight .dropdownContainer:last-child {
   margin-right: 0;
 }
 
-/* line 35, ../partials/_SubNav.scss */
 .subNavDropdown, .refresh, .pages, .languageConfig {
   background: #fff;
   box-sizing: border-box;
@@ -381,22 +365,18 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: 1px solid grey;
   margin: 0 1%;
 }
-/* line 42, ../partials/_SubNav.scss */
 .subNavDropdown.dropdown__focus, .refresh.dropdown__focus, .pages.dropdown__focus, .languageConfig.dropdown__focus {
   background: gold;
 }
 
-/* line 47, ../partials/_SubNav.scss */
 .refresh, .pages, .languageConfig {
   display: inline-block;
   position: relative;
 }
-/* line 50, ../partials/_SubNav.scss */
 .refresh:hover, .pages:hover, .languageConfig:hover {
   cursor: pointer;
 }
 
-/* line 55, ../partials/_SubNav.scss */
 .emailViews, .refresh__symbol, .selection, .moreOptions, .settings {
   display: inline-block;
   position: absolute;
@@ -407,84 +387,71 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   left: 50%;
   margin: -8px 0 0 -40%;
 }
-/* line 64, ../partials/_SubNav.scss */
 .emailViews div, .refresh__symbol div, .selection div, .moreOptions div, .settings div {
   display: inline-block;
 }
 
-/* line 69, ../partials/_SubNav.scss */
 .refresh, .settings span {
   font-size: 1.5em;
 }
 
-/* line 79, ../partials/_SubNav.scss */
 .emailViews__dropdown ol li:hover, .selection__dropdown ol li:hover, .moreOptions__dropdown ol li:hover,
 .inputTools__dropdown ol li:hover, .settings__dropdown ol li:hover {
   background: rgba(255, 255, 0, 0.8);
   cursor: pointer;
 }
 
-/* line 86, ../partials/_SubNav.scss */
 .emailViews__dropdown, .selection__dropdown, .moreOptions__dropdown {
   left: -2px;
 }
-/* line 88, ../partials/_SubNav.scss */
 .emailViews__dropdown ol li, .selection__dropdown ol li, .moreOptions__dropdown ol li {
   padding: 8px;
-  padding-right: 55px;
+  padding-right: 65px;
 }
 
-/* line 95, ../partials/_SubNav.scss */
 .moreOptions__dropdown ol li {
   padding-right: 110px;
 }
 
-/* line 100, ../partials/_SubNav.scss */
 .inputTools__dropdown, .settings__dropdown {
   right: -2px;
 }
-/* line 102, ../partials/_SubNav.scss */
 .inputTools__dropdown ol li, .settings__dropdown ol li {
   padding: 8px;
-  padding-right: 58px;
+  padding-right: 65px;
 }
 
-/* line 110, ../partials/_SubNav.scss */
+.settings__dropdown ol li {
+  padding-right: 52px;
+}
 .settings__dropdown ol li:nth-child(4), .settings__dropdown ol li:nth-child(7) {
   margin-top: 24px;
 }
-/* line 114, ../partials/_SubNav.scss */
 .settings__dropdown ol li:nth-child(4) {
   margin-bottom: 24px;
 }
 
-/* line 120, ../partials/_SubNav.scss */
 .pages, .languageConfig {
   border: none;
   float: left;
 }
 
-/* line 125, ../partials/_SubNav.scss */
 .pages {
   width: 150px;
 }
-/* line 127, ../partials/_SubNav.scss */
 .pages .pageSort, .pages .pagination {
   display: inline-block;
   height: 100%;
   box-sizing: border-box;
 }
-/* line 133, ../partials/_SubNav.scss */
 .pages .pageSort {
   width: 70%;
   border: 1px solid grey;
   margin-right: -1px;
 }
-/* line 139, ../partials/_SubNav.scss */
 .pages .pagination {
   width: 30%;
 }
-/* line 141, ../partials/_SubNav.scss */
 .pages .pagination .progressArrow {
   display: inline-block;
   box-sizing: border-box;
@@ -493,16 +460,13 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: 1px solid grey;
   margin-right: -1px;
 }
-/* line 148, ../partials/_SubNav.scss */
 .pages .pagination .progressArrow:last-child {
   margin: 0;
 }
 
-/* line 155, ../partials/_SubNav.scss */
 .languageConfig {
   width: 70px;
 }
-/* line 157, ../partials/_SubNav.scss */
 .languageConfig .virtualKeyboard, .languageConfig .dropdownContainer {
   display: inherit;
   box-sizing: border-box;
@@ -510,19 +474,15 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   border: 1px solid grey;
   float: left;
 }
-/* line 165, ../partials/_SubNav.scss */
 .languageConfig .virtualKeyboard {
   width: 70%;
   margin-right: -1px;
 }
-/* line 170, ../partials/_SubNav.scss */
 .languageConfig .dropdownContainer {
   width: 30%;
 }
 
-/* line 12, ../sass/screen.scss */
 body {
-  height: 100%;
   width: 100%;
   min-width: 800px;
   background: #ddd;
@@ -530,4 +490,13 @@ body {
   -ms-user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
+}
+
+body, html {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
 }

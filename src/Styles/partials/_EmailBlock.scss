@@ -1,8 +1,14 @@
-.mainBlock {
+.FOOgly {
     height: 100%;
     width: auto;
     overflow: hidden;
     z-index: 1;
+}
+
+.mainBlock {
+    background: gold;
+    height: auto;
+    min-height: 50%;
 }
 //TODO: Compute in Mysql query n amount of letters to preview body
 .emailList {

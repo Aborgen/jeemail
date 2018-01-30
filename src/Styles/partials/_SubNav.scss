@@ -16,7 +16,7 @@
 
 .subNavLeft {
     float: left;
-    margin-left: 2%;
+    margin-left: 27px;
     padding-right: 22px;
     .dropdownContainer:first-child {
         margin-right: 40px;
@@ -87,7 +87,7 @@
     left: -2px;
     ol li {
         padding: 8px;
-        padding-right: 55px;
+        padding-right: 65px;
     }
 }
 
@@ -101,12 +101,13 @@
     right: -2px;
     ol li {
         padding: 8px;
-        padding-right: 58px;
+        padding-right: 65px;
     }
 }
 
 .settings__dropdown {
     ol li {
+        padding-right: 52px;
         &:nth-child(4), &:nth-child(7) {
             margin-top: 24px;
         }
