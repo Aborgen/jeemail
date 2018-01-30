@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 // Components
 import EmailBlock    from './components/EmailBlock/EmailBlock';
 import SettingsBlock from './components/SettingsBlock/SettingsBlock';
+import ThemesBlock   from './components/ThemesBlock/ThemesBlock';
 class DisplayBlock extends Component {
     render() {
         const type = this.props.blockType;
@@ -14,6 +15,9 @@ class DisplayBlock extends Component {
                 break;
             case "settings":
                 showIt = <SettingsBlock />;
+                break;
+            case "themes":
+                showIt = <ThemesBlock />;
                 break;
         }
         return (
