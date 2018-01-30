@@ -32,10 +32,12 @@ class Home extends Component {
     }
 
     render() {
+        const Fragment = React.Fragment;
         return (
-            <div>
+            <Fragment>
                 <Header />
                 <SubNav
+                    changeScene = {this.props.changeScene}
                     refresh = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
                 <Sidebar />
@@ -43,7 +45,7 @@ class Home extends Component {
                     blockType = {"email"}
                     refreshEmails = {this.state.emails}
                     selectionOpt = {this.state.selection} />
-            </div>
+            </Fragment>
         );
     }
 }

@@ -9,8 +9,9 @@ import SubNav               from '../../Components/SubNav/SubNav';
 
 class SettingsMenu extends Component {
     render() {
+        const Fragment = React.Fragment;
         return (
-            <div>
+            <Fragment>
                 <Header />
                 <SubNav
                     refresh = {this.refresh}
@@ -19,7 +20,7 @@ class SettingsMenu extends Component {
                 <Sidebar />
                 <DisplayBlock blockType = {"settings"} />
                 <Footer />
-            </div>
+            </Fragment>
         );
     }
 }
