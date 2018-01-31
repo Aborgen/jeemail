@@ -18,8 +18,10 @@ class SettingsMenu extends Component {
                     selectionOpt = {this.selectionOpt}
                     changeScene = {this.props.changeScene} />
                 <Sidebar />
-                <DisplayBlock blockType = {"settings"} />
-                <Footer />
+                <div className="FOOgly">
+                    <DisplayBlock blockType = {"settings"} />
+                    <Footer />
+                </div>
             </Fragment>
         );
     }

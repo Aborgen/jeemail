@@ -41,10 +41,13 @@ class Home extends Component {
                     refresh = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
                 <Sidebar />
-                <DisplayBlock
-                    blockType = {"email"}
-                    refreshEmails = {this.state.emails}
-                    selectionOpt = {this.state.selection} />
+                <div className="FOOgly">
+                    <DisplayBlock
+                        blockType = {"email"}
+                        refreshEmails = {this.state.emails}
+                        selectionOpt = {this.state.selection} />
+                    <Footer />
+                </div>
             </Fragment>
         );
     }

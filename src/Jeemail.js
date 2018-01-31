@@ -3,21 +3,20 @@ import React, { Component } from 'react';
 // Scenes
 import Home         from './Scenes/Home/index';
 import SettingsMenu from './Scenes/SettingsMenu/index';
+import ThemesMenu   from './Scenes/ThemesMenu/index';
 
 class Jeemail extends Component {
     constructor() {
         super();
         this.state = {
-            "currentPage": "home"
+            "currentPage": "/home"
         };
     }
 
     changeScene(scene) {
-        const huh = scene === 'Settings' ? 'settingsMenu' : 'home';
-        // console.log(huh);
         this.setState((prevState) => {
             return({
-                "currentPage": huh
+                "currentPage": scene
             });
         })
 
@@ -26,8 +25,16 @@ class Jeemail extends Component {
         const scene = this.state.currentPage;
         let showIt;
         switch (scene) {
-            case "settingsMenu":
+            case "/settings":
                 showIt = <SettingsMenu changeScene={this.changeScene.bind(this)} />;
+                break;
+
+            case "/themes":
+                showIt = <ThemesMenu changeScene={this.changeScene.bind(this)} />;
+                break;
+
+            case "/home":
+                showIt = <Home changeScene={this.changeScene.bind(this)} />;
                 break;
 
             default:

@@ -98,7 +98,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 .mainBlock {
   background: gold;
   height: auto;
-  min-height: 50%;
+  min-height: 40%;
 }
 
 .emailList {
@@ -141,7 +141,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 
 .footer {
   display: block;
-  height: 50%;
+  min-height: 60%;
   width: auto;
   overflow: hidden;
   z-index: 1;
