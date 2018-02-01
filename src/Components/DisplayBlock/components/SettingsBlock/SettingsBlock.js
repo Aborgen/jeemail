@@ -4,8 +4,18 @@ import React, { Component } from 'react';
 import Settings from './components/Settings/Settings.js';
 
 class SettingsBlock extends Component {
+
+    constructor() {
+        super();
+        this.state = {
+            "radioChecked": [0, 0, 0],
+            "selectionChecked": [25, 250]
+        };
+    }
+
     render() {
-        const { radio, selection } = this.props.settings;
+        const { radio, selection }               = this.props.settings;
+        const { radioChecked, selectionChecked } = this.state;
 
         return (
             <div className="mainBlock">
@@ -15,8 +25,12 @@ class SettingsBlock extends Component {
                         <col className="setting" />
                     </colgroup>
                     <tbody>
-                        <Settings type="radio" settings={radio} />
-                        <Settings type="selection" settings={selection} />
+                        <Settings type="radio"
+                                  settings={radio}
+                                  checked={radioChecked} />
+                        <Settings type="selection"
+                                  settings={selection}
+                                  checked={selectionChecked} />
                     </tbody>
                 </table>
             </div>
