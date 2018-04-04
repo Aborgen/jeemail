@@ -52,7 +52,7 @@ class Member
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $membername;
+    private $username;
 
     /**
      * @ORM\Column(type="string", length=64, unique=true)
@@ -211,14 +211,14 @@ class Member
         return $this;
     }
 
-    public function getMembername(): ?string
+    public function getUsername(): ?string
     {
-        return $this->membername;
+        return $this->username;
     }
 
-    public function setMembername(string $membername): self
+    public function setUsername(string $username): self
     {
-        $this->membername = $membername;
+        $this->username = $username;
 
         return $this;
     }
@@ -267,23 +267,23 @@ class Member
         return $this->contacts;
     }
 
-    public function addContact(PersonalContacts $contacts): self
+    public function addContact(PersonalContacts $contact): self
     {
-        if (!$this->contacts->contains($contacts)) {
-            $this->contacts[] = $contacts;
-            $contacts->setMember($this);
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts[] = $contact;
+            $contact->setMember($this);
         }
 
         return $this;
     }
 
-    public function removePersonalContact(PersonalContacts $contacts): self
+    public function removePersonalContact(PersonalContacts $contact): self
     {
-        if ($this->contacts->contains($contacts)) {
-            $this->contacts->removeElement($contacts);
+        if ($this->contacts->contains($contact)) {
+            $this->contacts->removeElement($contact);
             // set the owning side to null (unless already changed)
-            if ($contacts->getMember() === $this) {
-                $contacts->setMember(null);
+            if ($contact->getMember() === $this) {
+                $contact->setMember(null);
             }
         }
 
