@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\SentEmailsRepository")
+ * @ORM\Table(name="Sent_Emails")
+ */
+class SentEmails
+{
+    /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(name="SentEmailsID", type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Member", inversedBy="sentEmails")
+     * @ORM\JoinColumn(name="MemberID", referencedColumnName="MemberID", nullable=false)
+     */
+    private $member;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Email", inversedBy="sentEmails")
+     * @ORM\JoinColumn(name="EmailID", referencedColumnName="EmailID", nullable=false)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $important;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $starred;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PersonalCategories", inversedBy="sentEmails")
+     * @ORM\JoinColumn(name="PersonalCategoriesID", referencedColumnName="PersonalCategoriesID", nullable=false)
+     */
+    private $category;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="sentEmails")
+     * @ORM\JoinColumn(name="PersonalLabelsID", referencedColumnName="PersonalLabelsID", nullable=true)
+     */
+    private $labels;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getMemberID(): ?Member
+    {
+        return $this->member;
+    }
+
+    public function setMemberID(?Member $member): self
+    {
+        $this->member = $member;
+
+        return $this;
+    }
+
+    public function getEmail(): ?Email
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?Email $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getImportant(): ?bool
+    {
+        return $this->important;
+    }
+
+    public function setImportant(bool $important): self
+    {
+        $this->important = $important;
+
+        return $this;
+    }
+
+    public function getStarred(): ?bool
+    {
+        return $this->starred;
+    }
+
+    public function setStarred(bool $starred): self
+    {
+        $this->starred = $starred;
+
+        return $this;
+    }
+
+    public function getCategory(): ?PersonalCategories
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?PersonalCategories $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function getLabels(): ?PersonalLabels
+    {
+        return $this->labels;
+    }
+
+    public function setLabels(?PersonalLabels $labels): self
+    {
+        $this->labels = $labels;
+
+        return $this;
+    }
+}

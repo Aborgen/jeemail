@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+{% if messages is defined %}
+    <div class="messages">
+        {% for message in messages %}
+            <h1 class="message" id="message{{ loop.index }}">{{ message }}</h1>
+        {% endfor %}
+    </div>
+{% endif %}
+<h1>INDEX!</h1>
+{% endblock %}
