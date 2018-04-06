@@ -32,6 +32,11 @@ class Icon
      */
     private $icon_large;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Member", mappedBy="icon", cascade={"persist", "remove"})
+     */
+    private $member;
+
     public function getId()
     {
         return $this->id;
@@ -69,6 +74,23 @@ class Icon
     public function setIconLarge(string $icon_large): self
     {
         $this->icon_large = $icon_large;
+
+        return $this;
+    }
+
+    public function getMember(): ?Member
+    {
+        return $this->member;
+    }
+
+    public function setMember(Member $member): self
+    {
+        $this->member = $member;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $member->getIcon()) {
+            $member->setIcon($this);
+        }
 
         return $this;
     }

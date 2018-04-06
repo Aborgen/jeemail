@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180403204451 extends AbstractMigration
+class Version20180405234711 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -33,7 +33,7 @@ class Version20180403204451 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE Category_CategoryID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Contact_Details_ContactDetailsID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Default_Label_DefaultLabelID_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE Member (MemberID INT NOT NULL, first_name VARCHAR(64) NOT NULL, last_name VARCHAR(64) NOT NULL, gender VARCHAR(64) DEFAULT NULL, birthday VARCHAR(64) DEFAULT NULL, address VARCHAR(64) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, membername VARCHAR(64) NOT NULL, email VARCHAR(64) NOT NULL, password VARCHAR(255) NOT NULL, IconID INT NOT NULL, PRIMARY KEY(MemberID))');
+        $this->addSql('CREATE TABLE Member (MemberID INT NOT NULL, first_name VARCHAR(64) NOT NULL, last_name VARCHAR(64) NOT NULL, gender VARCHAR(64) DEFAULT NULL, birthday VARCHAR(64) DEFAULT NULL, address VARCHAR(64) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, username VARCHAR(64) NOT NULL, email VARCHAR(64) NOT NULL, password VARCHAR(255) NOT NULL, IconID INT DEFAULT NULL, PRIMARY KEY(MemberID))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_7748FF4EE7927C74 ON Member (email)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_7748FF4E36018720 ON Member (IconID)');
         $this->addSql('CREATE TABLE Personal_Settings (MemberID INT NOT NULL, SettingsID INT NOT NULL, PRIMARY KEY(MemberID, SettingsID))');

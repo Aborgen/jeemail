@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\PersonalDefaultLabelsRepository"")
+ * @ORM\Entity(repositoryClass="App\Repository\PersonalDefaultLabelsRepository")
  * @ORM\Table(name="Personal_Default_Labels")
  */
 class PersonalDefaultLabels

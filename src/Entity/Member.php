@@ -65,12 +65,6 @@ class Member
     private $password;
 
     /**
-     * @ORM\OneToOne(targetEntity="Icon", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="IconID", referencedColumnName="IconID", nullable=false)
-     */
-    private $icon;
-
-    /**
      * @ORM\OneToMany(targetEntity="PersonalContacts", mappedBy="member", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $contacts;
@@ -121,6 +115,12 @@ class Member
      */
     private $sentEmails;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Icon", inversedBy="member", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="IconID", referencedColumnName="IconID", nullable=true)
+     */
+    private $icon;
+
     public function __construct()
     {
         $this->contacts       = new ArrayCollection();
@@ -168,7 +168,7 @@ class Member
         return $this->gender;
     }
 
-    public function setGender(string $gender): self
+    public function setGender(?string $gender): self
     {
         $this->gender = $gender;
 
@@ -243,18 +243,6 @@ class Member
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    public function getIcon(): ?Icon
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(Icon $icon): self
-    {
-        $this->icon = $icon;
 
         return $this;
     }
@@ -526,6 +514,18 @@ class Member
                 $sentEmail->setMember(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIcon(): ?Icon
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(Icon $icon): self
+    {
+        $this->icon = $icon;
 
         return $this;
     }

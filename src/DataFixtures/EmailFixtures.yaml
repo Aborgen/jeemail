@@ -1,0 +1,30 @@
+parameters:
+    blocked_count: '3'
+    contact_count: '3'
+    label_count: '3'
+
+App\Entity\Blocked:
+    blocked_{1..3}:
+        email (unique): '<email()>'
+
+App\Entity\Contact:
+    contact_{1..3}:
+        name (unique): '<firstName()> <lastName()>'
+        email (unique): '<email()>'
+
+App\Entity\Label:
+    label_{1..3}:
+        name (unique): '<word()>'
+        slug (unique): '@self->name'
+
+App\Entity\Member:
+    dummy_{1..10}:
+        gender: '80%? <randomElement(["male", "female"])>'
+        first_name: '<firstName(@self->gender)>'
+        last_name: '<lastName()>'
+        birthday: '90%? <month()>-<dayOfMonth()>-<year()>'
+        address: '40%? <streetAddress()>'
+        phone: '<phoneNumber()>'
+        username: '<userName()>'
+        email (unique): '<email()>'
+        password: '<password()>'
