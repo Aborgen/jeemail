@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\PersonalLabels;
+use App\Entity\PersonalDefaultLabels;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -19,25 +19,24 @@ class PersonalDefaultLabelsRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonalDefaultLabels::class);
     }
 
-    public function findEmailsBySlug(string $slug): object
+    public function findEmailsBySlug(string $slug, int $id): array
     {
         // a = PersonalDefaultLabelTable
         // b = DefaultLabelTable
         // c = ReceivedEmailsTable
         // d = EmailTable
         return $this->createQueryBuilder('a')
-                    ->select('c')
+                    ->select('a.id'/*'d'*/)
                     ->leftJoin('a.defaultLabel', 'b')
-                    ->andWhere('b.url_slug = :slug')
-                    ->andWhere('a.DefaultLabelID = b.DefaultLabelID')
-                    ->addParameter(':slug', $slug)
-                    ->leftJoin('a.receivedEmails', 'c')
-                    ->andWhere('a.PersonalLabelID = c.PersonalLabelID')
-                    ->andWhere('a.UserID = :id')
-                    ->addParameter(':id', $id)
-                    ->leftJoin('c.email', 'd')
-                    ->andWhere('c.EmailID', 'd.EmailID')
-                    ->orderBy('d.time_sent', 'ASC')
+                    ->andWhere('b.slug = :slug')
+                    ->andWhere('a.member = :id')
+                    ->andWhere('a.defaultLabel = b.id')
+                    ->setParameters([':slug' => $slug, ':id' => $id])
+                    // ->leftJoin('a.receivedEmails', 'c')
+                    // ->andWhere('a.id = c.defaultLabels')
+                    // ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
+                    // ->andWhere('c.email = d.id')
+                    // ->orderBy('d.timeSent', 'ASC')
                     ->getQuery()
                     ->getResult();
     }

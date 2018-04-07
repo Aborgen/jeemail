@@ -69,12 +69,14 @@ class EmailFixtures extends Fixture
         //     $manager->persist($member);
         // }
         $loader = new NativeLoader();
-        $objectSet = $loader->loadFile(__DIR__.'/EmailFixtures.yaml')
-                            ->getObjects();
-        foreach($objectSet as $object) {
-            $manager->persist($object);
-        }
+        for ($i=0; $i < 3; $i++) {
+            $objectSet = $loader->loadFile(__DIR__.'/EmailFixtures.yaml')
+                                ->getObjects();
+            foreach($objectSet as $object) {
+                $manager->persist($object);
+            }
 
-        $manager->flush();
+            $manager->flush();
+        }
     }
 }

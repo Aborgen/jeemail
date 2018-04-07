@@ -41,9 +41,9 @@ class Email
     private $body;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="time_sent", type="datetime")
      */
-    private $time_sent;
+    private $timeSent;
 
     /**
      * @ORM\OneToMany(targetEntity="ReceivedEmails", mappedBy="email")
@@ -128,12 +128,12 @@ class Email
 
     public function getTimeSent(): ?\DateTimeInterface
     {
-        return $this->time_sent;
+        return $this->timeSent;
     }
 
-    public function setTimeSent(\DateTimeInterface $time_sent): self
+    public function setTimeSent(\DateTimeInterface $timeSent): self
     {
-        $this->time_sent = $time_sent;
+        $this->timeSent = $timeSent;
 
         return $this;
     }

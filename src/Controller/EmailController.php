@@ -41,7 +41,8 @@ class EmailController extends AbstractController
                          LabelInterface $interface): object
     {
         if(isset($defaultLabel)) {
-            // $emails = $interface->findPersonalLabel($defaultLabel, LabelConstants::ADMIN_DEFINED);
+            $interface->setType(LabelConstants::ADMIN_DEFINED);
+            $emails = $interface->findPersonalLabel($defaultLabel, 122);
             return $this->render('email/label.html.twig', [
                 "emails" => $emails]);
         }
@@ -52,7 +53,8 @@ class EmailController extends AbstractController
         }
 
         if(isset($label)) {
-            // $emails = $interface->findPersonalLabel($label, LabelConstants::USER_DEFINED);
+            $interface->setType(LabelConstants::USER_DEFINED);
+            $emails = $interface->findPersonalLabel($label, 122);
             return $this->render('email/label.html.twig', [
                 "emails" => $emails]);
         }

@@ -19,15 +19,24 @@ class PersonalLabelsRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonalLabels::class);
     }
 
-    public function findBySlug(string $slug): object
+    public function findEmailsBySlug(string $slug, int $id): array
     {
+        // a = PersonalLabelTable
+        // b = LabelTable
+        // c = ReceivedEmailsTable
+        // d = EmailTable
         return $this->createQueryBuilder('a')
-                    ->select('b.name', 'b.url_slug')
-                    ->leftJoin(PersonalLabels::JOIN_TABLE, 'b', 'WITH',
-                        'a.labelid = b.labelid')
-                    ->andWhere('b.url_slug = :slug')
-                    ->setParameter('slug', $slug)
-                    ->orderBy('b.name', 'DSC')
+                    ->select('d')
+                    ->leftJoin('a.label', 'b')
+                    ->andWhere('b.slug = :slug')
+                    ->andWhere('a.member = :id')
+                    ->andWhere('a.label = b.id')
+                    ->setParameters([':slug' => $slug, ':id' => $id])
+                    ->leftJoin('a.receivedEmails', 'c')
+                    ->andWhere('a.id = c.labels')
+                    ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
+                    ->andWhere('c.email = d.id')
+                    ->orderBy('d.timeSent', 'ASC')
                     ->getQuery()
                     ->getResult();
     }

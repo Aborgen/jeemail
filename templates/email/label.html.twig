@@ -5,6 +5,8 @@
 {% block body %}
 <h1>LABEL!</h1>
 {% if emails is defined %}
-    <pre>{{ emails }}</pre>
+    {% for email in emails %}
+        <pre>{{ email['name'] }}</pre>
+    {% endfor %}
 {% endif %}
 {% endblock %}

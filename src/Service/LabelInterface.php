@@ -16,17 +16,14 @@ class LabelInterface
 {
     // USER_DEFINED | ADMIN_DEFINED
     private $type;
-    // Repo is an instantiation of either App\Entity\PersonalLabels or
+    // Entity is an instantiation of either App\Entity\PersonalLabels or
     // App\Entity\PersonalDefaultLabels.
-    private $repo;
+    private $entity;
     private $em;
 
-    function __construct(EntityManagerInterface $entityManager,
-                         int $type = Constant::USER_DEFINED)
+    function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em   = $entityManager;
-        $this->type = $type;
-        $this->setRepo();
+        $this->em = $entityManager;
     }
 
     public function getType(): int
@@ -39,18 +36,20 @@ class LabelInterface
         $type === Constant::USER_DEFINED || $type === Constant::ADMIN_DEFINED
             ? $this->type = $type
             : $this->type = Constant::USER_DEFINED;
+
+        $this->setEntity();
     }
 
-    public function getRepo(): string
+    public function getEntity(): string
     {
-        return $this->repo;
+        return $this->entity;
     }
 
-    private function setRepo(): void
+    private function setEntity(): void
     {
         $this->type === Constant::USER_DEFINED
-            ? $this->repo = PersonalLabels::class
-            : $this->repo = PersonalDefaultLables::class;
+            ? $this->entity = PersonalLabels::class
+            : $this->entity = PersonalDefaultLabels::class;
     }
 
     /**
@@ -61,11 +60,11 @@ class LabelInterface
  	 * @return void
 	 */
 
-    public function findPersonalLabel(string $slug): object
+    public function findPersonalLabel(string $slug, int $id): array
     {
         $label = $this->em
-                      ->getRepository($this->repo)
-                      ->findBySlug($slug);
+                      ->getRepository($this->entity)
+                      ->findEmailsBySlug($slug, $id);
 
         return $label;
     }

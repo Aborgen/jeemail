@@ -96,14 +96,14 @@ class ContactDetails
         return $this;
     }
 
-    public function getName(): ?string
+    public function getNickname(): ?string
     {
-        return $this->name;
+        return $this->nickname;
     }
 
-    public function setName(?string $name): self
+    public function setNickname(?string $nickname): self
     {
-        $this->name = $name;
+        $this->nickname = $nickname;
 
         return $this;
     }

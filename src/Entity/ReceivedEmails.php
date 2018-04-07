@@ -43,7 +43,7 @@ class ReceivedEmails
      * @ORM\ManyToOne(targetEntity="PersonalCategories", inversedBy="receivedEmails")
      * @ORM\JoinColumn(name="PersonalCategoriesID", referencedColumnName="PersonalCategoriesID", nullable=false)
      */
-    private $category;
+    private $categories;
 
     /**
      * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="receivedEmails")
@@ -106,12 +106,12 @@ class ReceivedEmails
 
     public function getCategory(): ?PersonalCategories
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    public function setCategory(?PersonalCategories $category): self
+    public function setCategory(?PersonalCategories $categories): self
     {
-        $this->category = $category;
+        $this->categories = $categories;
 
         return $this;
     }
