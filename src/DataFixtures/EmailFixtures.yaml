@@ -1,16 +1,19 @@
+parameters:
+    count: '<sizeof({members})>'
+
+# Blocked
 App\Entity\Blocked:
     blocked_{1..3}:
         email (unique): '<email()>'
-
 App\Entity\PersonalBlockeds:
     personalBlocked_{1..3}:
         blocked: '@blocked_<current()>'
 
+# Contact
 App\Entity\Contact:
     contact_{1..3}:
         name (unique): '<firstName()> <lastName()>'
         email (unique): '<email()>'
-
 App\Entity\ContactDetails:
     contactDetails_{1..3}:
         type: '<randomElement(["business", "personal"])>'
@@ -23,22 +26,69 @@ App\Entity\ContactDetails:
         relationship: '<randomElement(["Boss", "Aunt", "Friend", "Colleague"])>'
         website: '40%? <domainName()>'
         notes: '20%? <paragraph()>'
-
 App\Entity\PersonalContacts:
     personalContact_{1..3}:
         contact: '@contact_<current()>'
         contactDetails: '@contactDetails_<current()>'
 
+# Label
 App\Entity\Label:
     label_{1..3}:
         name (unique): '<word()>'
         slug (unique): '@self->name'
-
 App\Entity\PersonalLabels:
     personalLabel_{1..3}:
         label: '@label_<current()>'
         visibility: 1
 
+# Default Label
+App\Entity\DefaultLabel:
+    defaultLabel_{Inbox, SentMail, Important}:
+        name (unique): '<word()>'
+        slug (unique): '@self->name'
+App\Entity\PersonalDefaultLabels:
+    personalDefaultLabel_{Inbox, SentMail, Important}:
+        defaultLabel: '@defaultLabel_<current()>'
+        visibility: 1
+
+# Category
+App\Entity\Category:
+    category_{Social, Promotions, Updates}:
+        name: '<current()>'
+        slug: '$name'
+App\Entity\PersonalCategories:
+    personalCategory_{Social, Promotions, Updates}:
+        member: '@member'
+        category: '@category_<current()>'
+        visibility: 1
+
+# Sent Email
+App\Entity\Email:
+    email_{1..10}:
+        member: '@member'
+        reply_to_email: '<email()>'
+        subject: '<sentence()>'
+        body: '<realText()>'
+        timeSent: '<dateTime()>'
+App\Entity\SentEmails:
+    sentEmail_{1..10}:
+        member: '@member'
+        email: '@email_<current()>'
+        important: 0
+        starred: 0
+        category: '@personalCategory_Social'
+
+# # Received Email
+# App\Entity\Email:
+#     email_{1..10}:
+#         member: '<{members[rand(0, sizeof({members}))]}>'
+#         reply_to_email: '@self->member->email'
+#         subject: '<sentence()>'
+#         body: '<realText()>'
+#         timeSent: '<dateTime()>'
+
+
+# Member
 App\Entity\Member:
     member:
         gender: '80%? <randomElement(["male", "female"])>'
@@ -51,12 +101,19 @@ App\Entity\Member:
         email (unique): '<email()>'
         password: '<password()>'
         __calls:
+            # Blocked
             - addBlocked: ['@personalBlocked_1']
             - addBlocked: ['@personalBlocked_2']
             - addBlocked: ['@personalBlocked_3']
+            # Contact
             - addContact: ['@personalContact_1']
             - addContact: ['@personalContact_2']
             - addContact: ['@personalContact_3']
+            # Label
             - addLabel: ['@personalLabel_1']
             - addLabel: ['@personalLabel_2']
             - addLabel: ['@personalLabel_3']
+            # Default Label
+            - addDefaultLabel: ['@personalDefaultLabel_Inbox']
+            - addDefaultLabel: ['@personalDefaultLabel_SentMail']
+            - addDefaultLabel: ['@personalDefaultLabel_Important']

@@ -42,19 +42,21 @@ class EmailController extends AbstractController
     {
         if(isset($defaultLabel)) {
             $interface->setType(LabelConstants::ADMIN_DEFINED);
-            $emails = $interface->findPersonalLabel($defaultLabel, 122);
+            $emails = $interface->findPersonalLabel($defaultLabel, 195);
             return $this->render('email/label.html.twig', [
                 "emails" => $emails]);
         }
 
         if(isset($category)) {
+            $repository = $this->getDoctrine()->getRepository(PersonalCategories::class);
+            $emails = $repository->findEmailsBySlug($category, 195);
             return $this->render('email/category.html.twig', [
-                "emails" => $category]);
+                "emails" => $emails]);
         }
 
         if(isset($label)) {
             $interface->setType(LabelConstants::USER_DEFINED);
-            $emails = $interface->findPersonalLabel($label, 122);
+            $emails = $interface->findPersonalLabel($label, 195);
             return $this->render('email/label.html.twig', [
                 "emails" => $emails]);
         }

@@ -33,7 +33,7 @@ class Category
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PersonalCategories", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="PersonalCategories", mappedBy="category")
      */
     private $personalCategories;
 
@@ -55,6 +55,18 @@ class Category
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

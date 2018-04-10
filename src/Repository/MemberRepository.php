@@ -57,4 +57,8 @@ class MemberRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getOneOrNullResult();
     }
+    public function findAll()
+    {
+        return $this->findBy(array(), array('username' => 'ASC'));
+    }
 }

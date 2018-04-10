@@ -26,19 +26,15 @@ class PersonalLabelsRepository extends ServiceEntityRepository
         // c = ReceivedEmailsTable
         // d = EmailTable
         return $this->createQueryBuilder('a')
-                    ->select('d')
                     ->leftJoin('a.label', 'b')
                     ->andWhere('b.slug = :slug')
                     ->andWhere('a.member = :id')
-                    ->andWhere('a.label = b.id')
                     ->setParameters([':slug' => $slug, ':id' => $id])
                     ->leftJoin('a.receivedEmails', 'c')
-                    ->andWhere('a.id = c.labels')
                     ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
-                    ->andWhere('c.email = d.id')
                     ->orderBy('d.timeSent', 'ASC')
                     ->getQuery()
-                    ->getResult();
+                    ->getScalarResult();
     }
    /**
     * @return PersonalLabels[] Returns an array of PersonalLabels objects

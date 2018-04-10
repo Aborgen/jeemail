@@ -19,32 +19,23 @@ class PersonalCategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonalCategories::class);
     }
 
-//    /**
-//     * @return PersonalCategories[] Returns an array of PersonalCategories objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function findEmailsBySlug(string $slug, int $id): array
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        // a = PersonalCategoriesTable
+        // b = CategoriesTable
+        // c = ReceivedEmailsTable
+        // d = EmailTable
+        return $this->createQueryBuilder('a')
+                    ->select('d')
+                    ->leftJoin('a.category', 'b')
+                    ->andWhere('b.slug = :slug')
+                    ->andWhere('a.member = :id')
+                    ->setParameters([':slug' => $slug, ':id' => $id])
+                    ->leftJoin('a.receivedEmails', 'c')
+                    ->andWhere('a.id = c.categories')
+                    ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
+                    ->orderBy('d.timeSent', 'ASC')
+                    ->getQuery()
+                    ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?PersonalCategories
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

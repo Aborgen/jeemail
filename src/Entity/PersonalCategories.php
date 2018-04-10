@@ -12,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PersonalCategories
 {
-    const JOIN_TABLE = "Category";
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

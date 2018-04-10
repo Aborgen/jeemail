@@ -56,12 +56,12 @@ class SentEmails
         return $this->id;
     }
 
-    public function getMemberID(): ?Member
+    public function getMember(): ?Member
     {
         return $this->member;
     }
 
-    public function setMemberID(?Member $member): self
+    public function setMember(?Member $member): self
     {
         $this->member = $member;
 

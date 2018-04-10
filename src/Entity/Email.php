@@ -78,18 +78,6 @@ class Email
         return $this;
     }
 
-    public function getAuthor(): ?Member
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?Member $author): self
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
     public function getReplyToEmail(): ?string
     {
         return $this->reply_to_email;
