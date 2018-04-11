@@ -40,26 +40,44 @@ class EmailController extends AbstractController
                          string $label = null,
                          LabelInterface $interface): object
     {
-        if(isset($defaultLabel)) {
-            $interface->setType(LabelConstants::ADMIN_DEFINED);
-            $emails = $interface->findPersonalLabel($defaultLabel, 195);
-            return $this->render('email/label.html.twig', [
-                "emails" => $emails]);
+        try {
+            if(isset($defaultLabel)) {
+                $interface->setType(LabelConstants::DEFAULT_LABEL);
+                $personalDefaultLabel = $interface->findPersonalLabel($defaultLabel, 195);
+                if(!isset($personalDefaultLabel)) {
+                    throw new \Exception("$defaultLabel does not exist in the database");
+                }
+
+                return $this->render('email/label.html.twig', [
+                    "label" => $defaultLabel]);
+            }
+
+            if(isset($category)) {
+                $interface->setType(LabelConstants::CATEGORY);
+                $personalCategory = $interface->findPersonalLabel($category, 195);
+                if(!isset($personalCategory)) {
+                    throw new \Exception("$category does not exist in the database");
+                }
+
+                return $this->render('email/category.html.twig', [
+                    "category" => $personalCategory]);
+            }
+
+            if(isset($label)) {
+                $interface->setType(LabelConstants::LABEL);
+                $personalLabel = $interface->findPersonalLabel($label, 195);
+                if(!isset($personalLabel)) {
+                    throw new \Exception("$label does not exist in the database");
+                }
+
+                return $this->render('email/label.html.twig', [
+                    "label" => $personalLabel]);
+            }
+        } catch (\Exception $e) {
+            return $this->redirectToRoute('email_index');
         }
 
-        if(isset($category)) {
-            $repository = $this->getDoctrine()->getRepository(PersonalCategories::class);
-            $emails = $repository->findEmailsBySlug($category, 195);
-            return $this->render('email/category.html.twig', [
-                "emails" => $emails]);
-        }
 
-        if(isset($label)) {
-            $interface->setType(LabelConstants::USER_DEFINED);
-            $emails = $interface->findPersonalLabel($label, 195);
-            return $this->render('email/label.html.twig', [
-                "emails" => $emails]);
-        }
     }
 
     /**

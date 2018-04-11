@@ -44,7 +44,7 @@ App\Entity\PersonalLabels:
 # Default Label
 App\Entity\DefaultLabel:
     defaultLabel_{Inbox, SentMail, Important}:
-        name (unique): '<word()>'
+        name (unique): '<current()>'
         slug (unique): '@self->name'
 App\Entity\PersonalDefaultLabels:
     personalDefaultLabel_{Inbox, SentMail, Important}:
@@ -62,9 +62,9 @@ App\Entity\PersonalCategories:
         category: '@category_<current()>'
         visibility: 1
 
-# Sent Email
+# Email
 App\Entity\Email:
-    email_{1..10}:
+    email_{1..20}:
         member: '@member'
         reply_to_email: '<email()>'
         subject: '<sentence()>'
@@ -77,16 +77,13 @@ App\Entity\SentEmails:
         important: 0
         starred: 0
         category: '@personalCategory_Social'
-
-# # Received Email
-# App\Entity\Email:
-#     email_{1..10}:
-#         member: '<{members[rand(0, sizeof({members}))]}>'
-#         reply_to_email: '@self->member->email'
-#         subject: '<sentence()>'
-#         body: '<realText()>'
-#         timeSent: '<dateTime()>'
-
+App\Entity\ReceivedEmails:
+    receivedEmail_{11..20}:
+        member: '@member'
+        email: '@email_<current()>'
+        important: 0
+        starred: 0
+        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
 
 # Member
 App\Entity\Member:

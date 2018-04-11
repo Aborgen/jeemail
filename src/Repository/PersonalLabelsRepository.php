@@ -34,7 +34,7 @@ class PersonalLabelsRepository extends ServiceEntityRepository
                     ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
                     ->orderBy('d.timeSent', 'ASC')
                     ->getQuery()
-                    ->getScalarResult();
+                    ->getResult();
     }
    /**
     * @return PersonalLabels[] Returns an array of PersonalLabels objects

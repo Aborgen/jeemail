@@ -4,7 +4,17 @@
 
 {% block body %}
 <h1>CATEGORY!</h1>
-{% if emails is defined %}
-    <pre>{{ emails }}</pre>
+{% if category is not null %}
+    <h2>{{ category.category.name }} - Emails</h2>
+    {% for sentEmails in category.sentEmails %}
+        <p>Subject</p>
+        <pre>{{ sentEmails.email.subject }}</pre>
+        <p>Body</p>
+        <p>{{ sentEmails.email.body }}</p>
+        <span>{{ sentEmails.email.timeSent|date('D, M Y h:m:s') }}</span>
+        <span> - </span>
+        <span>{{ sentEmails.email.member.username }}({{ sentEmails.email.member.email }})</span>
+        <hr>
+    {% endfor %}
 {% endif %}
 {% endblock %}

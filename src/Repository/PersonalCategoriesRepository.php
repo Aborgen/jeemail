@@ -26,13 +26,11 @@ class PersonalCategoriesRepository extends ServiceEntityRepository
         // c = ReceivedEmailsTable
         // d = EmailTable
         return $this->createQueryBuilder('a')
-                    ->select('d')
                     ->leftJoin('a.category', 'b')
                     ->andWhere('b.slug = :slug')
                     ->andWhere('a.member = :id')
                     ->setParameters([':slug' => $slug, ':id' => $id])
                     ->leftJoin('a.receivedEmails', 'c')
-                    ->andWhere('a.id = c.categories')
                     ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
                     ->orderBy('d.timeSent', 'ASC')
                     ->getQuery()

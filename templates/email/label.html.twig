@@ -4,9 +4,17 @@
 
 {% block body %}
 <h1>LABEL!</h1>
-{% if emails is defined %}
-    {% for email in emails %}
-        <pre>{{ email }}</pre>
+{% if label is not null %}
+    <h2>{{ label.label.name }} - Emails</h2>
+    {% for sentEmails in label.sentEmails %}
+        <p>Subject</p>
+        <pre>{{ sentEmails.email.subject }}</pre>
+        <p>Body</p>
+        <p>{{ sentEmails.email.body }}</p>
+        <span>{{ sentEmails.email.timeSent|date('D, M Y h:m:s') }}</span>
+        <span> - </span>
+        <span>{{ sentEmails.email.member.username }}({{ sentEmails.email.member.email }})</span>
+        <hr>
     {% endfor %}
 {% endif %}
 {% endblock %}

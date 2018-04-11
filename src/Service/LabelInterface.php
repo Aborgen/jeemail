@@ -5,19 +5,20 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 
 use App\Constant\LabelConstants as Constant;
+use App\Entity\PersonalCategories;
 use App\Entity\PersonalDefaultLabels;
 use App\Entity\PersonalLabels;
 /**
- * Since Label and Default_Label entities are so similar --differing only in
- * privilege level required to create-- this service exists
+ * This service exists since Label, Default_Label, and Category entities
+ * are so similar.
  */
 
 class LabelInterface
 {
-    // USER_DEFINED | ADMIN_DEFINED
+    // LABEL | DEFAULT_LABEL | CATEGORY
     private $type;
-    // Entity is an instantiation of either App\Entity\PersonalLabels or
-    // App\Entity\PersonalDefaultLabels.
+    // Entity is an instantiation of either PersonalLabels,
+    // PersonalDefaultLabels, or PersonalCategories.
     private $entity;
     private $em;
 
@@ -33,9 +34,11 @@ class LabelInterface
 
     public function setType(int $type): void
     {
-        $type === Constant::USER_DEFINED || $type === Constant::ADMIN_DEFINED
+        $type === Constant::LABEL         ||
+        $type === Constant::DEFAULT_LABEL ||
+        $type === Constant::CATEGORY
             ? $this->type = $type
-            : $this->type = Constant::USER_DEFINED;
+            : $this->type = Constant::LABEL;
 
         $this->setEntity();
     }
@@ -47,26 +50,36 @@ class LabelInterface
 
     private function setEntity(): void
     {
-        $this->type === Constant::USER_DEFINED
-            ? $this->entity = PersonalLabels::class
-            : $this->entity = PersonalDefaultLabels::class;
+        switch ($this->type) {
+            case Constant::LABEL:
+                $this->entity = PersonalLabels::class;
+                break;
+            case Constant::DEFAULT_LABEL:
+                $this->entity = PersonalDefaultLabels::class;
+                break;
+            case Constant::CATEGORY:
+                $this->entity = PersonalCategories::class;
+                break;
+        }
     }
 
     /**
- 	 * Find member's particular row in either PersonalLabels or PersonalDefaultLabels
+ 	 * Find PersonalLabels, PersonalDefaultLabels, or PersonalCategories object
+     * given $slug and $id.
  	 *
- 	 * @param string $label
-     *      Expect $label to be in the form of a slug: My-Label
- 	 * @return void
+ 	 * @param string $slug
+     *      Expect $slug to be in the form of a slug: My-Label
+     * @param int $id
+     *
+ 	 * @return object|null
 	 */
-
-    public function findPersonalLabel(string $slug, int $id): array
+    public function findPersonalLabel(string $slug, int $id): ?object
     {
         $label = $this->em
                       ->getRepository($this->entity)
                       ->findEmailsBySlug($slug, $id);
 
-        return $label;
+        return isset($label[0]) ? $label[0] : null;
     }
 }
 ?>
