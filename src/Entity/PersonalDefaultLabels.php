@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,6 +37,16 @@ class PersonalDefaultLabels
      * @ORM\Column(type="boolean", options={"default":1})
      */
     private $visibility;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="defaultLabels")
+     */
+    private $receivedEmail;
+
+    public function __construct()
+    {
+        $this->receivedEmail = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -73,6 +85,37 @@ class PersonalDefaultLabels
     public function setVisibility(bool $visibility): self
     {
         $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ReceivedSentEmailsToLabels[]
+     */
+    public function getReceivedEmail(): Collection
+    {
+        return $this->receivedEmail;
+    }
+
+    public function addReceivedEmail(ReceivedSentEmailsToLabels $receivedEmail): self
+    {
+        if (!$this->receivedEmail->contains($receivedEmail)) {
+            $this->receivedEmail[] = $receivedEmail;
+            $receivedEmail->setDefaultLabels($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedEmail(ReceivedSentEmailsToLabels $receivedEmail): self
+    {
+        if ($this->receivedEmail->contains($receivedEmail)) {
+            $this->receivedEmail->removeElement($receivedEmail);
+            // set the owning side to null (unless already changed)
+            if ($receivedEmail->getDefaultLabels() === $this) {
+                $receivedEmail->setDefaultLabels(null);
+            }
+        }
 
         return $this;
     }

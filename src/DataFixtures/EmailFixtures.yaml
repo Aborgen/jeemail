@@ -76,14 +76,13 @@ App\Entity\SentEmails:
         email: '@email_<current()>'
         important: 0
         starred: 0
-        category: '@personalCategory_Social'
 App\Entity\ReceivedEmails:
     receivedEmail_{11..20}:
         member: '@member'
         email: '@email_<current()>'
         important: 0
         starred: 0
-        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        category: '90%? @personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
 
 # Member
 App\Entity\Member:

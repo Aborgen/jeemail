@@ -39,19 +39,13 @@ class PersonalLabels
     private $visibility;
 
     /**
-     * @ORM\OneToMany(targetEntity="ReceivedEmails", mappedBy="labels")
-     */
-    private $receivedEmails;
-
-    /**
-     * @ORM\OneToMany(targetEntity="SentEmails", mappedBy="labels")
+     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="labels")
      */
     private $sentEmails;
 
     public function __construct()
     {
-        $this->receivedEmails = new ArrayCollection();
-        $this->sentEmails     = new ArrayCollection();
+        $this->sentEmails = new ArrayCollection();
     }
 
     public function getId()
@@ -96,45 +90,14 @@ class PersonalLabels
     }
 
     /**
-     * @return Collection|ReceivedEmails[]
-     */
-    public function getReceivedEmails(): Collection
-    {
-        return $this->receivedEmails;
-    }
-
-    public function addReceivedEmail(ReceivedEmails $receivedEmail): self
-    {
-        if (!$this->receivedEmails->contains($receivedEmail)) {
-            $this->receivedEmails[] = $receivedEmail;
-            $receivedEmail->setLabels($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReceivedEmail(ReceivedEmails $receivedEmail): self
-    {
-        if ($this->receivedEmails->contains($receivedEmail)) {
-            $this->receivedEmails->removeElement($receivedEmail);
-            // set the owning side to null (unless already changed)
-            if ($receivedEmail->getLabels() === $this) {
-                $receivedEmail->setLabels(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|SentEmails[]
+     * @return Collection|ReceivedSentEmailsToLabels[]
      */
     public function getSentEmails(): Collection
     {
         return $this->sentEmails;
     }
 
-    public function addSentEmail(SentEmails $sentEmail): self
+    public function addSentEmail(ReceivedSentEmailsToLabels $sentEmail): self
     {
         if (!$this->sentEmails->contains($sentEmail)) {
             $this->sentEmails[] = $sentEmail;
@@ -144,7 +107,7 @@ class PersonalLabels
         return $this;
     }
 
-    public function removeSentEmail(SentEmails $sentEmail): self
+    public function removeSentEmail(ReceivedSentEmailsToLabels $sentEmail): self
     {
         if ($this->sentEmails->contains($sentEmail)) {
             $this->sentEmails->removeElement($sentEmail);

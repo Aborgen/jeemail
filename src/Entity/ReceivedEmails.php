@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,15 +43,19 @@ class ReceivedEmails
 
     /**
      * @ORM\ManyToOne(targetEntity="PersonalCategories", inversedBy="receivedEmails")
-     * @ORM\JoinColumn(name="PersonalCategoriesID", referencedColumnName="PersonalCategoriesID", nullable=false)
+     * @ORM\JoinColumn(name="PersonalCategoriesID", referencedColumnName="PersonalCategoriesID", nullable=true)
      */
     private $category;
 
     /**
-     * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="receivedEmails")
-     * @ORM\JoinColumn(name="PersonalLabelsID", referencedColumnName="PersonalLabelsID", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="receivedEmail")
      */
     private $labels;
+
+    public function __construct()
+    {
+        $this->labels = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -116,14 +122,33 @@ class ReceivedEmails
         return $this;
     }
 
-    public function getLabels(): ?PersonalLabels
+    /**
+     * @return Collection|ReceivedSentEmailsToLabels[]
+     */
+    public function getLabels(): Collection
     {
         return $this->labels;
     }
 
-    public function setLabels(?PersonalLabels $labels): self
+    public function addLabel(ReceivedSentEmailsToLabels $label): self
     {
-        $this->labels = $labels;
+        if (!$this->labels->contains($label)) {
+            $this->labels[] = $label;
+            $label->setReceivedEmail($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLabel(ReceivedSentEmailsToLabels $label): self
+    {
+        if ($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
+            // set the owning side to null (unless already changed)
+            if ($label->getReceivedEmail() === $this) {
+                $label->setReceivedEmail(null);
+            }
+        }
 
         return $this;
     }

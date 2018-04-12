@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,10 +48,14 @@ class SentEmails
     private $category;
 
     /**
-     * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="sentEmails")
-     * @ORM\JoinColumn(name="PersonalLabelsID", referencedColumnName="PersonalLabelsID", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="sentEmail")
      */
     private $labels;
+
+    public function __construct()
+    {
+        $this->labels = new ArrayCollection();
+    }
 
     public function getId()
     {
@@ -121,9 +127,25 @@ class SentEmails
         return $this->labels;
     }
 
-    public function setLabels(?PersonalLabels $labels): self
+    public function addLabel(ReceivedSentEmailsToLabels $label): self
     {
-        $this->labels = $labels;
+        if (!$this->labels->contains($label)) {
+            $this->labels[] = $label;
+            $label->setSentEmail($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLabel(ReceivedSentEmailsToLabels $label): self
+    {
+        if ($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
+            // set the owning side to null (unless already changed)
+            if ($label->getSentEmail() === $this) {
+                $label->setSentEmail(null);
+            }
+        }
 
         return $this;
     }
