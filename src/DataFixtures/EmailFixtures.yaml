@@ -104,6 +104,15 @@ App\Entity\ReceivedSentEmailsToLabels:
     receivedLabels_{1..10}:
         defaultLabels: '@personalDefaultLabel_Inbox'
 
+# Settings
+App\Entity\Settings:
+    settings_{1..5}:
+        maxEmailsShown: '<randomElement(["10", "15", "20", "25", "50", "100"])>'
+        max_contacts_shown: '<randomElement(["50", "100", "250"])>'
+        reply_type: <numberBetween(0, 1)>
+        display_images: <numberBetween(0, 1)>
+        button_style: <numberBetween(0, 1)>
+        ui_display_style: '<randomElement(["comfortable", "compact", "cozy"])>'
 # Member
 App\Entity\Member:
     member:
@@ -137,3 +146,5 @@ App\Entity\Member:
             - addDefaultLabel: ['@personalDefaultLabel_Inbox']
             - addDefaultLabel: ['@personalDefaultLabel_SentMail']
             - addDefaultLabel: ['@personalDefaultLabel_Important']
+            # Settings
+            - addSettings: ['@settings_<numberBetween(1, 5)>']

@@ -5,18 +5,10 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SettingsRepository")
- * @ORM\Table(name="Settings", @UniqueEntity(fields={
- *     "max_emails_shown",
- *     "max_contacts_shown",
- *     "reply_type",
- *     "display_images",
- *     "button_style",
- *     "ui_display_style"
- * }), options={"comment":"Since there are a finite number of possible combinations with the Settings, each user will have reference to one of the available rows in Personal_Settings."})
+ * @ORM\Table(name="Settings")
  */
 class Settings
 {
@@ -62,14 +54,14 @@ class Settings
         return $this->id;
     }
 
-    public function getMaxEmailsPerPage(): ?string
+    public function getMaxEmailsShown(): ?string
     {
-        return $this->max_emails_per_page;
+        return $this->max_emails_shown;
     }
 
-    public function setMaxEmailsPerPage(string $max_emails_per_page): self
+    public function setMaxEmailsShown(string $max_emails_shown): self
     {
-        $this->max_emails_per_page = $max_emails_per_page;
+        $this->max_emails_shown = $max_emails_shown;
 
         return $this;
     }
@@ -86,14 +78,14 @@ class Settings
         return $this;
     }
 
-    public function getReplyDefault(): ?string
+    public function getReplyType(): ?string
     {
-        return $this->reply_default;
+        return $this->reply_type;
     }
 
-    public function setReplyDefault(string $reply_default): self
+    public function setReplyType(string $reply_type): self
     {
-        $this->reply_default = $reply_default;
+        $this->reply_type = $reply_type;
 
         return $this;
     }
@@ -122,14 +114,14 @@ class Settings
         return $this;
     }
 
-    public function getUiDisplayType(): ?string
+    public function getUiDisplayStyle(): ?string
     {
-        return $this->ui_display_type;
+        return $this->ui_display_style;
     }
 
-    public function setUiDisplayType(string $ui_display_type): self
+    public function setUiDisplayStyle(string $ui_display_style): self
     {
-        $this->ui_display_type = $ui_display_type;
+        $this->ui_display_style = $ui_display_style;
 
         return $this;
     }
