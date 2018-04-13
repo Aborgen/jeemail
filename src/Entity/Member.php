@@ -98,7 +98,7 @@ class Member
     private $defaultLabels;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Theme", inversedBy="members")
+     * @ORM\ManyToMany(targetEntity="Theme", inversedBy="members")
      * @ORM\JoinTable(name="Personal_Themes",
      *     joinColumns={@ORM\JoinColumn(name="MemberID", referencedColumnName="MemberID")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="ThemeID", referencedColumnName="ThemeID")})
@@ -352,7 +352,6 @@ class Member
     {
         if (!$this->settings->contains($settings)) {
             $this->settings[] = $settings;
-            $settings->addMember($this);
         }
 
         return $this;
@@ -362,7 +361,6 @@ class Member
     {
         if ($this->settings->contains($settings)) {
             $this->settings->removeElement($settings);
-            $settings->removeMember($this);
         }
 
         return $this;
