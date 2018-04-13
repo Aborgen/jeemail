@@ -3,18 +3,36 @@
 {% block title %}{% endblock %}
 
 {% block body %}
-<h1>LABEL!</h1>
 {% if label is not null %}
-    <h2>{{ label.label.name }} - Emails</h2>
-    {% for sentEmails in label.sentEmails %}
-        <p>Subject</p>
-        <pre>{{ sentEmails.email.subject }}</pre>
-        <p>Body</p>
-        <p>{{ sentEmails.email.body }}</p>
-        <span>{{ sentEmails.email.timeSent|date('D, M Y h:m:s') }}</span>
-        <span> - </span>
-        <span>{{ sentEmails.email.member.username }}({{ sentEmails.email.member.email }})</span>
-        <hr>
+    <h2>{{ label.label.name }}</h2>
+    <h3>Sent Emails</h3>
+    {% for sentEmails in label.sentOrReceivedEmails %}
+        {% if sentEmails.sentEmail is not null %}
+            <p>Subject</p>
+            <pre>{{ sentEmails.sentEmail.email.subject }}</pre>
+            <p>Body</p>
+            <p>{{ sentEmails.sentEmail.email.body }}</p>
+            <span>{{ sentEmails.sentEmail.email.timeSent|date('D, M Y h:m:s') }}</span>
+            <span> - </span>
+            <span>{{ sentEmails.sentEmail.email.member.username }}({{ sentEmails.sentEmail.email.member.email }})</span>
+            <hr>
+        {% endif %}
     {% endfor %}
+    <h3>Received Emails</h3>
+    {% for receivedEmails in label.sentOrReceivedEmails %}
+        {% if receivedEmails.receivedEmail is not null %}
+            <p>Subject</p>
+            <pre>{{ receivedEmails.receivedEmail.email.subject }}</pre>
+            <p>Body</p>
+            <p>{{ receivedEmails.receivedEmail.email.body }}</p>
+            <span>{{ receivedEmails.receivedEmail.email.timeSent|date('D, M Y h:m:s') }}</span>
+            <span> - </span>
+            <span>{{ receivedEmails.receivedEmail.email.member.username }}({{ receivedEmails.receivedEmail.email.member.email }})</span>
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <h2>NOT A VALID LABEL!</h2>
 {% endif %}
+
 {% endblock %}

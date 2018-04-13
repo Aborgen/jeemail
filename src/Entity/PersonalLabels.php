@@ -12,8 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PersonalLabels
 {
-    const JOIN_TABLE = "Label";
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -39,13 +37,13 @@ class PersonalLabels
     private $visibility;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="labels")
+     * @ORM\OneToMany(targetEntity="ReceivedSentEmailsToLabels", mappedBy="labels")
      */
-    private $sentEmails;
+    private $sentOrReceivedEmails;
 
     public function __construct()
     {
-        $this->sentEmails = new ArrayCollection();
+        $this->sentOrReceivedEmails = new ArrayCollection();
     }
 
     public function getId()
@@ -92,28 +90,28 @@ class PersonalLabels
     /**
      * @return Collection|ReceivedSentEmailsToLabels[]
      */
-    public function getSentEmails(): Collection
+    public function getSentOrReceivedEmails(): Collection
     {
-        return $this->sentEmails;
+        return $this->sentOrReceivedEmails;
     }
 
-    public function addSentEmail(ReceivedSentEmailsToLabels $sentEmail): self
+    public function addSentOrReceivedEmail(ReceivedSentEmailsToLabels $sentOrReceivedEmail): self
     {
-        if (!$this->sentEmails->contains($sentEmail)) {
-            $this->sentEmails[] = $sentEmail;
-            $sentEmail->setLabels($this);
+        if (!$this->sentOrReceivedEmails->contains($sentOrReceivedEmail)) {
+            $this->sentOrReceivedEmails[] = $sentOrReceivedEmail;
+            $sentOrReceivedEmail->setLabels($this);
         }
 
         return $this;
     }
 
-    public function removeSentEmail(ReceivedSentEmailsToLabels $sentEmail): self
+    public function removeSentOrReceivedEmail(ReceivedSentEmailsToLabels $sentOrReceivedEmail): self
     {
-        if ($this->sentEmails->contains($sentEmail)) {
-            $this->sentEmails->removeElement($sentEmail);
+        if ($this->sentOrReceivedEmails->contains($sentOrReceivedEmail)) {
+            $this->sentOrReceivedEmails->removeElement($sentOrReceivedEmail);
             // set the owning side to null (unless already changed)
-            if ($sentEmail->getLabels() === $this) {
-                $sentEmail->setLabels(null);
+            if ($sentOrReceivedEmail->getLabels() === $this) {
+                $sentOrReceivedEmail->setLabels(null);
             }
         }
 

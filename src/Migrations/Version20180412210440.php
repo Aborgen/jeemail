@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20180405234711 extends AbstractMigration
+class Version20180412210440 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
@@ -31,6 +31,7 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE Personal_Default_Labels_PersonalDefaultLabelsID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Theme_ThemeID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Category_CategoryID_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE Received_Sent_Emails_To_Labels_ReceivedSentEmailsToLabelsID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Contact_Details_ContactDetailsID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE Default_Label_DefaultLabelID_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE Member (MemberID INT NOT NULL, first_name VARCHAR(64) NOT NULL, last_name VARCHAR(64) NOT NULL, gender VARCHAR(64) DEFAULT NULL, birthday VARCHAR(64) DEFAULT NULL, address VARCHAR(64) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, username VARCHAR(64) NOT NULL, email VARCHAR(64) NOT NULL, password VARCHAR(255) NOT NULL, IconID INT DEFAULT NULL, PRIMARY KEY(MemberID))');
@@ -42,16 +43,14 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('CREATE TABLE Personal_Themes (MemberID INT NOT NULL, ThemeID INT NOT NULL, PRIMARY KEY(MemberID, ThemeID))');
         $this->addSql('CREATE INDEX IDX_6EA7E561522B9974 ON Personal_Themes (MemberID)');
         $this->addSql('CREATE INDEX IDX_6EA7E56128D93000 ON Personal_Themes (ThemeID)');
-        $this->addSql('CREATE TABLE Sent_Emails (SentEmailsID INT NOT NULL, important BOOLEAN NOT NULL, starred BOOLEAN NOT NULL, MemberID INT NOT NULL, EmailID INT NOT NULL, PersonalCategoriesID INT NOT NULL, PersonalLabelsID INT DEFAULT NULL, PRIMARY KEY(SentEmailsID))');
+        $this->addSql('CREATE TABLE Sent_Emails (SentEmailsID INT NOT NULL, important BOOLEAN NOT NULL, starred BOOLEAN NOT NULL, MemberID INT NOT NULL, EmailID INT NOT NULL, PersonalCategoriesID INT NOT NULL, PRIMARY KEY(SentEmailsID))');
         $this->addSql('CREATE INDEX IDX_2EDCD538522B9974 ON Sent_Emails (MemberID)');
         $this->addSql('CREATE INDEX IDX_2EDCD538CC8E3CD1 ON Sent_Emails (EmailID)');
         $this->addSql('CREATE INDEX IDX_2EDCD538A9AE1681 ON Sent_Emails (PersonalCategoriesID)');
-        $this->addSql('CREATE INDEX IDX_2EDCD538B52265AA ON Sent_Emails (PersonalLabelsID)');
-        $this->addSql('CREATE TABLE Received_Emails (ReceivedEmailsID INT NOT NULL, important BOOLEAN DEFAULT \'false\' NOT NULL, starred BOOLEAN DEFAULT \'false\' NOT NULL, MemberID INT NOT NULL, EmailID INT NOT NULL, PersonalCategoriesID INT NOT NULL, PersonalLabelsID INT DEFAULT NULL, PRIMARY KEY(ReceivedEmailsID))');
+        $this->addSql('CREATE TABLE Received_Emails (ReceivedEmailsID INT NOT NULL, important BOOLEAN DEFAULT \'false\' NOT NULL, starred BOOLEAN DEFAULT \'false\' NOT NULL, MemberID INT NOT NULL, EmailID INT NOT NULL, PersonalCategoriesID INT DEFAULT NULL, PRIMARY KEY(ReceivedEmailsID))');
         $this->addSql('CREATE INDEX IDX_4793F8D9522B9974 ON Received_Emails (MemberID)');
         $this->addSql('CREATE INDEX IDX_4793F8D9CC8E3CD1 ON Received_Emails (EmailID)');
         $this->addSql('CREATE INDEX IDX_4793F8D9A9AE1681 ON Received_Emails (PersonalCategoriesID)');
-        $this->addSql('CREATE INDEX IDX_4793F8D9B52265AA ON Received_Emails (PersonalLabelsID)');
         $this->addSql('CREATE TABLE Personal_Labels (PersonalLabelsID INT NOT NULL, visibility BOOLEAN DEFAULT \'true\' NOT NULL, MemberID INT NOT NULL, LabelID INT NOT NULL, PRIMARY KEY(PersonalLabelsID))');
         $this->addSql('CREATE INDEX IDX_CE34D5AE522B9974 ON Personal_Labels (MemberID)');
         $this->addSql('CREATE INDEX IDX_CE34D5AE23A27C11 ON Personal_Labels (LabelID)');
@@ -89,6 +88,11 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_FF3A7B9786C952DA ON Category (url_slug)');
         $this->addSql('COMMENT ON COLUMN Category.name IS \'Similar but separate from Default_Label. An email can have both a Category and a Label.\'');
         $this->addSql('COMMENT ON COLUMN Category.url_slug IS \'This field will also contain the name of the category. If there are any spaces present, they will be replaced with \'\'-\'\': Excellent Category -> Excellent-Category\'');
+        $this->addSql('CREATE TABLE Received_Sent_Emails_To_Labels (ReceivedSentEmailsToLabelsID INT NOT NULL, ReceivedEmailsID INT DEFAULT NULL, SentEmailsID INT DEFAULT NULL, PersonalDefaultLabelsID INT DEFAULT NULL, PersonalLabelsID INT DEFAULT NULL, PRIMARY KEY(ReceivedSentEmailsToLabelsID))');
+        $this->addSql('CREATE INDEX IDX_74863742F6D8828 ON Received_Sent_Emails_To_Labels (ReceivedEmailsID)');
+        $this->addSql('CREATE INDEX IDX_74863742D80915EB ON Received_Sent_Emails_To_Labels (SentEmailsID)');
+        $this->addSql('CREATE INDEX IDX_74863742E35EFF5F ON Received_Sent_Emails_To_Labels (PersonalDefaultLabelsID)');
+        $this->addSql('CREATE INDEX IDX_74863742B52265AA ON Received_Sent_Emails_To_Labels (PersonalLabelsID)');
         $this->addSql('CREATE TABLE Contact_Details (ContactDetailsID INT NOT NULL, type TEXT DEFAULT NULL CHECK (type IN (\'business\', \'personal\')), nickname VARCHAR(64) DEFAULT NULL, company VARCHAR(64) DEFAULT NULL, job_title VARCHAR(64) DEFAULT NULL, phone VARCHAR(64) DEFAULT NULL, address VARCHAR(64) DEFAULT NULL, birthday VARCHAR(64) DEFAULT NULL, relationship VARCHAR(64) DEFAULT NULL, website VARCHAR(64) DEFAULT NULL, notes TEXT DEFAULT NULL, PRIMARY KEY(ContactDetailsID))');
         $this->addSql('CREATE TABLE Default_Label (DefaultLabelID INT NOT NULL, name VARCHAR(255) NOT NULL, url_slug VARCHAR(255) NOT NULL, PRIMARY KEY(DefaultLabelID))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_953E60175E237E06 ON Default_Label (name)');
@@ -102,11 +106,9 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('ALTER TABLE Sent_Emails ADD CONSTRAINT FK_2EDCD538522B9974 FOREIGN KEY (MemberID) REFERENCES Member (MemberID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Sent_Emails ADD CONSTRAINT FK_2EDCD538CC8E3CD1 FOREIGN KEY (EmailID) REFERENCES Email (EmailID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Sent_Emails ADD CONSTRAINT FK_2EDCD538A9AE1681 FOREIGN KEY (PersonalCategoriesID) REFERENCES Personal_Categories (PersonalCategoriesID) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE Sent_Emails ADD CONSTRAINT FK_2EDCD538B52265AA FOREIGN KEY (PersonalLabelsID) REFERENCES Personal_Labels (PersonalLabelsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Received_Emails ADD CONSTRAINT FK_4793F8D9522B9974 FOREIGN KEY (MemberID) REFERENCES Member (MemberID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Received_Emails ADD CONSTRAINT FK_4793F8D9CC8E3CD1 FOREIGN KEY (EmailID) REFERENCES Email (EmailID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Received_Emails ADD CONSTRAINT FK_4793F8D9A9AE1681 FOREIGN KEY (PersonalCategoriesID) REFERENCES Personal_Categories (PersonalCategoriesID) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE Received_Emails ADD CONSTRAINT FK_4793F8D9B52265AA FOREIGN KEY (PersonalLabelsID) REFERENCES Personal_Labels (PersonalLabelsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Personal_Labels ADD CONSTRAINT FK_CE34D5AE522B9974 FOREIGN KEY (MemberID) REFERENCES Member (MemberID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Personal_Labels ADD CONSTRAINT FK_CE34D5AE23A27C11 FOREIGN KEY (LabelID) REFERENCES Label (LabelID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Personal_Contacts ADD CONSTRAINT FK_48AA9B96522B9974 FOREIGN KEY (MemberID) REFERENCES Member (MemberID) NOT DEFERRABLE INITIALLY IMMEDIATE');
@@ -119,6 +121,11 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('ALTER TABLE Personal_Categories ADD CONSTRAINT FK_13FA940CE8042869 FOREIGN KEY (CategoryID) REFERENCES Category (CategoryID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Personal_Default_Labels ADD CONSTRAINT FK_FC15AE5B522B9974 FOREIGN KEY (MemberID) REFERENCES Member (MemberID) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE Personal_Default_Labels ADD CONSTRAINT FK_FC15AE5BF0A4E819 FOREIGN KEY (DefaultLabelID) REFERENCES Default_Label (DefaultLabelID) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels ADD CONSTRAINT FK_74863742F6D8828 FOREIGN KEY (ReceivedEmailsID) REFERENCES Received_Emails (ReceivedEmailsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels ADD CONSTRAINT FK_74863742D80915EB FOREIGN KEY (SentEmailsID) REFERENCES Sent_Emails (SentEmailsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels ADD CONSTRAINT FK_74863742E35EFF5F FOREIGN KEY (PersonalDefaultLabelsID) REFERENCES Personal_Default_Labels (PersonalDefaultLabelsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels ADD CONSTRAINT FK_74863742B52265AA FOREIGN KEY (PersonalLabelsID) REFERENCES Personal_Labels (PersonalLabelsID) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels ADD CONSTRAINT CHK_FORCED_NULL CHECK (((ReceivedEmailsID IS NOT NULL OR SentEmailsID IS NOT NULL) AND (ReceivedEmailsID IS NULL OR SentEmailsID IS NULL)) AND ((PersonalDefaultLabelsID IS NOT NULL OR PersonalLabelsID IS NOT NULL) AND (PersonalDefaultLabelsID IS NULL OR PersonalLabelsID IS NULL)))');
     }
 
     public function down(Schema $schema)
@@ -126,7 +133,7 @@ class Version20180405234711 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
+        $this->addSql('CREATE SCHEMA IF NOT EXISTS public');
         $this->addSql('ALTER TABLE Personal_Settings DROP CONSTRAINT FK_9EAF2E20522B9974');
         $this->addSql('ALTER TABLE Personal_Themes DROP CONSTRAINT FK_6EA7E561522B9974');
         $this->addSql('ALTER TABLE Sent_Emails DROP CONSTRAINT FK_2EDCD538522B9974');
@@ -137,8 +144,9 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('ALTER TABLE Personal_Blockeds DROP CONSTRAINT FK_8D869725522B9974');
         $this->addSql('ALTER TABLE Personal_Categories DROP CONSTRAINT FK_13FA940C522B9974');
         $this->addSql('ALTER TABLE Personal_Default_Labels DROP CONSTRAINT FK_FC15AE5B522B9974');
-        $this->addSql('ALTER TABLE Sent_Emails DROP CONSTRAINT FK_2EDCD538B52265AA');
-        $this->addSql('ALTER TABLE Received_Emails DROP CONSTRAINT FK_4793F8D9B52265AA');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels DROP CONSTRAINT FK_74863742D80915EB');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels DROP CONSTRAINT FK_74863742F6D8828');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels DROP CONSTRAINT FK_74863742B52265AA');
         $this->addSql('ALTER TABLE Sent_Emails DROP CONSTRAINT FK_2EDCD538CC8E3CD1');
         $this->addSql('ALTER TABLE Received_Emails DROP CONSTRAINT FK_4793F8D9CC8E3CD1');
         $this->addSql('ALTER TABLE Sent_Emails DROP CONSTRAINT FK_2EDCD538A9AE1681');
@@ -148,6 +156,8 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('ALTER TABLE Personal_Settings DROP CONSTRAINT FK_9EAF2E203ED5054C');
         $this->addSql('ALTER TABLE Personal_Blockeds DROP CONSTRAINT FK_8D8697259F799877');
         $this->addSql('ALTER TABLE Personal_Contacts DROP CONSTRAINT FK_48AA9B96CDD4564D');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels DROP CONSTRAINT FK_74863742E35EFF5F');
+        $this->addSql('ALTER TABLE Received_Sent_Emails_To_Labels DROP CONSTRAINT CHK_FORCED_NULL');
         $this->addSql('ALTER TABLE Personal_Themes DROP CONSTRAINT FK_6EA7E56128D93000');
         $this->addSql('ALTER TABLE Personal_Categories DROP CONSTRAINT FK_13FA940CE8042869');
         $this->addSql('ALTER TABLE Personal_Contacts DROP CONSTRAINT FK_48AA9B966646987C');
@@ -168,6 +178,7 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('DROP SEQUENCE Personal_Default_Labels_PersonalDefaultLabelsID_seq CASCADE');
         $this->addSql('DROP SEQUENCE Theme_ThemeID_seq CASCADE');
         $this->addSql('DROP SEQUENCE Category_CategoryID_seq CASCADE');
+        $this->addSql('DROP SEQUENCE Received_Sent_Emails_To_Labels_ReceivedSentEmailsToLabelsID_seq CASCADE');
         $this->addSql('DROP SEQUENCE Contact_Details_ContactDetailsID_seq CASCADE');
         $this->addSql('DROP SEQUENCE Default_Label_DefaultLabelID_seq CASCADE');
         $this->addSql('DROP TABLE Member');
@@ -188,6 +199,7 @@ class Version20180405234711 extends AbstractMigration
         $this->addSql('DROP TABLE Personal_Default_Labels');
         $this->addSql('DROP TABLE Theme');
         $this->addSql('DROP TABLE Category');
+        $this->addSql('DROP TABLE Received_Sent_Emails_To_Labels');
         $this->addSql('DROP TABLE Contact_Details');
         $this->addSql('DROP TABLE Default_Label');
     }

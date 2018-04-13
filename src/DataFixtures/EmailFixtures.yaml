@@ -48,7 +48,7 @@ App\Entity\DefaultLabel:
         slug (unique): '@self->name'
 App\Entity\PersonalDefaultLabels:
     personalDefaultLabel_{Inbox, SentMail, Important}:
-        defaultLabel: '@defaultLabel_<current()>'
+        label: '@defaultLabel_<current()>'
         visibility: 1
 
 # Category
@@ -64,25 +64,45 @@ App\Entity\PersonalCategories:
 
 # Email
 App\Entity\Email:
-    email_{1..20}:
+    emails1_{1..10}:
         member: '@member'
         reply_to_email: '<email()>'
         subject: '<sentence()>'
         body: '<realText()>'
         timeSent: '<dateTime()>'
+    emails2_{1..10}:
+        member: '@member'
+        reply_to_email: '<email()>'
+        subject: '<sentence()>'
+        body: '<realText()>'
+        timeSent: '<dateTime()>'
+
+# Member -> Email relationship tables
 App\Entity\SentEmails:
     sentEmail_{1..10}:
         member: '@member'
-        email: '@email_<current()>'
+        email: '@emails1_<current()>'
         important: 0
         starred: 0
+        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@sentLabels_<current()>']
 App\Entity\ReceivedEmails:
-    receivedEmail_{11..20}:
+    receivedEmail_{1..10}:
         member: '@member'
-        email: '@email_<current()>'
+        email: '@emails2_<current()>'
         important: 0
         starred: 0
-        category: '90%? @personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@receivedLabels_<current()>']
+
+# Received/Sent Emails <- personaldefaultlabels/personallabels relationship table
+App\Entity\ReceivedSentEmailsToLabels:
+    sentLabels_{1..10}:
+        defaultLabels: '@personalDefaultLabel_SentMail'
+    receivedLabels_{1..10}:
+        defaultLabels: '@personalDefaultLabel_Inbox'
 
 # Member
 App\Entity\Member:
@@ -105,6 +125,10 @@ App\Entity\Member:
             - addContact: ['@personalContact_1']
             - addContact: ['@personalContact_2']
             - addContact: ['@personalContact_3']
+            # Categories
+            - addCategory: ['@personalCategory_Social']
+            - addCategory: ['@personalCategory_Promotions']
+            - addCategory: ['@personalCategory_Updates']
             # Label
             - addLabel: ['@personalLabel_1']
             - addLabel: ['@personalLabel_2']

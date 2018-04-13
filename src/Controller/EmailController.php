@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use \Symfony\Component\VarDumper\Dump;
 
 // Entities
 use App\Entity\PersonalCategories;
@@ -40,42 +41,42 @@ class EmailController extends AbstractController
                          string $label = null,
                          LabelInterface $interface): object
     {
-        try {
+        // try {
             if(isset($defaultLabel)) {
                 $interface->setType(LabelConstants::DEFAULT_LABEL);
-                $personalDefaultLabel = $interface->findPersonalLabel($defaultLabel, 195);
-                if(!isset($personalDefaultLabel)) {
-                    throw new \Exception("$defaultLabel does not exist in the database");
-                }
-
+                $personalDefaultLabel = $interface->findPersonalLabel($defaultLabel, 4);
+                // if(!isset($personalDefaultLabel)) {
+                //     throw new \Exception("$defaultLabel does not exist in the database");
+                // }
+                dump($personalDefaultLabel);
                 return $this->render('email/label.html.twig', [
-                    "label" => $defaultLabel]);
+                    "label" => $personalDefaultLabel]);
             }
 
             if(isset($category)) {
                 $interface->setType(LabelConstants::CATEGORY);
-                $personalCategory = $interface->findPersonalLabel($category, 195);
-                if(!isset($personalCategory)) {
-                    throw new \Exception("$category does not exist in the database");
-                }
-
+                $personalCategory = $interface->findPersonalLabel($category, 4);
+                // if(!isset($personalCategory)) {
+                //     throw new \Exception("$category does not exist in the database");
+                // }
                 return $this->render('email/category.html.twig', [
                     "category" => $personalCategory]);
             }
 
             if(isset($label)) {
                 $interface->setType(LabelConstants::LABEL);
-                $personalLabel = $interface->findPersonalLabel($label, 195);
-                if(!isset($personalLabel)) {
-                    throw new \Exception("$label does not exist in the database");
-                }
-
+                $personalLabel = $interface->findPersonalLabel($label, 4);
+                // if(!isset($personalLabel)) {
+                //     throw new \Exception("$label does not exist in the database");
+                // }
+                // dump($personalLabel);
                 return $this->render('email/label.html.twig', [
                     "label" => $personalLabel]);
+                // return $this->redirectToRoute('email_index');
             }
-        } catch (\Exception $e) {
-            return $this->redirectToRoute('email_index');
-        }
+        // } catch (\Exception $e) {
+        //     return $this->redirectToRoute('email_index');
+        // }
 
 
     }

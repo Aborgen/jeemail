@@ -31,7 +31,7 @@ class PersonalDefaultLabels
      * @ORM\ManyToOne(targetEntity="DefaultLabel", inversedBy="personalDefaultLabels")
      * @ORM\JoinColumn(name="DefaultLabelID", referencedColumnName="DefaultLabelID", nullable=false)
      */
-    private $defaultLabel;
+    private $label;
 
     /**
      * @ORM\Column(type="boolean", options={"default":1})
@@ -39,13 +39,13 @@ class PersonalDefaultLabels
     private $visibility;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ReceivedSentEmailsToLabels", mappedBy="defaultLabels")
+     * @ORM\OneToMany(targetEntity="ReceivedSentEmailsToLabels", mappedBy="defaultLabels")
      */
-    private $receivedEmail;
+    private $sentOrReceivedEmails;
 
     public function __construct()
     {
-        $this->receivedEmail = new ArrayCollection();
+        $this->sentOrReceivedEmails = new ArrayCollection();
     }
 
     public function getId()
@@ -65,14 +65,14 @@ class PersonalDefaultLabels
         return $this;
     }
 
-    public function getDefaultLabel(): ?DefaultLabel
+    public function getLabel(): ?DefaultLabel
     {
-        return $this->defaultLabel;
+        return $this->label;
     }
 
-    public function setDefaultLabel(?DefaultLabel $defaultLabel): self
+    public function setLabel(?DefaultLabel $label): self
     {
-        $this->defaultLabel = $defaultLabel;
+        $this->label = $label;
 
         return $this;
     }
@@ -92,28 +92,28 @@ class PersonalDefaultLabels
     /**
      * @return Collection|ReceivedSentEmailsToLabels[]
      */
-    public function getReceivedEmail(): Collection
+    public function getSentOrReceivedEmails(): Collection
     {
-        return $this->receivedEmail;
+        return $this->sentOrReceivedEmails;
     }
 
-    public function addReceivedEmail(ReceivedSentEmailsToLabels $receivedEmail): self
+    public function addSentOrReceivedEmail(ReceivedSentEmailsToLabels $sentOrReceivedEmail): self
     {
-        if (!$this->receivedEmail->contains($receivedEmail)) {
-            $this->receivedEmail[] = $receivedEmail;
-            $receivedEmail->setDefaultLabels($this);
+        if (!$this->sentOrReceivedEmails->contains($sentOrReceivedEmail)) {
+            $this->sentOrReceivedEmails[] = $sentOrReceivedEmail;
+            $sentOrReceivedEmail->setDefaultLabels($this);
         }
 
         return $this;
     }
 
-    public function removeReceivedEmail(ReceivedSentEmailsToLabels $receivedEmail): self
+    public function removeReceivedEmail(ReceivedSentEmailsToLabels $sentOrReceivedEmail): self
     {
-        if ($this->receivedEmail->contains($receivedEmail)) {
-            $this->receivedEmail->removeElement($receivedEmail);
+        if ($this->sentOrReceivedEmails->contains($sentOrReceivedEmail)) {
+            $this->sentOrReceivedEmails->removeElement($sentOrReceivedEmail);
             // set the owning side to null (unless already changed)
-            if ($receivedEmail->getDefaultLabels() === $this) {
-                $receivedEmail->setDefaultLabels(null);
+            if ($sentOrReceivedEmail->getDefaultLabels() === $this) {
+                $sentOrReceivedEmail->setDefaultLabels(null);
             }
         }
 

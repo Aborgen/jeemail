@@ -23,16 +23,18 @@ class PersonalDefaultLabelsRepository extends ServiceEntityRepository
     {
         // a = PersonalDefaultLabelTable
         // b = DefaultLabelTable
-        // c = ReceivedEmailsTable
-        // d = EmailTable
+        // c = ReceivedSentEmailsToLabelsTable
+        // d = ReceivedEmailsTable
+        // e = EmailTable
         return $this->createQueryBuilder('a')
-                    ->leftJoin('a.defaultLabel', 'b')
+                    ->leftJoin('a.label', 'b')
                     ->andWhere('b.slug = :slug')
                     ->andWhere('a.member = :id')
                     ->setParameters([':slug' => $slug, ':id' => $id])
-                    // ->leftJoin('a.receivedEmails', 'c')
-                    // ->leftJoin('App\Entity\Email', 'd', 'WITH', 'c.email = d.id')
-                    // ->orderBy('d.timeSent', 'ASC')
+                    ->leftJoin('a.sentOrReceivedEmails', 'c')
+                    ->leftJoin('App\Entity\ReceivedEmails', 'd', 'WITH', 'c.receivedEmail = d.id')
+                    ->leftJoin('App\Entity\Email', 'e', 'WITH', 'd.email = e.id')
+                    ->orderBy('e.timeSent', 'ASC')
                     ->getQuery()
                     ->getResult();
     }

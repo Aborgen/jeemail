@@ -22,25 +22,25 @@ class ReceivedSentEmailsToLabels
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\ReceivedEmails", inversedBy="labels")
+     * @ORM\ManyToOne(targetEntity="ReceivedEmails", inversedBy="labels")
      * @ORM\JoinColumn(name="ReceivedEmailsID", referencedColumnName="ReceivedEmailsID", nullable=true)
      */
     private $receivedEmail;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\SentEmails", inversedBy="labels")
+     * @ORM\ManyToOne(targetEntity="SentEmails", inversedBy="labels")
      * @ORM\JoinColumn(name="SentEmailsID", referencedColumnName="SentEmailsID", nullable=true)
      */
     private $sentEmail;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\PersonalDefaultLabels", inversedBy="receivedEmail")
+     * @ORM\ManyToOne(targetEntity="PersonalDefaultLabels", inversedBy="sentOrReceivedEmails")
      * @ORM\JoinColumn(name="PersonalDefaultLabelsID", referencedColumnName="PersonalDefaultLabelsID", nullable=true)
      */
     private $defaultLabels;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\PersonalLabels", inversedBy="sentEmails")
+     * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="sentOrReceivedEmails")
      * @ORM\JoinColumn(name="PersonalLabelsID", referencedColumnName="PersonalLabelsID", nullable=true)
      */
     private $labels;

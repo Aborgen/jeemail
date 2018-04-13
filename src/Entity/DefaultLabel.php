@@ -31,7 +31,7 @@ class DefaultLabel
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\PersonalDefaultLabels", mappedBy="defaultLabel")
+     * @ORM\OneToMany(targetEntity="PersonalDefaultLabels", mappedBy="label")
      */
     private $personalDefaultLabels;
 
