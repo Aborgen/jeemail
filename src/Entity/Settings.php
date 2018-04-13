@@ -5,10 +5,18 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SettingsRepository")
- * @ORM\Table(name="Settings")
+ * @ORM\Table(name="Settings", @UniqueEntity(fields={
+ *     "max_emails_shown",
+ *     "max_contacts_shown",
+ *     "reply_type",
+ *     "display_images",
+ *     "button_style",
+ *     "ui_display_style"
+ * }), options={"comment":"Since there are a finite number of possible combinations with the Settings, each user will have reference to one of the available rows in Personal_Settings."})
  */
 class Settings
 {
