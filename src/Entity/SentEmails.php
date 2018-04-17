@@ -122,7 +122,10 @@ class SentEmails
         return $this;
     }
 
-    public function getLabels(): ?PersonalLabels
+    /**
+     * @return Collection|ReceivedSentEmailsToLabels[]
+     */
+    public function getLabels(): Collection
     {
         return $this->labels;
     }
