@@ -1,18 +1,18 @@
 # Blocked
 App\Entity\Blocked:
-    blocked_{1..3}:
+    blocked_{1..6}:
         email (unique): '<email()>'
 App\Entity\PersonalBlockeds:
-    personalBlocked_{1..3}:
+    personalBlocked_{1..6}:
         blocked: '@blocked_<current()>'
 
 # Contact
 App\Entity\Contact:
-    contact_{1..3}:
+    contact_{1..6}:
         name (unique): '<firstName()> <lastName()>'
         email (unique): '<email()>'
 App\Entity\ContactDetails:
-    contactDetails_{1..3}:
+    contactDetails_{1..6}:
         type: '<randomElement(["business", "personal"])>'
         nickname: '<name()>'
         company: '<company()>'
@@ -24,17 +24,17 @@ App\Entity\ContactDetails:
         website: '40%? <domainName()>'
         notes: '20%? <paragraph()>'
 App\Entity\PersonalContacts:
-    personalContact_{1..3}:
+    personalContact_{1..6}:
         contact: '@contact_<current()>'
         contactDetails: '@contactDetails_<current()>'
 
 # Label
 App\Entity\Label:
-    label_{1..3}:
+    label_{1..6}:
         name (unique): '<word()>'
-        slug (unique): '@self->name'
+        slug (unique): '$name'
 App\Entity\PersonalLabels:
-    personalLabel_{1..3}:
+    personalLabel_{1..6}:
         label: '@label_<current()>'
         visibility: 1
 
@@ -42,9 +42,12 @@ App\Entity\PersonalLabels:
 App\Entity\DefaultLabel:
     defaultLabel_{Inbox, SentMail, Important}:
         name (unique): '<current()>'
-        slug (unique): '@self->name'
+        slug (unique): '$name'
 App\Entity\PersonalDefaultLabels:
-    personalDefaultLabel_{Inbox, SentMail, Important}:
+    personalDefaultLabel1_{Inbox, SentMail, Important}:
+        label: '@defaultLabel_<current()>'
+        visibility: 1
+    personalDefaultLabel2_{Inbox, SentMail, Important}:
         label: '@defaultLabel_<current()>'
         visibility: 1
 
@@ -54,21 +57,23 @@ App\Entity\Category:
         name: '<current()>'
         slug: '$name'
 App\Entity\PersonalCategories:
-    personalCategory_{Social, Promotions, Updates}:
-        member: '@member'
+    personalCategory1_{Social, Promotions, Updates}:
+        category: '@category_<current()>'
+        visibility: 1
+    personalCategory2_{Social, Promotions, Updates}:
         category: '@category_<current()>'
         visibility: 1
 
 # Email
 App\Entity\Email:
     emails1_{1..10}:
-        member: '@member'
+        member: '@member_1'
         reply_to_email: '<email()>'
         subject: '<sentence()>'
         body: '<realText()>'
         timeSent: '<dateTime()>'
     emails2_{1..10}:
-        member: '@member'
+        member: '@member_2'
         reply_to_email: '<email()>'
         subject: '<sentence()>'
         body: '<realText()>'
@@ -76,30 +81,50 @@ App\Entity\Email:
 
 # Member -> Email relationship tables
 App\Entity\SentEmails:
-    sentEmail_{1..10}:
-        member: '@member'
+    sentEmail1_{1..10}:
+        member: '@member_1'
         email: '@emails1_<current()>'
         important: <numberBetween(0, 1)>
         starred: <numberBetween(0, 1)>
-        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        category: '@personalCategory1_<randomElement(["Social", "Promotions", "Updates"])>'
         __calls:
-            - addLabel: ['@sentLabels_<current()>']
-App\Entity\ReceivedEmails:
-    receivedEmail_{1..10}:
-        member: '@member'
+            - addLabel: ['@sentLabels1_<current()>']
+    sentEmail2_{1..10}:
+        member: '@member_2'
         email: '@emails2_<current()>'
         important: <numberBetween(0, 1)>
         starred: <numberBetween(0, 1)>
-        category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
+        category: '@personalCategory2_<randomElement(["Social", "Promotions", "Updates"])>'
         __calls:
-            - addLabel: ['@receivedLabels_<current()>']
+            - addLabel: ['@sentLabels2_<current()>']
+App\Entity\ReceivedEmails:
+    receivedEmail1_{1..10}:
+        member: '@member_1'
+        email: '@emails2_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory1_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@receivedLabels1_<current()>']
+    receivedEmail2_{1..10}:
+        member: '@member_2'
+        email: '@emails1_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory2_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@receivedLabels2_<current()>']
 
 # Received/Sent Emails <- personaldefaultlabels/personallabels relationship table
 App\Entity\ReceivedSentEmailsToLabels:
-    sentLabels_{1..10}:
-        defaultLabels: '@personalDefaultLabel_SentMail'
-    receivedLabels_{1..10}:
-        defaultLabels: '@personalDefaultLabel_Inbox'
+    sentLabels1_{1..10}:
+        defaultLabels: '@personalDefaultLabel1_SentMail'
+    receivedLabels1_{1..10}:
+        defaultLabels: '@personalDefaultLabel1_Inbox'
+    sentLabels2_{1..10}:
+        defaultLabels: '@personalDefaultLabel2_SentMail'
+    receivedLabels2_{1..10}:
+        defaultLabels: '@personalDefaultLabel2_Inbox'
 
 # Settings
 App\Entity\Settings:
@@ -113,7 +138,7 @@ App\Entity\Settings:
 
 # Member
 App\Entity\Member:
-    member:
+    member_1:
         gender: '80%? <randomElement(["male", "female"])>'
         first_name: '<firstName($gender)>'
         last_name: '<lastName()>'
@@ -132,17 +157,50 @@ App\Entity\Member:
             - addContact: ['@personalContact_1']
             - addContact: ['@personalContact_2']
             - addContact: ['@personalContact_3']
-            # Categories
-            - addCategory: ['@personalCategory_Social']
-            - addCategory: ['@personalCategory_Promotions']
-            - addCategory: ['@personalCategory_Updates']
             # Label
             - addLabel: ['@personalLabel_1']
             - addLabel: ['@personalLabel_2']
             - addLabel: ['@personalLabel_3']
             # Default Label
-            - addDefaultLabel: ['@personalDefaultLabel_Inbox']
-            - addDefaultLabel: ['@personalDefaultLabel_SentMail']
-            - addDefaultLabel: ['@personalDefaultLabel_Important']
+            - addDefaultLabel: ['@personalDefaultLabel1_Inbox']
+            - addDefaultLabel: ['@personalDefaultLabel1_SentMail']
+            - addDefaultLabel: ['@personalDefaultLabel1_Important']
+            # Categories
+            - addCategory: ['@personalCategory1_Social']
+            - addCategory: ['@personalCategory1_Promotions']
+            - addCategory: ['@personalCategory1_Updates']
+            # Settings
+            - addSettings: ['@settings_<numberBetween(1, 5)>']
+    member_2:
+        gender: '80%? <randomElement(["male", "female"])>'
+        first_name: '<firstName($gender)>'
+        last_name: '<lastName()>'
+        birthday: '90%? <month()>-<dayOfMonth()>-<year()>'
+        address: '40%? <streetAddress()>'
+        phone: '<phoneNumber()>'
+        username: '<userName()>'
+        email (unique): '<email()>'
+        password: '<password()>'
+        __calls:
+            # Blocked
+            - addBlocked: ['@personalBlocked_4']
+            - addBlocked: ['@personalBlocked_5']
+            - addBlocked: ['@personalBlocked_6']
+            # Contact
+            - addContact: ['@personalContact_4']
+            - addContact: ['@personalContact_5']
+            - addContact: ['@personalContact_6']
+            # Label
+            - addLabel: ['@personalLabel_4']
+            - addLabel: ['@personalLabel_5']
+            - addLabel: ['@personalLabel_6']
+            # Default Label
+            - addDefaultLabel: ['@personalDefaultLabel2_Inbox']
+            - addDefaultLabel: ['@personalDefaultLabel2_SentMail']
+            - addDefaultLabel: ['@personalDefaultLabel2_Important']
+            # Categories
+            - addCategory: ['@personalCategory2_Social']
+            - addCategory: ['@personalCategory2_Promotions']
+            - addCategory: ['@personalCategory2_Updates']
             # Settings
             - addSettings: ['@settings_<numberBetween(1, 5)>']
