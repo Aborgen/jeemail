@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if member is not null %}
+        {{ member.info['email'] }}
+    {% else %}
+        Guesterino!
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+{% if member is null %}
+    <h2>Hello, Guest!</h2>
+{% else %}
+    <h2>Hello, {{ member.info['name']['full'] }}!</h2>
+    <p>Received Emails</p>
+    <table>
+        <thead>
+            <th>Important</th>
+            <th>Starred</th>
+            <th>Subject</th>
+            <th>Body</th>
+            <th>Author</th>
+            <th>Time</th>
+            <th>Category</th>
+            <th>Labels</th>
+        </thead>
+        <tbody>
+            {% for received in member.data['emails']['received'] %}
+                <tr>
+                    <td>
+                        <input type="checkbox"
+                            {% if received.important == 1 %}
+                                checked
+                            {% endif %}>
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                            {% if received.starred == 1 %}
+                                checked
+                            {% endif %}>
+                    </td>
+                    <td>{{ received.email.subject }}</td>
+                    <td>{{ received.email.body }}</td>
+                    <td>{{ received.email.member.username }}</td>
+                    <td>{{ received.email.timeSent|date('d-m-y') }}</td>
+                    <td>{{ received.category.category.name }}</td>
+                    <td>
+                        {#
+                        {% for label in received.labels %}
+                            {% if label.labels is not null %}
+                                {{ label.labels.label.name }},
+                            {% else %}
+                                {{ label.defaultLabels.label.name }},
+                            {% endif %}
+                        {% endfor %}
+                        #}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <p>Sent Emails</p>
+    <table>
+        <thead>
+            <th>Important</th>
+            <th>Starred</th>
+            <th>Subject</th>
+            <th>Body</th>
+            <th>Author</th>
+            <th>Time</th>
+            <th>Category</th>
+            <th>Labels</th>
+        </thead>
+        <tbody>
+            {% for sent in member.data['emails']['sent'] %}
+                <tr>
+                    <td>
+                        <input type="checkbox"
+                            {% if sent.important == 1 %}
+                                checked
+                            {% endif %}>
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                            {% if sent.starred == 1 %}
+                                checked
+                            {% endif %}>
+                    </td>
+                    <td>{{ sent.email.subject }}</td>
+                    <td>{{ sent.email.body }}</td>
+                    <td>{{ sent.email.member.username }}</td>
+                    <td>{{ sent.email.timeSent|date('y-m-d') }}</td>
+                    <td>{{ sent.category.category.name }}</td>
+                    <td>
+                        {#
+                        {% for label in sent.labels %}
+                            {% if label.labels is not null %}
+                                {{ label.labels.label.name }},
+                            {% else %}
+                                {{ label.defaultLabels.label.name }},
+                            {% endif %}
+                        {% endfor %}
+                        #}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

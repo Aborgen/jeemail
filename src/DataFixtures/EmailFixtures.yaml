@@ -1,6 +1,3 @@
-parameters:
-    count: '<sizeof({members})>'
-
 # Blocked
 App\Entity\Blocked:
     blocked_{1..3}:
@@ -82,8 +79,8 @@ App\Entity\SentEmails:
     sentEmail_{1..10}:
         member: '@member'
         email: '@emails1_<current()>'
-        important: 0
-        starred: 0
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
         category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
         __calls:
             - addLabel: ['@sentLabels_<current()>']
@@ -91,8 +88,8 @@ App\Entity\ReceivedEmails:
     receivedEmail_{1..10}:
         member: '@member'
         email: '@emails2_<current()>'
-        important: 0
-        starred: 0
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
         category: '@personalCategory_<randomElement(["Social", "Promotions", "Updates"])>'
         __calls:
             - addLabel: ['@receivedLabels_<current()>']
@@ -113,6 +110,7 @@ App\Entity\Settings:
         display_images: <numberBetween(0, 1)>
         button_style: <numberBetween(0, 1)>
         ui_display_style: '<randomElement(["comfortable", "compact", "cozy"])>'
+
 # Member
 App\Entity\Member:
     member:
