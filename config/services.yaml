@@ -28,3 +28,13 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Constant\:
         resource: '../src/Constant'
+    App\DataFixtures\:
+        resource: '../src/DataFixtures'
+
+framework:
+    assets:
+        packages:
+            icons:
+                base_path: 'static/icons/'
+            themes:
+                base_path: 'static/themes/'
