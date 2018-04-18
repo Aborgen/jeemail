@@ -4,11 +4,9 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Nelmio\Alice\Loader\NativeLoader;
 
-// Entities
 use App\Entity\Member;
-
+use App\DataFixtures\ExtendedNativeLoader;
 
 class EmailFixtures extends Fixture
 {
@@ -56,7 +54,7 @@ class EmailFixtures extends Fixture
 
     public function load(ObjectManager $manager, int $count = 1): void
     {
-        $loader = new NativeLoader();
+        $loader = new ExtendedNativeLoader();
         for ($i=0; $i < $count; $i++) {
             // $data = [];
             // if($i === 0) {

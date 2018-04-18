@@ -1,3 +1,9 @@
+parameters:
+    iconDir: '/home/thatman/Documents/__Code_Personal/react-clones/jeebak/public/static/icons'
+    iconSmall: 32
+    iconMedium: 64
+    iconLarge: 138
+
 # Blocked
 App\Entity\Blocked:
     blocked_{1..6}:
@@ -136,6 +142,19 @@ App\Entity\Settings:
         button_style: <numberBetween(0, 1)>
         ui_display_style: '<randomElement(["comfortable", "compact", "cozy"])>'
 
+# Icon
+# imageGenerator is an extended provider. It takes $dir, $width, $height,
+# $format, and $text.
+# In this case, $text is being set to the first letter of a Member's username
+App\Entity\Icon:
+    icon_1:
+        icon_small: '<generateImage(<{iconDir}>, <{iconSmall}>, <{iconSmall}>, "jpg", @member_1->username)>'
+        icon_medium: '<generateImage(<{iconDir}>, <{iconMedium}>, <{iconMedium}>, "jpg", @member_1->username)>'
+        icon_large: '<generateImage(<{iconDir}>, <{iconLarge}>, <{iconLarge}>, "jpg", @member_1->username)>'
+    icon_2:
+        icon_small: '<generateImage(<{iconDir}>, <{iconSmall}>, <{iconSmall}>, "jpg", @member_2->username)>'
+        icon_medium: '<generateImage(<{iconDir}>, <{iconMedium}>, <{iconMedium}>, "jpg", @member_2->username)>'
+        icon_large: '<generateImage(<{iconDir}>, <{iconLarge}>, <{iconLarge}>, "jpg", @member_2->username)>'
 # Member
 App\Entity\Member:
     member_1:
@@ -171,6 +190,8 @@ App\Entity\Member:
             - addCategory: ['@personalCategory1_Updates']
             # Settings
             - addSettings: ['@settings_<numberBetween(1, 5)>']
+            # Icon
+            - setIcon: ['@icon_1']
     member_2:
         gender: '80%? <randomElement(["male", "female"])>'
         first_name: '<firstName($gender)>'
@@ -204,3 +225,5 @@ App\Entity\Member:
             - addCategory: ['@personalCategory2_Updates']
             # Settings
             - addSettings: ['@settings_<numberBetween(1, 5)>']
+            # Icon
+            - setIcon: ['@icon_2']
