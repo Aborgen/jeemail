@@ -26,6 +26,7 @@
         "symfony/yaml": "^4.0"
     },
     "require-dev": {
+        "bheller/images-generator": "^1.0",
         "doctrine/doctrine-fixtures-bundle": "^3.0",
         "nelmio/alice": "^3.2",
         "sensiolabs/security-checker": "^4.1",
