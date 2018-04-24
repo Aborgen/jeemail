@@ -52,22 +52,15 @@ class EmailFixtures extends Fixture
     //     return $memberObjects;
     // }
 
-    public function load(ObjectManager $manager, int $count = 1): void
+    public function load(ObjectManager $manager): void
     {
-        $loader = new ExtendedNativeLoader();
-        for ($i=0; $i < $count; $i++) {
-            // $data = [];
-            // if($i === 0) {
-            //     $data = $this->setDefaultMembers($manager);
-            // }
-
-            $objects = $loader->loadFile(__DIR__.'/EmailFixtures.yaml')
-                              ->getObjects();
-            foreach($objects as $object) {
-                $manager->persist($object);
-            }
-
-            $manager->flush();
+        $loader  = new ExtendedNativeLoader();
+        $objects = $loader->loadFile(__DIR__.'/EmailFixtures.yaml')
+                          ->getObjects();
+        foreach($objects as $object) {
+            $manager->persist($object);
         }
+
+        $manager->flush();
     }
 }

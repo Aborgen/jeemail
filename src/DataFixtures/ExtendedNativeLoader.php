@@ -15,9 +15,13 @@ class ExtendedNativeLoader extends NativeLoader
 {
     protected function createFakerGenerator(): FakerGenerator
         {
+            // Clear out Fixture images from public/static/icons
+            $imgProvider = new GenerateImagesProvider();
+            $imgProvider->clearImages();
+
             $generator = FakerGeneratorFactory::create(parent::LOCALE);
             $generator->addProvider(new AliceProvider());
-            $generator->addProvider(new GenerateImagesProvider());
+            $generator->addProvider($imgProvider);
             $generator->seed($this->getSeed());
 
             return $generator;
