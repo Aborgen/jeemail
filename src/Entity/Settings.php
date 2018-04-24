@@ -8,7 +8,16 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SettingsRepository")
- * @ORM\Table(name="Settings")
+ * @ORM\Table(name="Settings", options={"comment": "The unique constraint is there since there are a finite number of possible unique combinations."},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="all_columns",columns={
+ *         "max_emails_shown",
+ *         "max_contacts_shown",
+ *         "reply_type",
+ *         "display_images",
+ *         "button_style",
+ *         "ui_display_style"
+ *     })
+ * })
  */
 class Settings
 {
