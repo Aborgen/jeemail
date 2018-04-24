@@ -19,6 +19,26 @@ class SettingsRepository extends ServiceEntityRepository
         parent::__construct($registry, Settings::class);
     }
 
+    public function findExact(Settings $settings): ?Settings
+    {
+        return $this->createQueryBuilder('a')
+                    ->andWhere('a.max_emails_shown = :emails')
+                    ->andWhere('a.max_contacts_shown = :contacts')
+                    ->andWhere('a.reply_type = :reply')
+                    ->andWhere('a.display_images = :display')
+                    ->andWhere('a.button_style = :button')
+                    ->andWhere('a.ui_display_style = :ui')
+                    ->setParameters([
+                        'emails' => $settings->getMaxEmailsShown(),
+                        'contacts' => $settings->getMaxContactsShown(),
+                        'reply' => $settings->getReplyType(),
+                        'display' => $settings->getDisplayImages(),
+                        'button' => $settings->getButtonStyle(),
+                        'ui' => $settings->getUiDisplayStyle()
+                    ])
+                    ->getQuery()
+                    ->getOneOrNullResult();
+    }
 //    /**
 //     * @return Settings[] Returns an array of Settings objects
 //     */
