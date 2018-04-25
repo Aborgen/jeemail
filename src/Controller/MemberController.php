@@ -2,12 +2,18 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Service\MemberInterface;
-class MemberController extends Controller
+use App\Service\PreInsert;
+use App\Entity\Label;
+use App\Entity\PersonalLabels;
+use App\Entity\Member;
+
+class MemberController extends AbstractController
 {
     /**
      * @Route("/details", name="details")
@@ -15,12 +21,58 @@ class MemberController extends Controller
     public function index(MemberInterface $interface, Request $request): object
     {
         $id = $request->get('id');
-        if(!isset($id)){
+        if(!isset($id)) {
             $id = -100;
         }
 
         $interface->setId($id);
         $member = $interface->hydrateMember();
         return $this->render('member/index.html.twig', ['member' => $member]);
+    }
+
+    /**
+     * @Route("/details/create-label/{label}", name="create_label")
+     * @Method({ "GET" })
+     */
+    public function createLabel(string $label, PreInsert $preInsert,
+                                Request $request): object
+    {
+        $id = $request->get('id');
+        if(!isset($id)) {
+            return $this->redirectToRoute('details');
+        }
+        $manager = $this->getDoctrine()->getManager();
+        $member  = $manager->getRepository(Member::class)
+                           ->find($id);
+
+        // Create a new Label entity with information given.
+        $newLabel = new Label();
+        $newLabel->setName($label);
+        $newLabel->setSlug($label);
+
+        // Next, use PreInsert to query the database to determine whether
+        // the new Label entity is a duplicate. If it is, it will return
+        // the pre-existing entity to be used in PersonalLabels
+        $preInsert->setRepo(Label::class);
+
+        // Will either be the new Label or the pre-existing Label
+        $dbLabel = $preInsert->findExactOrReturnOriginalEntity($newLabel);
+        $preInsert->maybePersist();
+
+        // Create a new PersonalLabels entity with Member and Label entities
+        $personalLabel = new PersonalLabels();
+        $personalLabel->setMember($member);
+        $personalLabel->setLabel($dbLabel);
+        $personalLabel->setVisibility('true');
+
+        // Exact same procedure from above
+        $preInsert->setRepo(PersonalLabels::class);
+        $dbPLabel = $preInsert->findExactOrReturnOriginalEntity($personalLabel);
+        $preInsert->maybePersist();
+
+        // Cleanup
+        $preInsert->flush();
+
+        return $this->redirectToRoute('details', ['id' => $id]);
     }
 }
