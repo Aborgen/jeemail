@@ -19,6 +19,18 @@ class LabelRepository extends ServiceEntityRepository
         parent::__construct($registry, Label::class);
     }
 
+    public function findExact(Label $entity): ?Label
+    {
+        return $this->createQueryBuilder('a')
+                    ->andWhere('a.name = :name')
+                    ->andWhere('a.slug = :slug')
+                    ->setParameters([
+                        'name' => $entity->getName(),
+                        'slug' => $entity->getSlug()
+                    ])
+                    ->getQuery()
+                    ->getOneOrNullResult();
+    }
 //    /**
 //     * @return Label[] Returns an array of Label objects
 //     */

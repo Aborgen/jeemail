@@ -38,6 +38,19 @@ class PersonalLabelsRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+    public function findExact(PersonalLabels $personalLabel): ?PersonalLabels
+    {
+        return $this->createQueryBuilder('a')
+                    ->andWhere('a.member = :member')
+                    ->andWhere('a.label  = :label')
+                    ->setParameters([
+                        'member' => $personalLabel->getMember(),
+                        'label'  => $personalLabel->getLabel()
+                    ])
+                    ->getQuery()
+                    ->getOneOrNullResult();
+    }
    /**
     * @return PersonalLabels[] Returns an array of PersonalLabels objects
     */
