@@ -6,11 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MemberRepository")
  * @ORM\Table(name="Member")
  */
-class Member
+class Member implements UserInterface, \Serializable
 {
     /**
      * @ORM\Id()
@@ -526,5 +528,41 @@ class Member
         $this->icon = $icon;
 
         return $this;
+    }
+
+    /**
+     * Mandatory because we are implementing UserInterface
+     */
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_USER'];
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    public function serialize(): string
+    {
+        return serialize(array(
+            $this->id,
+            $this->username,
+            $this->password
+        ));
+    }
+
+    public function unserialize($serialized): void
+    {
+        list (
+            $this->id,
+            $this->username,
+            $this->password
+        ) = unserialize($serialized, ['allowed_classes' => false]);
     }
 }

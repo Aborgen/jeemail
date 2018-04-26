@@ -4,8 +4,8 @@ namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\VarDumper\Dump;
 
 use App\Service\MemberInterface;
 use App\Service\PreInsert;
@@ -18,14 +18,14 @@ class MemberController extends AbstractController
     /**
      * @Route("/details", name="details")
      */
-    public function index(MemberInterface $interface, Request $request): object
+    public function index(MemberInterface $interface): object
     {
-        $id = $request->get('id');
-        if(!isset($id)) {
-            $id = -100;
-        }
-
-        $interface->setId($id);
+        // $id = $request->get('id');
+        // if(!isset($id)) {
+        //     $id = -100;
+        // }
+        $member = $this->get('security.token_storage')->getToken()->getUser();
+        $interface->setId($member->getId());
         $member = $interface->hydrateMember();
         return $this->render('member/index.html.twig', ['member' => $member]);
     }
@@ -34,16 +34,10 @@ class MemberController extends AbstractController
      * @Route("/details/create-label/{label}", name="create_label")
      * @Method({ "GET" })
      */
-    public function createLabel(string $label, PreInsert $preInsert,
-                                Request $request): object
+    public function createLabel(string $label, PreInsert $preInsert): object
     {
-        $id = $request->get('id');
-        if(!isset($id)) {
-            return $this->redirectToRoute('details');
-        }
+        $member  = $this->get('security.token_storage')->getToken()->getUser();
         $manager = $this->getDoctrine()->getManager();
-        $member  = $manager->getRepository(Member::class)
-                           ->find($id);
 
         // Create a new Label entity with information given.
         $newLabel = new Label();
@@ -73,6 +67,6 @@ class MemberController extends AbstractController
         // Cleanup
         $preInsert->flush();
 
-        return $this->redirectToRoute('details', ['id' => $id]);
+        return $this->redirectToRoute('details');
     }
 }
