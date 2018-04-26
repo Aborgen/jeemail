@@ -9,16 +9,17 @@ import SubNav               from '../../Components/SubNav/SubNav';
 
 class SettingsMenu extends Component {
     render() {
+        const { changeScene, saveView, currentView } = this.props;
         const Fragment = React.Fragment;
         return (
             <Fragment>
                 <Header />
                 <SubNav
-                    refresh = {this.refresh}
-                    selectionOpt = {this.selectionOpt}
-                    changeScene = {this.props.changeScene} />
-                <Sidebar />
-                <div className="FOOgly">
+                    changeScene  = {changeScene}
+                    refresh      = {this.refresh}
+                    selectionOpt = {this.selectionOpt} />
+                <Sidebar saveView={saveView} currentView={currentView} />
+                <div className   ="FOOgly">
                     <DisplayBlock blockType = {"settings"} />
                     <Footer />
                 </div>

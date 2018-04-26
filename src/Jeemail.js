@@ -9,8 +9,16 @@ class Jeemail extends Component {
     constructor() {
         super();
         this.state = {
-            "currentPage": "/home"
+            "currentPage": "/home",
+            "currentView": ""
         };
+
+        this.changeScene = this.changeScene.bind(this);
+        this.saveView    = this.saveView.bind(this);
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.currentPage === nextState.currentPage ? false : true;
     }
 
     changeScene(scene) {
@@ -18,31 +26,53 @@ class Jeemail extends Component {
             return({
                 "currentPage": scene
             });
-        })
-
+        });
     }
-    render() {
-        const scene = this.state.currentPage;
+
+    saveView(view) {
+        this.setState((prevState) => {
+            return({
+                "currentView": view
+            });
+        });
+    }
+
+    renderScene() {
+        const { changeScene, saveView }    = this;
+        const { currentView, currentPage } = this.state;
         let showIt;
-        switch (scene) {
+        switch (currentPage) {
             case "/settings":
-                showIt = <SettingsMenu changeScene={this.changeScene.bind(this)} />;
+                showIt = <SettingsMenu
+                            changeScene={changeScene}
+                            currentView={currentView}
+                            saveView={saveView} />;
                 break;
 
             case "/themes":
-                showIt = <ThemesMenu changeScene={this.changeScene.bind(this)} />;
+                showIt = <ThemesMenu
+                            changeScene={changeScene}
+                            currentView={currentView}
+                            saveView={saveView} />;
                 break;
 
             case "/home":
-                showIt = <Home changeScene={this.changeScene.bind(this)} />;
-                break;
-
             default:
-                showIt = <Home changeScene={this.changeScene.bind(this)} />;
+                showIt = <Home
+                            changeScene={changeScene}
+                            currentView={currentView}
+                            saveView={saveView} />;
                 break;
         }
+
+        return showIt;
+    }
+
+    render() {
+        const scene = this.renderScene();
+        console.log(this.state);
         return (
-            showIt
+            scene
         );
     }
 }

@@ -32,20 +32,22 @@ class Home extends Component {
     }
 
     render() {
+        const { changeScene, saveView, currentView } = this.props;
+        const { emails, selection }    = this.state;
         const Fragment = React.Fragment;
         return (
             <Fragment>
                 <Header />
                 <SubNav
-                    changeScene = {this.props.changeScene}
-                    refresh = {this.refresh}
+                    changeScene  = {changeScene}
+                    refresh      = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
-                <Sidebar />
+                <Sidebar saveView={saveView} currentView={currentView} />
                 <div className="FOOgly">
                     <DisplayBlock
-                        blockType = {"email"}
-                        refreshEmails = {this.state.emails}
-                        selectionOpt = {this.state.selection} />
+                        blockType     = {"email"}
+                        refreshEmails = {emails}
+                        selectionOpt  = {selection} />
                     <Footer />
                 </div>
             </Fragment>

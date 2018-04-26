@@ -9,44 +9,55 @@ class SideBar extends Component {
     constructor() {
         super();
         this.state = {
-            "currentSelection": "sideBar0"
+            "currentView": "sideBar0",
+            "categoriesExpaned": false,
+            "moreExpanded": false
         };
 
-        this.setSelection = this.setSelection.bind(this)
+        this.setView    = this.setView.bind(this)
         this.expandMenu = this.expandMenu.bind(this)
+
     }
 
     componentDidMount() {
-        const current = document.getElementById(this.state.currentSelection);
-        current.classList.add('sideBar__currentSelection');
+        this.setView(this.getView());
     }
 
-    setSelection(selection) {
-        const current = document.querySelector('.sideBar__currentSelection');
-        const newNode = document.getElementById(selection);
-        if(!current) {
-            newNode.classList.add('sideBar__currentSelection');
+    componentWillUnmount() {
+        this.props.saveView(this.state.currentView);
+    }
 
+    setView(view) {
+        console.log("SETTINGVIEW: "+view);
+        const current = document.querySelector('.sideBar__currentView');
+        const newNode = document.getElementById(view);
+        if(!current) {
+            newNode.classList.add('sideBar__currentView');
         }
 
         if(current && current !== newNode) {
-            current.classList.remove('sideBar__currentSelection');
-            newNode.classList.add('sideBar__currentSelection');
+            current.classList.remove('sideBar__currentView');
+            newNode.classList.add('sideBar__currentView');
         }
 
         this.setState((prevState) => {
-            return { currentSelection: selection }
+            return { currentView: view }
         })
     }
 
+    getView() {
+        const parentView = this.props.currentView;
+        const thisView   = this.state.currentView;
+        return parentView !== "" ? parentView : thisView
+    }
+
     expandMenu() {
-        const selectedItem
-            = document.getElementById(this.state.currentSelection);
+        const selectedItem = document.getElementById(this.state.currentView);
         if(!selectedItem) {
             return;
         }
 
-        selectedItem.classList.add('sideBar__currentSelection');
+        selectedItem.classList.add('sideBar__currentView');
     }
 
     render() {
@@ -55,7 +66,7 @@ class SideBar extends Component {
                 <div className="sideBar__button">
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
-                <VerticalList setSelection={this.setSelection}
+                <VerticalList setView={this.setView}
                               expandMenu={this.expandMenu}
                               items={this.props.items} />
             </div>

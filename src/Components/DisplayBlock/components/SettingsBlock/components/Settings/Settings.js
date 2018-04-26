@@ -18,7 +18,6 @@ class Settings extends Component {
         const radioRows = rows.map((row, i) => {
             const dataChunks = row['data'].map((data, n) => {
                 if(n === checked[i]) {
-                    console.log(i, checked[n]);
                     return (
                         <div key={`${row.id}${n}`}>
                             <input type="radio"

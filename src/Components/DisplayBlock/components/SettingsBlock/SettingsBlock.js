@@ -66,6 +66,366 @@ SettingsBlock.defaultProps = {
                     "Always display external images",
                     "Ask before displaying external images"
                 ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
+            },
+            {
+                "name": "Button labels:",
+                "id": "labelsText",
+                "data": [
+                    "Icons",
+                    "Text"
+                ]
+            },
+            {
+                "name": "Default reply behavior:",
+                "id": "replyStyle",
+                "data": [
+                    "Reply",
+                    "Reply all"
+                ]
+            },
+            {
+                "name": "Images:",
+                "id": "displayImg",
+                "data": [
+                    "Always display external images",
+                    "Ask before displaying external images"
+                ]
             }
         ],
         "selection": [
