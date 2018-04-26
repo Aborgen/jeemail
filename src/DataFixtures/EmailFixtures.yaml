@@ -169,7 +169,7 @@ App\Entity\Member:
         phone: '<phoneNumber()>'
         username: '<userName()>'
         email (unique): '<email()>'
-        password: '<password()>'
+        password: '<password_hash($username, <intval(2)>)>'
         __calls:
             # Blocked
             - addBlocked: ['@personalBlocked_1']
@@ -204,7 +204,7 @@ App\Entity\Member:
         phone: '<phoneNumber()>'
         username: '<userName()>'
         email (unique): '<email()>'
-        password: '<password()>'
+        password: '<password_hash($username, <intval(2)>)>'
         __calls:
             # Blocked
             - addBlocked: ['@personalBlocked_4']
