@@ -19,21 +19,25 @@ use App\Service\LabelInterface;
 // Constants
 use App\Constant\LabelConstants;
 
+/**
+ * @Route("/email")
+ */
 class EmailController extends AbstractController
 {
     /**
-     * @Route("/email", name="email_index")
+     * @Route("", name="email_index")
      * @Method({ "GET" })
      */
     public function index(): object
     {
-        return $this->render('email/index.html.twig');
+        return $this->redirectToRoute('email_show_default_label', [
+            'defaultLabel' => 'Inbox']);
     }
 
     /**
-     * @Route("/email/{defaultLabel}", name="email_show_default_label")
-     * @Route("/email/category/{category}", name="email_show_category")
-     * @Route("/email/label/{label}", name="email_show_label")
+     * @Route("/{defaultLabel}", name="email_show_default_label")
+     * @Route("/category/{category}", name="email_show_category")
+     * @Route("/label/{label}", name="email_show_label")
      * @Method({ "GET" })
      */
     public function show(string $defaultLabel = null,
@@ -41,42 +45,34 @@ class EmailController extends AbstractController
                          string $label = null,
                          LabelInterface $interface): object
     {
-        // try {
+        $member = $this->get('security.token_storage')->getToken()->getUser();
+        $emailsShown = $member->getSettings()[0]->getMaxEmailsShown();
+        $id = $member->getId();
             if(isset($defaultLabel)) {
                 $interface->setType(LabelConstants::DEFAULT_LABEL);
-                $personalDefaultLabel = $interface->findPersonalLabel($defaultLabel, 4);
-                // if(!isset($personalDefaultLabel)) {
-                //     throw new \Exception("$defaultLabel does not exist in the database");
-                // }
-                dump($personalDefaultLabel);
+                $personalDefaultLabel =
+                    $interface->findPersonalLabel($defaultLabel, $id);
                 return $this->render('email/label.html.twig', [
-                    "label" => $personalDefaultLabel]);
+                    "label"         => $personalDefaultLabel,
+                    "emailsPerPage" => $emailsShown
+                ]);
             }
 
             if(isset($category)) {
                 $interface->setType(LabelConstants::CATEGORY);
-                $personalCategory = $interface->findPersonalLabel($category, 4);
-                // if(!isset($personalCategory)) {
-                //     throw new \Exception("$category does not exist in the database");
-                // }
+                $personalCategory =
+                    $interface->findPersonalLabel($category, $id);
                 return $this->render('email/category.html.twig', [
                     "category" => $personalCategory]);
             }
 
             if(isset($label)) {
                 $interface->setType(LabelConstants::LABEL);
-                $personalLabel = $interface->findPersonalLabel($label, 4);
-                // if(!isset($personalLabel)) {
-                //     throw new \Exception("$label does not exist in the database");
-                // }
-                // dump($personalLabel);
+                $personalLabel = $interface->findPersonalLabel($label, $id);
+
                 return $this->render('email/label.html.twig', [
                     "label" => $personalLabel]);
-                // return $this->redirectToRoute('email_index');
             }
-        // } catch (\Exception $e) {
-        //     return $this->redirectToRoute('email_index');
-        // }
 
 
     }

@@ -23,7 +23,7 @@ security:
                 check_path: login
                 post_only: true
                 always_use_default_target_path: true
-                default_target_path: details
+                default_target_path: email_index
 
             # TODO!
             # remember_me:
@@ -51,5 +51,6 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/email, roles: ROLE_USER}
         - { path: ^/details, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
