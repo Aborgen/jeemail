@@ -1,0 +1,232 @@
+parameters:
+    iconSmall: 32
+    iconMedium: 64
+    iconLarge: 138
+
+# Blocked
+App\Entity\Blocked:
+    blocked_{1..6}:
+        email (unique): '<email()>'
+App\Entity\PersonalBlockeds:
+    personalBlocked_{1..6}:
+        blocked: '@blocked_<current()>'
+
+# Contact
+App\Entity\Contact:
+    contact_{1..6}:
+        name (unique): '<firstName()> <lastName()>'
+        email (unique): '<email()>'
+App\Entity\ContactDetails:
+    contactDetails_{1..6}:
+        type: '<randomElement(["business", "personal"])>'
+        nickname: '<name()>'
+        company: '<company()>'
+        job_title: '60%? <jobTitle()>'
+        phone: '<phoneNumber()>'
+        address: ' 60%? <streetAddress()>'
+        birthday: '90%? <month()>-<dayOfMonth()>-<year()>'
+        relationship: '<randomElement(["Boss", "Aunt", "Friend", "Colleague"])>'
+        website: '40%? <domainName()>'
+        notes: '20%? <paragraph()>'
+App\Entity\PersonalContacts:
+    personalContact_{1..6}:
+        contact: '@contact_<current()>'
+        contactDetails: '@contactDetails_<current()>'
+
+# Label
+App\Entity\Label:
+    label_{1..6}:
+        name (unique): '<word()>'
+        slug (unique): '$name'
+    # Ensure that if duplicate name exists, that no error occurs
+    # testLabel:
+    #     name : '@label_1->name'
+    #     slug : '$name'
+App\Entity\PersonalLabels:
+    personalLabel_{1..6}:
+        label: '@label_<current()>'
+        visibility: 1
+
+# Default Label
+App\Entity\DefaultLabel:
+    defaultLabel_{Inbox, SentMail, Important}:
+        name (unique): '<current()>'
+        slug (unique): '$name'
+App\Entity\PersonalDefaultLabels:
+    personalDefaultLabel1_{Inbox, SentMail, Important}:
+        label: '@defaultLabel_<current()>'
+        visibility: 1
+    personalDefaultLabel2_{Inbox, SentMail, Important}:
+        label: '@defaultLabel_<current()>'
+        visibility: 1
+
+# Category
+App\Entity\Category:
+    category_{Social, Promotions, Updates}:
+        name: '<current()>'
+        slug: '$name'
+App\Entity\PersonalCategories:
+    personalCategory1_{Social, Promotions, Updates}:
+        category: '@category_<current()>'
+        visibility: 1
+    personalCategory2_{Social, Promotions, Updates}:
+        category: '@category_<current()>'
+        visibility: 1
+
+# Email
+App\Entity\Email:
+    emails1_{1..10}:
+        member: '@member_1'
+        reply_to_email: '<email()>'
+        subject: '<sentence()>'
+        body: '<realText()>'
+        timeSent: '<dateTime()>'
+    emails2_{1..10}:
+        member: '@member_2'
+        reply_to_email: '<email()>'
+        subject: '<sentence()>'
+        body: '<realText()>'
+        timeSent: '<dateTime()>'
+
+# Member -> Email relationship tables
+App\Entity\SentEmails:
+    sentEmail1_{1..10}:
+        member: '@member_1'
+        email: '@emails1_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory1_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@sentLabels1_<current()>']
+    sentEmail2_{1..10}:
+        member: '@member_2'
+        email: '@emails2_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory2_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@sentLabels2_<current()>']
+App\Entity\ReceivedEmails:
+    receivedEmail1_{1..10}:
+        member: '@member_1'
+        email: '@emails2_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory1_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@receivedLabels1_<current()>']
+    receivedEmail2_{1..10}:
+        member: '@member_2'
+        email: '@emails1_<current()>'
+        important: <numberBetween(0, 1)>
+        starred: <numberBetween(0, 1)>
+        category: '@personalCategory2_<randomElement(["Social", "Promotions", "Updates"])>'
+        __calls:
+            - addLabel: ['@receivedLabels2_<current()>']
+
+# Received/Sent Emails <- personaldefaultlabels/personallabels relationship table
+App\Entity\ReceivedSentEmailsToLabels:
+    sentLabels1_{1..10}:
+        defaultLabels: '@personalDefaultLabel1_SentMail'
+    receivedLabels1_{1..10}:
+        defaultLabels: '@personalDefaultLabel1_Inbox'
+    sentLabels2_{1..10}:
+        defaultLabels: '@personalDefaultLabel2_SentMail'
+    receivedLabels2_{1..10}:
+        defaultLabels: '@personalDefaultLabel2_Inbox'
+
+# Settings
+App\Entity\Settings:
+    settings_{1..5}:
+        maxEmailsShown: '<randomElement(["10", "15", "20", "25", "50", "100"])>'
+        max_contacts_shown: '<randomElement(["50", "100", "250"])>'
+        reply_type: <numberBetween(0, 1)>
+        display_images: <numberBetween(0, 1)>
+        button_style: <numberBetween(0, 1)>
+        ui_display_style: '<randomElement(["comfortable", "compact", "cozy"])>'
+
+# Icon
+# imageGenerator is an extended provider. It takes $dir, $width, $height,
+# $format, and $text.
+# In this case, $text is being set to the first letter of a Member's username
+App\Entity\Icon:
+    icon_1:
+        icon_small: '<generateImage(<{iconSmall}>, <{iconSmall}>, @member_1->username)>'
+        icon_medium: '<generateImage(<{iconMedium}>, <{iconMedium}>, @member_1->username)>'
+        icon_large: '<generateImage(<{iconLarge}>, <{iconLarge}>, @member_1->username)>'
+    icon_2:
+        icon_small: '<generateImage(<{iconSmall}>, <{iconSmall}>, @member_2->username)>'
+        icon_medium: '<generateImage(<{iconMedium}>, <{iconMedium}>, @member_2->username)>'
+        icon_large: '<generateImage(<{iconLarge}>, <{iconLarge}>, @member_2->username)>'
+# Member
+App\Entity\Member:
+    member_1:
+        gender: '80%? <randomElement(["male", "female"])>'
+        first_name: '<firstName($gender)>'
+        last_name: '<lastName()>'
+        birthday: '90%? <month()>-<dayOfMonth()>-<year()>'
+        address: '40%? <streetAddress()>'
+        phone: '<phoneNumber()>'
+        username: '<userName()>'
+        email (unique): '<email()>'
+        password: '<password_hash($username, <intval(2)>)>'
+        __calls:
+            # Blocked
+            - addBlocked: ['@personalBlocked_1']
+            - addBlocked: ['@personalBlocked_2']
+            - addBlocked: ['@personalBlocked_3']
+            # Contact
+            - addContact: ['@personalContact_1']
+            - addContact: ['@personalContact_2']
+            - addContact: ['@personalContact_3']
+            # Label
+            - addLabel: ['@personalLabel_1']
+            - addLabel: ['@personalLabel_2']
+            - addLabel: ['@personalLabel_3']
+            # Default Label
+            - addDefaultLabel: ['@personalDefaultLabel1_Inbox']
+            - addDefaultLabel: ['@personalDefaultLabel1_SentMail']
+            - addDefaultLabel: ['@personalDefaultLabel1_Important']
+            # Categories
+            - addCategory: ['@personalCategory1_Social']
+            - addCategory: ['@personalCategory1_Promotions']
+            - addCategory: ['@personalCategory1_Updates']
+            # Settings
+            - addSettings: ['@settings_<numberBetween(1, 5)>']
+            # Icon
+            - setIcon: ['@icon_1']
+    member_2:
+        gender: '80%? <randomElement(["male", "female"])>'
+        first_name: '<firstName($gender)>'
+        last_name: '<lastName()>'
+        birthday: '90%? <month()>-<dayOfMonth()>-<year()>'
+        address: '40%? <streetAddress()>'
+        phone: '<phoneNumber()>'
+        username: '<userName()>'
+        email (unique): '<email()>'
+        password: '<password_hash($username, <intval(2)>)>'
+        __calls:
+            # Blocked
+            - addBlocked: ['@personalBlocked_4']
+            - addBlocked: ['@personalBlocked_5']
+            - addBlocked: ['@personalBlocked_6']
+            # Contact
+            - addContact: ['@personalContact_4']
+            - addContact: ['@personalContact_5']
+            - addContact: ['@personalContact_6']
+            # Label
+            - addLabel: ['@personalLabel_4']
+            - addLabel: ['@personalLabel_5']
+            - addLabel: ['@personalLabel_6']
+            # Default Label
+            - addDefaultLabel: ['@personalDefaultLabel2_Inbox']
+            - addDefaultLabel: ['@personalDefaultLabel2_SentMail']
+            - addDefaultLabel: ['@personalDefaultLabel2_Important']
+            # Categories
+            - addCategory: ['@personalCategory2_Social']
+            - addCategory: ['@personalCategory2_Promotions']
+            - addCategory: ['@personalCategory2_Updates']
+            # Settings
+            - addSettings: ['@settings_<numberBetween(1, 5)>']
+            # Icon
+            - setIcon: ['@icon_2']
