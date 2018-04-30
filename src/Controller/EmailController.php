@@ -30,8 +30,9 @@ class EmailController extends AbstractController
      */
     public function index(): object
     {
-        return $this->redirectToRoute('email_show_default_label', [
-            'defaultLabel' => 'Inbox']);
+        return $this->render('index.html.twig');
+        // return $this->redirectToRoute('email_show_default_label', [
+        //     'defaultLabel' => 'Inbox']);
     }
 
     /**
