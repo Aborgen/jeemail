@@ -57,7 +57,7 @@ class Home extends Component {
                     changeScene  = {changeScene}
                     refresh      = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
-                <Sidebar saveView={saveView} currentView={currentView} />
+                <Sidebar setView={setView} getView={getView} />
                 <div className="FOOgly">
                     <DisplayBlock
                         blockType     = {"email"}

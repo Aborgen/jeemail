@@ -9,25 +9,15 @@ class SideBar extends Component {
     constructor() {
         super();
         this.state = {
-            "currentView": "sideBar0",
             "categoriesExpaned": false,
             "moreExpanded": false
         };
 
-        this.setView    = this.setView.bind(this)
+        this.toggleHighlight = this.toggleHighlight.bind(this)
         this.expandMenu = this.expandMenu.bind(this)
-
     }
 
-    componentDidMount() {
-        this.setView(this.getView());
-    }
-
-    componentWillUnmount() {
-        this.props.saveView(this.state.currentView);
-    }
-
-    setView(view) {
+    toggleHighlight(view) {
         console.log("SETTINGVIEW: "+view);
         const current = document.querySelector('.sideBar__currentView');
         const newNode = document.getElementById(view);
@@ -40,9 +30,7 @@ class SideBar extends Component {
             newNode.classList.add('sideBar__currentView');
         }
 
-        this.setState((prevState) => {
-            return { currentView: view }
-        })
+        this.props.setView(view);
     }
 
     getView() {
@@ -66,9 +54,9 @@ class SideBar extends Component {
                 <div className="sideBar__button">
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
-                <VerticalList setView={this.setView}
-                              expandMenu={this.expandMenu}
-                              items={this.props.items} />
+                <VerticalList toggleHighlight = { this.toggleHighlight }
+                              expandMenu = { this.expandMenu }
+                              items = { this.props.items } />
             </div>
         );
     }

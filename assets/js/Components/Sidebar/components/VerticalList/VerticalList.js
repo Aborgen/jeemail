@@ -20,7 +20,7 @@ class VerticalList extends Component {
             return;
         }
 
-        this.props.setView(clicked.id);
+        this.props.toggleHighlight(clicked.id);
     }
 
     render() {
