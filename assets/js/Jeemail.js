@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
 
 // Scenes
-import Home         from './Scenes/Home/index';
-import SettingsMenu from './Scenes/SettingsMenu/index';
-import ThemesMenu   from './Scenes/ThemesMenu/index';
+import Home from './Scenes/Home/index';
 
 // Services
 import FetchService from './Services/FetchService';
@@ -34,18 +32,17 @@ class Jeemail extends Component {
         this.fetchService.fetch(FetchService.EMAILS);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.currentPage === nextState.currentPage ? false : true;
+    getView() {
+        return this.state.view;
     }
 
-    changeScene(scene) {
+    setView(view) {
         this.setState((prevState) => {
-            return({
-                "currentPage": scene
-            });
+            return({ view });
         });
     }
 
+<<<<<<< 099a6a1b10f37aa3852e294d5bac4f4d665f93ad
     saveView(view) {
         this.setState((prevState) => {
             return({
@@ -102,6 +99,13 @@ class Jeemail extends Component {
             this.hasKeys(contacts)   &&
             this.hasKeys(organizers) &&
             this.hasKeys(emails)
+=======
+    render() {
+        return (
+            <Home
+                getView = { this.getView }
+                setView = { this.setView } />
+>>>>>>> Remove multi-scene scheme from React
         );
             return (
                 <Fragment>
