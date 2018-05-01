@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\VarDumper\Dump;
 
@@ -17,6 +18,7 @@ class MemberController extends AbstractController
 {
     /**
      * @Route("/details", name="details")
+     * @Method({ "POST" })
      */
     public function index(MemberInterface $interface): object
     {
@@ -27,7 +29,8 @@ class MemberController extends AbstractController
         $member = $this->get('security.token_storage')->getToken()->getUser();
         $interface->setId($member->getId());
         $member = $interface->hydrateMember();
-        return $this->render('member/index.html.twig', ['member' => $member]);
+        // return $this->render('member/index.html.twig', ['member' => $member]);
+        return new JsonResponse($member);
     }
 
     /**

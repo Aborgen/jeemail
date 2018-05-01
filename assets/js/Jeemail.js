@@ -10,11 +10,29 @@ class Jeemail extends Component {
         super();
         this.state = {
             "currentPage": "/home",
-            "currentView": ""
+            "currentView": "",
+            "emails": []
         };
 
         this.changeScene = this.changeScene.bind(this);
         this.saveView    = this.saveView.bind(this);
+
+        this.setEmails();
+    }
+
+    setEmails() {
+        fetch('/details', {
+            method: "POST",
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((response) => response.json())
+        .then((emails) => {
+            this.setState({ emails })
+            console.log(emails);
+        });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -70,7 +88,6 @@ class Jeemail extends Component {
 
     render() {
         const scene = this.renderScene();
-        console.log(this.state);
         return (
             scene
         );
