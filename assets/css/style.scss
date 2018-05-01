@@ -1,12 +1,12 @@
 // Partials
-@import "./partials/Button.scss";
-@import "./partials/Dropdown.scss";
-@import "./partials/EmailBlock.scss";
-@import "./partials/Footer.scss";
-@import "./partials/Header.scss";
-@import "./partials/SearchForm.scss";
-@import "./partials/Sidebar.scss";
-@import "./partials/SubNav.scss";
+@import "../js/Components/Button/Button.scss";
+@import "../js/Components/DisplayBlock/DisplayBlock.scss";
+@import "../js/Components/DropDown/DropDown.scss";
+@import "../js/Components/Footer/Footer.scss";
+@import "../js/Components/Header/Header.scss";
+@import "../js/Components/SearchForm/SearchForm.scss";
+@import "../js/Components/Sidebar/Sidebar.scss";
+@import "../js/Components/SubNav/SubNav.scss";
 
 body {
     width: 100%;
