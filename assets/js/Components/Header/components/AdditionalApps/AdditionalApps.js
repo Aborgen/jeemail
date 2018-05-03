@@ -1,21 +1,35 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
+import PropTypes            from 'prop-types';
 
-// Components
-import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
+import DropDown from '../../../DropDown/DropDown';
 
 class AdditonalApps extends Component {
 
+    getTrigger() {
+        return (
+            <span>?</span>
+        );
+    }
+
+    getContent() {
+        return (
+            <Fragment></Fragment>
+        );
+    }
+
     render() {
         return (
-            <DropDown className='headerDropdown'>
-                <Trigger className="additionalApps">
-                    <span>?</span>
-                </Trigger>
-                <Content></Content>
-            </DropDown>
+            <DropDown parentName    = { this.props.componentName }
+                      componentName = { "additionalApps" }
+                      trigger       = { this.getTrigger() }
+                      content       = { this.getContent() } />
         );
     }
 
 }
 
 export default AdditonalApps;
+
+AdditonalApps.propTypes = {
+    componentName: PropTypes.string.isRequired
+}

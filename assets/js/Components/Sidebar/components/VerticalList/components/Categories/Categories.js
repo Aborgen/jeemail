@@ -1,26 +1,42 @@
 import React, { Component } from 'react';
+import PropTypes            from 'prop-types';
 
-// Components
-import ExpandCollapse,
-    { Content,Trigger } from '../../../../../ExpandCollapse/ExpandCollapse';
+import ExpandCollapse from '../../../../../ExpandCollapse/ExpandCollapse';
 
 class Categories extends Component {
+
+    getTrigger() {
+        return (
+            <div onClick = { this.props.handleClick } >
+                Categories
+            </div>
+        );
+    }
+
+    getContent() {
+        return (
+            <ol>
+                { this.props.categories }
+            </ol>
+        );
+    }
+
     render() {
         return (
             <li>
-                <ExpandCollapse>
-                    <Trigger>
-                        <div onClick={this.props.handleClick} className="categories">Categories</div>
-                    </Trigger>
-                    <Content>
-                        <ol>
-                            {this.props.categories}
-                        </ol>
-                    </Content>
-                </ExpandCollapse>
+                <ExpandCollapse parentName = { this.props.componentName }
+                             componentName = { "categories" }
+                             trigger       = { this.getTrigger() }
+                             content       = { this.getContent() } />
             </li>
         );
     }
 }
 
 export default Categories;
+
+Categories.propTypes = {
+    componentName: PropTypes.string.isRequired,
+    categories   : PropTypes.array.isRequired,
+    handleClick  : PropTypes.func.isRequired
+}

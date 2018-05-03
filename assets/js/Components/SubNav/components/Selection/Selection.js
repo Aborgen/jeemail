@@ -1,35 +1,44 @@
-import React, { Component }           from 'react';
+import React, { Fragment, Component } from 'react';
+import PropTypes                      from 'prop-types';
 
-// Components
-import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
+import DropDown from '../../../DropDown/DropDown';
 
 class Selection extends Component {
 
-    render() {
-        const links = this.props.nav.map((link) => {
-            return <li
-                    onClick={this.props.selectionOpt}
-                    key={link.name}>
-                        <div>
-                            {link.name}
-                        </div>
-                    </li>
-        });
+    getTrigger() {
         return (
-            <DropDown className="subNavDropdown">
-                <Trigger className="selection">
-                    <span><input type="checkbox"></input></span>
-                    <div>&#9660;</div>
-                </Trigger>
-                <Content className="selection__dropdown">
-                    <ol>
-                        {links}
-                    </ol>
-                </Content>
-            </DropDown>
+            <Fragment>
+                <span><input type="checkbox"></input></span>
+                <div>&#9660;</div>
+            </Fragment>
         );
     }
 
+    getContent() {
+        const links = this.props.nav.map((link) => {
+            return <li onClick = { this.props.selectionOpt }
+                       key     = { link.name } >
+                        <div>
+                            { link.name }
+                        </div>
+                    </li>
+        });
+
+        return (
+            <ol>
+                {links}
+            </ol>
+        );
+    }
+
+    render() {
+        return (
+            <DropDown parentName    = { this.props.componentName }
+                      componentName = { "selection" }
+                      trigger       = { this.getTrigger() }
+                      content       = { this.getContent() } />
+        );
+    }
 }
 
 export default Selection;
@@ -55,4 +64,9 @@ Selection.defaultProps = {
             name: "Unstarred"
         },
     ]
+}
+
+Selection.propTypes = {
+    componentName: PropTypes.string.isRequired,
+    nav          : PropTypes.array.isRequired
 }

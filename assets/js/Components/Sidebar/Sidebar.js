@@ -55,8 +55,8 @@ class SideBar extends Component {
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
                 <VerticalList toggleHighlight = { this.toggleHighlight }
-                              expandMenu = { this.expandMenu }
-                              items = { this.props.items } />
+                              expandMenu      = { this.expandMenu }
+                              items           = { this.props.items } />
             </div>
         );
     }

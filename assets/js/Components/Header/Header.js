@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-// Components
 import AdditionalApps       from './components/AdditionalApps/AdditionalApps';
 import Notifications        from './components/Notifications/Notifications';
 import ProfileMenu          from './components/ProfileMenu/ProfileMenu';
@@ -15,9 +14,9 @@ class Header extends Component {
                     <div></div>
                 </div>
                 <div className="navPiece navRight">
-                    <AdditionalApps />
-                    <Notifications />
-                    <ProfileMenu member = { member }/>
+                    <AdditionalApps componentName = "header" />
+                    <Notifications  componentName = "header" />
+                    <ProfileMenu    componentName = "header" />
                 </div>
                 <SearchForm />
             </div>
