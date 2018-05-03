@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { findDOMNode }      from 'react-dom';
 import PropTypes            from 'prop-types';
 
-// Components
 import ToggleDOMNode from '../ToggleDOMNode/ToggleDOMNode';
 
 class DropDown extends Component {
@@ -83,7 +82,7 @@ export default DropDown;
 
 DropDown.propTypes = {
     parentName: PropTypes.string,
-    componentName: PropTypes.isRequired,
+    componentName: PropTypes.string.isRequired,
     trigger: PropTypes.object.isRequired,
     content: PropTypes.object.isRequired,
 }
