@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types'
 
-// components
 import Categories           from './components/Categories/Categories';
 import MoreItems            from './components/MoreItems/MoreItems';
 
@@ -41,11 +40,13 @@ class VerticalList extends Component {
 
         return (
             <ol className="verticalList">
-                {items['defaultItems']}
-                <Categories categories = {items['categories']}
-                            handleClick={this.handleClick} />
-                <MoreItems userDefined = {items['userDefined']}
-                            handleClick={this.handleClick} />
+                { items['defaultItems'] }
+                <Categories componentName = "sideBar"
+                            categories    = { items['categories'] }
+                            handleClick   = { this.handleClick } />
+                <MoreItems  componentName = "sideBar"
+                            userDefined   = { items['userDefined'] }
+                            handleClick   = { this.handleClick } />
                 <li>
                     <a href="">Edit label</a>
                 </li>

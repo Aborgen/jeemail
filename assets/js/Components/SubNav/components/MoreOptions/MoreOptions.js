@@ -1,29 +1,39 @@
-import React, { Component }           from 'react';
+import React, { Fragment, Component } from 'react';
+import PropTypes                      from 'prop-types';
 
-// Components
-import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
+import DropDown from '../../../DropDown/DropDown';
 
 class MoreOptions extends Component {
 
-    render() {
-        const links = this.props.nav.map((link) => {
-            return <li key={link.name}><div>{link.name}</div></li>
-        });
+    getTrigger() {
         return (
-            <DropDown className="subNavDropdown">
-                <Trigger className="moreOptions">
-                    <span>More</span>
-                    <div>&#9660;</div>
-                </Trigger>
-                <Content className="moreOptions__dropdown">
-                    <ol>
-                        {links}
-                    </ol>
-                </Content>
-            </DropDown>
+            <Fragment>
+                <span>More</span>
+                <div>&#9660;</div>
+            </Fragment>
         );
     }
 
+    getContent(){
+        const links = this.props.nav.map((link) => {
+            return <li key={link.name}><div>{link.name}</div></li>
+        });
+
+        return (
+            <ol>
+                { links }
+            </ol>
+        );
+    }
+
+    render() {
+        return (
+            <DropDown parentName    = { this.props.componentName }
+                      componentName = { "moreOptions" }
+                      trigger       = { this.getTrigger() }
+                      content       = { this.getContent() } />
+        );
+    }
 }
 
 export default MoreOptions;
@@ -35,4 +45,9 @@ MoreOptions.defaultProps = {
             url: ""
         }
     ]
+}
+
+MoreOptions.propTypes = {
+    componentName: PropTypes.string.isRequired,
+    nav          : PropTypes.array.isRequired
 }

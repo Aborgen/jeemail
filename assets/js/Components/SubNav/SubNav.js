@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 
-//Components
 import EmailViews           from './components/EmailViews/EmailViews';
 import InputTools           from './components/InputTools/InputTools';
 import MoreOptions          from './components/MoreOptions/MoreOptions';
@@ -9,9 +8,6 @@ import Pages                from './components/Pages/Pages';
 import Refresh              from './components/Refresh/Refresh';
 import Selection            from './components/Selection/Selection';
 import Settings             from './components/Settings/Settings';
-
-// Services
-// import getEmails            from '../../Services/GetEmails';
 
 class SubNav extends Component {
 
@@ -28,17 +24,17 @@ class SubNav extends Component {
 
     render() {
         return (
-            <div className="subNav">
-                <div className="subNavPiece subNavLeft">
-                    <EmailViews />
-                    <Selection selectionOpt={this.selectionOpt.bind(this)} />
-                    <Refresh refreshEmails={this.refresh.bind(this)} />
-                    <MoreOptions />
+            <div className = "subNav">
+                <div className = "subNavPiece subNavLeft">
+                    <EmailViews  componentName = "subNav" />
+                    <Selection   componentName = "subNav" />
+                    <Refresh     componentName = "subNav" />
+                    <MoreOptions componentName = "subNav" />
                 </div>
-                <div className="subNavPiece subNavRight">
-                    <Pages />
-                    <InputTools />
-                    <Settings changeScene={this.props.changeScene} />
+                <div className = "subNavPiece subNavRight">
+                    <Pages       componentName = "subNav" />
+                    <InputTools  componentName = "subNav" />
+                    <Settings    componentName = "subNav" />
                 </div>
             </div>
         );

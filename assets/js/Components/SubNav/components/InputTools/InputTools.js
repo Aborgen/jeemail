@@ -1,27 +1,38 @@
-import React, { Component }           from 'react';
+import React, { Fragment, Component } from 'react';
+import PropTypes                      from 'prop-types';
 
-// Components
-import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
+import DropDown from '../../../DropDown/DropDown';
 
 class InputTools extends Component {
 
-    render() {
+    getTrigger() {
+        return (
+            <span>&#9660;</span>
+        );
+    }
+
+    getContent() {
         const links = this.props.nav.map((link) => {
             return <li key={link.id}>{link.name}</li>
         });
+
+        return (
+            <ol>
+                { links }
+            </ol>
+        );
+    }
+
+    render() {
         return (
             <div className="languageConfig">
                 <div className="virtualKeyboard">
                     <span>&#9000;</span>
                 </div>
-                <DropDown className="subNavDropdown">
-                    <Trigger className="inputTools">
-                        <span>&#9660;</span>
-                    </Trigger>
-                    <Content className="inputTools__dropdown">
-                        <ol>{links}</ol>
-                    </Content>
-                </DropDown>
+                <DropDown parentName    = { this.props.componentName }
+                          componentName = { "inputTools" }
+                          trigger       = { this.getTrigger() }
+                          content       = { this.getContent() } />
             </div>
         );
     }
@@ -48,4 +59,9 @@ InputTools.defaultProps = {
             url: ""
         }
     ]
+}
+
+InputTools.propTypes = {
+    componentName: PropTypes.string.isRequired,
+    nav          : PropTypes.array.isRequired
 }

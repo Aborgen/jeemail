@@ -1,56 +1,80 @@
-import React, { Component }           from 'react';
+import React, { Fragment, Component } from 'react';
 import PropTypes                      from 'prop-types';
 
-// Components
-import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
-import Button                         from '../../../Button/Button';
+import DropDown from '../../../DropDown/DropDown';
+import Button   from '../../../Button/Button';
 
 class ProfileMenu extends Component {
 
-    render() {
-        const { member } = this.props;
-        const users = this.props.signedInUsers.map((user) => {
-            return <div className="profile" key={user.id}>
-                       <span className="profileIcon">
-                           <img className="centeredImg"
-                                src={user.icon} alt="" />
-                       </span>
-                       <span>
-                           <div className="profile__Name">{user.name}</div>
-                           <div className="profile__Email">{user.email}</div>
-                       </span>
-                   </div>
-        });
+    getTrigger() {
         return (
-            <DropDown className='headerDropdown'>
-                <Trigger className="profileMenu">
-                    <div>
-                        <img className="centeredImg"
-                             src={member.iconSmall} title="" />
-                    </div>
-                </Trigger>
-                <Content className="profileMenu__dropdown">
-                    <div className="profileSection profile__primary">
-                        <span className="profileIcon">
-                            <img className="centeredImg"
-                                 src={member.iconSmall} title={member.username} />
-                        </span>
-                        <span>
-                            <div className="profile__Name">{member.name} ({member.username})</div>
-                            <div className="profile__Email">{member.email}</div>
-                        </span>
-                    </div>
-                    <div className="profileSection">
-                        {users}
-                    </div>
-                    <div className="profileSection">
-                        <div>
-                            <Button type="button" name="Add Account" text="Add Account" />
-                            <Button type="button" name="Sign Out" text="Sign Out" />
+            <div>
+                <img className = "centeredImg"
+                     src       = { this.props.user.icon } alt = "" />
+            </div>
+        );
+    }
+
+    getContent() {
+        const users = this.props.signedInUsers.map((user) => {
+            return (
+                <div className = "profile" key = {user.id}>
+                    <span className = "profileIcon">
+                       <img className = "centeredImg"
+                            src       = { user.icon } alt = "" />
+                    </span>
+                    <span>
+                        <div className = "profile__Name">
+                            { user.name }
                         </div>
+                        <div className = "profile__Email">
+                            { user.email }
+                        </div>
+                    </span>
+                </div>
+            );
+        });
+
+        return (
+            <Fragment>
+                <div className = "profileSection profile__primary">
+                    <span className = "profileIcon">
+                        <img className = "centeredImg"
+                             src       = {this.props.user.icon} alt = "" />
+                    </span>
+                    <span>
+                        <div className = "profile__Name">
+                            {this.props.user.name}
+                        </div>
+                        <div className = "profile__Email">
+                            {this.props.user.email}
+                        </div>
+                    </span>
+                </div>
+                <div className = "profileSection">
+                    {users}
+                </div>
+                <div className = "profileSection">
+                    <div>
+                        <Button type = "button"
+                                name = "Add Account"
+                                text = "Add Account" />
+                        <Button type = "button"
+                                name = "Sign Out"
+                                text = "Sign Out" />
                     </div>
-                </Content>
-            </DropDown>
+                </div>
+            </Fragment>
+        );
+    }
+
+    render() {
+
+        return (
+            <DropDown parentName    = { this.props.componentName }
+                      componentName = { "profileMenu" }
+                      trigger       = { this.getTrigger() }
+                      content       = { this.getContent() } />
         );
     }
 }
@@ -58,6 +82,7 @@ class ProfileMenu extends Component {
 export default ProfileMenu;
 
 ProfileMenu.propTypes = {
+    componentName: PropTypes.string.isRequired,
     user: PropTypes.shape({
         id   : PropTypes.number.required,
         icon : PropTypes.string.required,
@@ -69,7 +94,7 @@ ProfileMenu.propTypes = {
         icon : PropTypes.string.required,
         name : PropTypes.string.required,
         email: PropTypes.string.required
-    }).isRequired)
+    }).isRequired).isRequired
 }
 
 ProfileMenu.defaultProps = {
