@@ -32,17 +32,18 @@ class ExpandCollapse extends Component {
     }
 
     render() {
-        const { trigger, content, className } = this.props;
-        const classOrClasses = className !== undefined
-            ? `expandCollapseContainer ${className}`
+        const { parentName, componentName, trigger, content } = this.props;
+        const classOrClasses = parentName !== undefined
+            ? `expandCollapseContainer ${parentName}ExpandCollapse`
             : `expandCollapseContainer`
 
           return (
             <div className={ classOrClasses }>
-                <ToggleDOMNode context   = { "expandCollapse" }
-                               trigger   = { trigger }
-                               content   = { content }
-                               isVisible = { this.state.expanded } />
+                <ToggleDOMNode context    = { "expandCollapse" }
+                               parentName = { componentName }
+                               trigger    = { trigger }
+                               content    = { content }
+                               isVisible  = { this.state.expanded } />
             </div>
         );
     }
