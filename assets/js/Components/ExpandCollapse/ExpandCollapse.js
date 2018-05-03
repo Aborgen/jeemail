@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { findDOMNode }      from 'react-dom';
+import PropTypes            from 'prop-types';
 
 // Components
-import Content from './components/ExpandContent/ExpandContent';
-import Trigger from './components/ExpandTrigger/ExpandTrigger';
+import ToggleDOMNode from '../ToggleDOMNode/ToggleDOMNode';
 
 class ExpandCollapse extends Component {
     constructor() {
@@ -32,19 +32,32 @@ class ExpandCollapse extends Component {
     }
 
     render() {
-        const [trigger, content] = React.Children.toArray(this.props.children);
-        const { className } = this.props;
-        const classes = className !== undefined   ?
-            `expandCollapseContainer ${className}`:
-            `expandCollapseContainer`
+        const { trigger, content, className } = this.props;
+        const classOrClasses = className !== undefined
+            ? `expandCollapseContainer ${className}`
+            : `expandCollapseContainer`
+
           return (
-            <div className={classes}>
-                {trigger}
-                {this.state.expanded && content}
+            <div className={ classOrClasses }>
+                <ToggleDOMNode context   = { "expandCollapse" }
+                               trigger   = { trigger }
+                               content   = { content }
+                               isVisible = { this.state.expanded } />
             </div>
         );
     }
 }
 
 export default ExpandCollapse;
-export { Trigger, Content };
+
+ExpandCollapse.propTypes = {
+    trigger: PropTypes.shape({
+        body     : PropTypes.object.isRequired,
+        className: PropTypes.string.isRequired
+    }).isRequired,
+    content: PropTypes.shape({
+        body     : PropTypes.object.isRequired,
+        className: PropTypes.string.isRequired
+    }).isRequired,
+    className: PropTypes.string.isRequired
+}

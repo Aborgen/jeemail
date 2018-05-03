@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { findDOMNode }      from 'react-dom';
+import PropTypes            from 'prop-types';
 
 // Components
-import Content from './components/DropDownContent/DropDownContent';
-import Trigger from './components/DropDownTrigger/DropDownTrigger';
+import ToggleDOMNode from '../ToggleDOMNode/ToggleDOMNode';
 
 class DropDown extends Component {
     constructor() {
         super();
          this.state = {
-             content_visible: false
+             contentShown: false
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -20,18 +20,21 @@ class DropDown extends Component {
     componentDidMount() {
         // TODO: Why does this need touchend event? ExpandCollapse doesn't
         //       and it is very similar.
-        window.addEventListener('click', this.handleClick);
-        window.addEventListener('touchend', this.handleClick);
+        const root = document.querySelector('#root');
+        root.addEventListener('click', this.handleClick);
+        root.addEventListener('touchend', this.handleClick);
     }
 
     componentWillUnmount() {
-        window.removeEventListener('click', this.handleClick);
-        window.removeEventListener('touchend', this.handleClick);
+        const root = document.querySelector('#root');
+        root.removeEventListener('click', this.handleClick);
+        root.removeEventListener('touchend', this.handleClick);
     }
+
     hideContent() {
         this.setState((prevState) => {
             return {
-                content_visible: false
+                contentShown: false
             }
         })
     }
@@ -39,7 +42,7 @@ class DropDown extends Component {
     showContent() {
         this.setState((prevState) => {
             return {
-                content_visible: true
+                contentShown: true
             }
         })
     }
@@ -59,19 +62,28 @@ class DropDown extends Component {
 
 
     render() {
-        const [trigger, content] = React.Children.toArray(this.props.children);
-        const { className } = this.props;
-        const classes = className !== undefined ?
-            `dropdownContainer ${className}`    :
-            `dropdownContainer`
+        const { parentName, componentName, trigger, content } = this.props;
+        const classOrClasses = parentName !== undefined
+            ? `dropDownContainer ${parentName}DropDown`
+            : `dropDownContainer`;
+
         return (
-            <div className={classes}>
-                {trigger}
-                {this.state.content_visible && content}
+            <div className = { classOrClasses }>
+                <ToggleDOMNode context    = { "dropDown" }
+                               parentName = { componentName }
+                               trigger    = { trigger }
+                               content    = { content }
+                               isVisible  = { this.state.contentShown } />
             </div>
         );
     }
 }
 
 export default DropDown;
-export { Trigger, Content };
+
+DropDown.propTypes = {
+    parentName: PropTypes.string,
+    componentName: PropTypes.isRequired,
+    trigger: PropTypes.object.isRequired,
+    content: PropTypes.object.isRequired,
+}
