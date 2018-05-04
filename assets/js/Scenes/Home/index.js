@@ -58,7 +58,7 @@ class Home extends Component {
                     refresh      = {this.refresh}
                     selectionOpt = {this.selectionOpt} />
                 <Sidebar setView={setView} getView={getView} />
-                <div className="FOOgly">
+                <div className="displayContainer">
                     <DisplayBlock
                         blockType     = {"email"}
                         refreshEmails = {emails}

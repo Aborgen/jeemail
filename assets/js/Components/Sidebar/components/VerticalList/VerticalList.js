@@ -32,7 +32,7 @@ class VerticalList extends Component {
                 return <li onClick={this.handleClick}
                            key={item}
                            id={`sideBar${i + len}`}
-                           className="sideBar__item">{item}</li>;
+                           className="sideBarItem highlightable">{item}</li>;
             });
             items[group] = domNodeGroup;
             len += domNodeGroup.length;
@@ -47,7 +47,7 @@ class VerticalList extends Component {
                 <MoreItems  componentName = "sideBar"
                             userDefined   = { items['userDefined'] }
                             handleClick   = { this.handleClick } />
-                <li>
+                <li className = "sideBarItem">
                     <a href="">Edit label</a>
                 </li>
             </ol>

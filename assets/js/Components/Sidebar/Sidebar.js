@@ -18,16 +18,15 @@ class SideBar extends Component {
     }
 
     toggleHighlight(view) {
-        console.log("SETTINGVIEW: "+view);
-        const current = document.querySelector('.sideBar__currentView');
+        const current = document.querySelector('.sideBarSelected');
         const newNode = document.getElementById(view);
         if(!current) {
-            newNode.classList.add('sideBar__currentView');
+            newNode.classList.add('sideBarSelected');
         }
 
         if(current && current !== newNode) {
-            current.classList.remove('sideBar__currentView');
-            newNode.classList.add('sideBar__currentView');
+            current.classList.remove('sideBarSelected');
+            newNode.classList.add('sideBarSelected');
         }
 
         this.props.setView(view);
@@ -45,13 +44,13 @@ class SideBar extends Component {
             return;
         }
 
-        selectedItem.classList.add('sideBar__currentView');
+        selectedItem.classList.add('sideBarSelected');
     }
 
     render() {
         return (
             <div className="sideBar">
-                <div className="sideBar__button">
+                <div className="sideBarButton">
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
                 <VerticalList toggleHighlight = { this.toggleHighlight }

@@ -22,15 +22,13 @@
     }
 }
 
-.footerPiece, .footer__inline {
+.footerPiece, .footerInline {
     display: inline-block;
 }
 
-.footer__block, .footer__inline {
+.footerBlock, .footerInline {
     font-size: .8em;
 }
-.footer__block {
+.footerBlock {
     display: block;
 }
-
-.footer__inline {}

@@ -1,4 +1,4 @@
-.FOOgly {
+.displayContainer {
     height: 100%;
     width: auto;
     overflow-y: scroll;
@@ -10,7 +10,7 @@
     height: auto;
     min-height: 40%;
 }
-//TODO: Compute in Mysql query n amount of letters to preview body
+
 .emailList {
     width:100%;
     table-layout:fixed;

@@ -5,12 +5,12 @@
     float: left;
 }
 
-.sideBar__button, .verticalList {
+.sideBarButton, .verticalList {
     width: 70%;
     margin: auto;
 }
 
-.sideBar__button {
+.sideBarButton {
     height: 33px;
     button[name="compose"] {
         height: 100%;
@@ -18,18 +18,21 @@
     }
 }
 
-.sideBar__currentView {
+.sideBarSelected {
     color: #5cdb7b;
-    border-left: 7px solid #5cdb7b;
+    border-left: 7px solid darken(#5cdb7b, 20%);
 }
 
-.sideBar__item {
+.sideBarItem {
     width: auto;
     margin-top: 10px;
     white-space: nowrap;
     overflow: hidden;
     &:hover {
-        background: #aeeaad;
         cursor: pointer;
     }
+}
+
+.highlightable:hover {
+    background: #aeeaad;
 }
