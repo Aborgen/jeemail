@@ -2,11 +2,17 @@
 
 {% block title %}jeemail{% endblock %}
 
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('build/css/style.css') }}" type="text/css">{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet"
+          href="{{ asset('build/css/style.css') }}" type="text/css">
+    <link rel="stylesheet"
+          href="{{ asset('build/css/normalize.css') }}" type="text/css">
+{% endblock %}
 {% block body %}
-<div id="root"></div>
+    <div id="root"></div>
 {% endblock %}
 
 {% block javascripts %}
-<script type="text/javascript" src="{{ asset('build/js/index.js') }}"></script>
+    <script type="text/javascript"src="{{ asset('build/js/index.js') }}">
+    </script>
 {% endblock %}
