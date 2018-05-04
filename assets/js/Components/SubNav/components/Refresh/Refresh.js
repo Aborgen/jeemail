@@ -6,7 +6,7 @@ class Refresh extends Component {
     render() {
         return (
             <div onClick={this.props.refreshEmails} className="refresh">
-                <div className="refresh__symbol">&#8635;</div>
+                <div className="refreshSymbol">&#8635;</div>
             </div>
         );
     }

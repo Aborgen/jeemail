@@ -23,7 +23,7 @@ class Categories extends Component {
 
     render() {
         return (
-            <li>
+            <li className = "sideBarItem">
                 <ExpandCollapse parentName = { this.props.componentName }
                              componentName = { "categories" }
                              trigger       = { this.getTrigger() }

@@ -7,29 +7,29 @@ class Footer extends Component {
             <div className="footer">
                 <div className="footerContent">
                     <span className="footerPiece">
-                        <div className="footer__block">
+                        <div className="footerBlock">
                             <p>1.3 GB (8%) of 15 GB used</p>
                         </div>
-                        <div className="footer__block">
+                        <div className="footerBlock">
                             <a href="">Manage</a>
                         </div>
                     </span>
                     <span className="footerPiece">
-                        <div className="footer__inline">
+                        <div className="footerInline">
                             <a href="">Terms</a>
                         </div>
-                        <div className="footer__inline">
+                        <div className="footerInline">
                             <p>-</p>
                         </div>
-                        <div className="footer__inline">
+                        <div className="footerInline">
                             <a href="">Privacy</a>
                         </div>
                     </span>
                     <span className="footerPiece">
-                        <div className="footer__block">
+                        <div className="footerBlock">
                             <p>Last account activity: 1 mil years</p>
                         </div>
-                        <div className="footer__block">
+                        <div className="footerBlock">
                             <a href="">Details</a>
                         </div>
                     </span>
