@@ -1,4 +1,4 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
 
 Encore
     // the project directory where compiled assets will be stored
@@ -9,6 +9,8 @@ Encore
     .enableSourceMaps(!Encore.isProduction())
     .addEntry('js/index', './assets/js/index.js')
     .addStyleEntry('css/style', './assets/css/style.scss')
+    .addStyleEntry('css/normalize',
+        './node_modules/normalize.css/normalize.css')
     // uncomment to create hashed filenames (e.g. app.abc123.css)
     // .enableVersioning(Encore.isProduction())
 
