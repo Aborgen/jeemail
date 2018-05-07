@@ -1,15 +1,15 @@
 .header {
-    height: 60px;
+    display: grid;
+    grid-template-columns: 180px 1fr 180px;
+    grid-template-rows: 1fr;
+    grid-column: span 2;
 }
 
 .navPiece {
     background: orange;
-    height: 100%;
-    width: 180px;
 }
 
 .navLeft {
-    float: left;
     div {
         background: #fff;
         height: inherit;
@@ -19,24 +19,27 @@
 }
 
 .navRight {
-    float: right;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .headerDropDown {
-    position: relative;
-    height: 32px;
-    width: 32px;
-    margin-right: 5px;
+    background: grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border: 3px solid #000;
+    border-radius: 50%;
 }
 
 .additionalAppsTrigger, .notificationsTrigger, .profileMenuTrigger {
     overflow: hidden;
     text-align: center;
-    border: 3px solid #000;
-    border-radius: 50%;
     span {
         display: block;
-        background: grey;
         font-size: 2.5em;
     }
 }

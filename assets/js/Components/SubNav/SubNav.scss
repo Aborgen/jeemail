@@ -1,35 +1,20 @@
 @import "../../../css/variables/Colors";
 
 .subNav {
-    height: 56px;
-    position: relative;
-    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
     border-top: solid thin green;
     border-bottom: solid thin green;
+    grid-column: span 2;
 }
 
 .subNavPiece {
-    position: relative;
-    height: 100%;
-    white-space: nowrap;
-}
-
-.subNavLeft {
-    float: left;
-    margin-left: 27px;
-    padding-right: 22px;
-    .subNavContainer:first-child {
-        margin-right: 40px;
-    }
-}
-
-.subNavRight {
-    float: right;
-    margin-right: 2%;
-    padding-right: 12px;
-    .subNavContainer:last-child {
-        margin-right: 0;
-    }
+    min-width: 22rem;
+    width: auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    // white-space: nowrap;
 }
 
 .subNavDropDown, .refresh, .pages, .languageConfig  {
@@ -38,27 +23,24 @@
     height: 70%;
     width: 80px;
     border: 1px solid grey;
-    margin: 0 1%;
-}
-
-.refresh, .pages, .languageConfig {
-    display: inline-block;
-    position: relative;
     &:hover {
         cursor: pointer;
     }
 }
 
-.emailViewsTrigger, .refresh__symbol, .selectionTrigger, .moreOptionsTrigger,
+.pages, .languageConfig {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.emailViewsTrigger, .selectionTrigger, .refreshSymbol, .moreOptionsTrigger,
 .settingsTrigger {
-    display: inline-block;
-    position: absolute;
-    height: 60%;
-    width: 80%;
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    margin: -8px 0 0 -40%;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     div {
         display: inline-block;
     }

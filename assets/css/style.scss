@@ -27,4 +27,7 @@ body, html {
 #root {
     height: 100%;
     overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 6fr;
+    grid-template-rows: repeat(2, 60px) 1fr;
 }

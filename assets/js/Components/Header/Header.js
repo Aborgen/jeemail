@@ -32,6 +32,7 @@ class Header extends Component {
                 <div className="navPiece navLeft">
                     <div></div>
                 </div>
+                <SearchForm />
                 <div className="navPiece navRight">
                     <AdditionalApps componentName = "header" />
                     <Notifications  componentName = "header" />

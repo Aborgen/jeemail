@@ -8,6 +8,8 @@ import Profile  from './components/Profile/Profile';
 class ProfileMenu extends Component {
 
     getTrigger() {
+        //<img className = "centeredImg"
+        //     src       = { this.props.user.icon } alt = "" />
         return (
             <span className = "profileIcon iconSmall">
                 <img src   = { this.props.user.icon.small }
