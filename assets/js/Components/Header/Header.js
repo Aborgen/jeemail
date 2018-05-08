@@ -32,7 +32,10 @@ class Header extends Component {
                 <div className="navPiece navLeft">
                     <div></div>
                 </div>
-                <SearchForm />
+                <Form componentName = "header"
+                      method        = "GET"
+                      fields        = { this.getFields() }
+                      buttonText    = "❓"/>
                 <div className="navPiece navRight">
                     <AdditionalApps componentName = "header" />
                     <Notifications  componentName = "header" />

@@ -24,6 +24,30 @@
     align-items: center;
 }
 
+.headerForm {
+    background: red;
+    display: flex;
+    width: auto;
+    justify-content: flex-start;
+    align-items: center;
+    form {
+        display: grid;
+        grid-template-columns: auto 3rem;
+        grid-template-rows: 2.5rem;
+        min-width: 60%;
+        width: auto;
+    }
+}
+
+.headerSearchFormGroup {
+    display: inline-block;
+    input {
+        box-sizing: border-box;
+        height: 100%;
+        width: 100%;
+    }
+}
+
 .headerDropDown {
     background: grey;
     display: flex;
