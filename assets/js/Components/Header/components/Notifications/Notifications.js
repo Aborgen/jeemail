@@ -1,5 +1,5 @@
-import React, { Fragment, Component } from 'react';
-import PropTypes                      from 'prop-types';
+import React, { Component } from 'react';
+import PropTypes            from 'prop-types';
 
 import DropDown from '../../../DropDown/DropDown';
 
@@ -13,7 +13,7 @@ class Notifications extends Component {
 
     getContent() {
         return (
-            <Fragment></Fragment>
+            <span></span>
         );
     }
 

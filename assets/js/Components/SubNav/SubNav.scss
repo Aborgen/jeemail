@@ -8,13 +8,22 @@
     grid-column: span 2;
 }
 
+.subNavLeft {
+    width: 32.5rem;
+    .subNavDropDown {
+        margin: 0 1rem;
+        &:first-of-type {
+            margin-right: auto;
+            margin-left: 2.2rem;
+        }
+    }
+}
+
 .subNavPiece {
     min-width: 22rem;
-    width: auto;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    // white-space: nowrap;
 }
 
 .subNavDropDown, .refresh, .pages, .languageConfig  {
@@ -58,7 +67,7 @@
     ol li {
         list-style-type: none;
         &:hover {
-            background: lighten($dropDown_Background, 20%);
+            background: $dropDown_Background__hover;
             cursor: pointer;
         }
     }
