@@ -1,13 +1,11 @@
-.displayContainer {
-    // height: 100%;
-    // width: auto;
+@import '../../../css/variables/Colors';
 
-    // overflow-y: scroll;
+.displayContainer {
     z-index: 1;
 }
 
 .mainBlock {
-    background: gold;
+    background: $dropDown_Background;
     height: auto;
     min-height: 40%;
 }
@@ -19,7 +17,6 @@
     border-collapse: collapse;
     colgroup {
         .select {
-            // background: yellow;
             width: 2em;
         }
         .emailName {

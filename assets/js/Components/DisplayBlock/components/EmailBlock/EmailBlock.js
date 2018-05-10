@@ -8,13 +8,8 @@ class EmailBlock extends Component {
     constructor() {
         super();
         this.state = {
-            emails: [],
             emails_available: false
         };
-
-        getReceived(3).then((emails) => {
-            this.setState({emails, emails_available: true});
-        });
 
         this.selectionOpt = this.selectionOpt.bind(this);
     }
@@ -60,8 +55,9 @@ class EmailBlock extends Component {
     // }
 
     render() {
-        const emails = this.state.emails.map((email) => {
-            return <Email key={email.id} email={email} />
+        console.log(email);
+        const emails = this.props.emails.map((email) => {
+            return <Email key={email.id} email={ email } />
         });
 
         return (

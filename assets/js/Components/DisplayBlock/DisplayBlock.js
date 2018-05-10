@@ -4,14 +4,15 @@ import React, { Component } from 'react';
 import EmailBlock    from './components/EmailBlock/EmailBlock';
 import SettingsBlock from './components/SettingsBlock/SettingsBlock';
 import ThemesBlock   from './components/ThemesBlock/ThemesBlock';
+
 class DisplayBlock extends Component {
     render() {
-        const type = this.props.blockType;
+        const { blockType, emails } = this.props;
         let showIt;
         // eslint-disable-next-line
-        switch (type) {
+        switch (blockType) {
             case "email":
-                showIt = <EmailBlock />;
+                showIt = <EmailBlock emails = { emails } />;
                 break;
             case "settings":
                 showIt = <SettingsBlock />;
