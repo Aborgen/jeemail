@@ -81,5 +81,12 @@ class LabelInterface
 
         return isset($label[0]) ? $label[0] : null;
     }
+
+    public function getAllLabelsAndCategories(int $id): ?object
+    {
+        return $this->em->createQuery(
+            'SELECT a, b, c FROM App\Entity\Member m LEFT JOIN m.labels a LEFT JOIN m.defaultLabels b LEFT JOIN m.categories c'
+        );
+    }
 }
 ?>
