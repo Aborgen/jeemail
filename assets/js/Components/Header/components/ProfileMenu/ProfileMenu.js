@@ -6,7 +6,9 @@ import DropDown, { Trigger, Content } from '../../../DropDown/DropDown';
 import Button                         from '../../../Button/Button';
 
 class ProfileMenu extends Component {
+
     render() {
+        const { member } = this.props;
         const users = this.props.signedInUsers.map((user) => {
             return <div className="profile" key={user.id}>
                        <span className="profileIcon">
@@ -24,18 +26,18 @@ class ProfileMenu extends Component {
                 <Trigger className="profileMenu">
                     <div>
                         <img className="centeredImg"
-                             src={this.props.user.icon} alt="" />
+                             src={member.iconSmall} title="" />
                     </div>
                 </Trigger>
                 <Content className="profileMenu__dropdown">
                     <div className="profileSection profile__primary">
                         <span className="profileIcon">
                             <img className="centeredImg"
-                                 src={this.props.user.icon} alt="" />
+                                 src={member.iconSmall} title={member.username} />
                         </span>
                         <span>
-                            <div className="profile__Name">{this.props.user.name}</div>
-                            <div className="profile__Email">{this.props.user.email}</div>
+                            <div className="profile__Name">{member.name} ({member.username})</div>
+                            <div className="profile__Email">{member.email}</div>
                         </span>
                     </div>
                     <div className="profileSection">

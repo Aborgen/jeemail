@@ -8,6 +8,7 @@ import SearchForm           from '../../Components/SearchForm/SearchForm';
 
 class Header extends Component {
     render() {
+        const { member } = this.props;
         return (
             <div className="header">
                 <div className="navPiece navLeft">
@@ -16,7 +17,7 @@ class Header extends Component {
                 <div className="navPiece navRight">
                     <AdditionalApps />
                     <Notifications />
-                    <ProfileMenu />
+                    <ProfileMenu member = { member }/>
                 </div>
                 <SearchForm />
             </div>
