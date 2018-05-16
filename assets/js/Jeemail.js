@@ -11,17 +11,19 @@ class Jeemail extends Component {
         this.state = {
             "currentPage": "/home",
             "currentView": "",
-            "emails": []
+            "member": {}
         };
 
         this.changeScene = this.changeScene.bind(this);
         this.saveView    = this.saveView.bind(this);
+    }
 
+    componentWillMount() {
         this.setEmails();
     }
 
     setEmails() {
-        fetch('/details', {
+        fetch('/api/member/details', {
             method: "POST",
             credentials: 'same-origin',
             headers: {
@@ -29,9 +31,8 @@ class Jeemail extends Component {
             }
         })
         .then((response) => response.json())
-        .then((emails) => {
-            this.setState({ emails })
-            console.log(emails);
+        .then((member) => {
+            this.setState({ member })
         });
     }
 
@@ -57,7 +58,7 @@ class Jeemail extends Component {
 
     renderScene() {
         const { changeScene, saveView }    = this;
-        const { currentView, currentPage } = this.state;
+        const { currentView, currentPage, member } = this.state;
         let showIt;
         switch (currentPage) {
             case "/settings":
@@ -79,7 +80,8 @@ class Jeemail extends Component {
                 showIt = <Home
                             changeScene={changeScene}
                             currentView={currentView}
-                            saveView={saveView} />;
+                            saveView={saveView}
+                            member={member} />;
                 break;
         }
 
