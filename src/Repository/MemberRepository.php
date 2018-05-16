@@ -32,6 +32,41 @@ class MemberRepository extends ServiceEntityRepository implements UserLoaderInte
                     ->getOneOrNullResult();
     }
 
+    public function getFilteredMember(int $id): ?array
+    {
+        $result = $this->createQueryBuilder('u')
+                    // ->select('partial u.{
+                    //     id,
+                    //     first_name,
+                    //     last_name,
+                    //     gender,
+                    //     birthday,
+                    //     address,
+                    //     phone,
+                    //     username,
+                    //     email
+                    // }')
+                    // ->addSelect('partial i.{
+                    //     id,
+                    //     icon_small,
+                    //     icon_medium,
+                    //     icon_large
+                    // }')
+                    ->addSelect('s', 't', 'i')
+                    ->leftJoin('u.icon', 'i')
+                    ->leftJoin('u.settings', 's')
+                    ->leftJoin('u.theme', 't')
+                    ->where('u.id = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult()[0];
+            $result['settings']  = $result['settings'][0];
+            $result['full_name'] = "{$result['first_name']} {$result['last_name']}";
+            unset($result['id'], $result['password'],
+                  $result['icon']['id'], $result['settings']['id']);
+            return $result;
+    }
+
 //    /**
 //     * @return Member[] Returns an array of Member objects
 //     */

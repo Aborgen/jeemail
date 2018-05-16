@@ -17,20 +17,15 @@ use App\Entity\Member;
 class MemberController extends AbstractController
 {
     /**
-     * @Route("/details", name="details")
-     * @Method({ "POST" })
+     * @Route("/api/member/details", name="details_show")
+     * @Method({ "POST", "GET" })
      */
-    public function index(MemberInterface $interface): object
+    public function getDetails(): object
     {
-        // $id = $request->get('id');
-        // if(!isset($id)) {
-        //     $id = -100;
-        // }
         $member = $this->get('security.token_storage')->getToken()->getUser();
-        $interface->setId($member->getId());
-        $member = $interface->hydrateMember();
-        // return $this->render('member/index.html.twig', ['member' => $member]);
-        return new JsonResponse($member);
+        $repo   = $this->getDoctrine()->getRepository(Member::class);
+        $filteredMember = $repo->getFilteredMember($member->getId());
+        return new JsonResponse($filteredMember);
     }
 
     /**
