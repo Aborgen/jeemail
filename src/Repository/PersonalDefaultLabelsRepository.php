@@ -39,7 +39,7 @@ class PersonalDefaultLabelsRepository extends ServiceEntityRepository
                     ->getResult();
     }
 
-    public function findJoinedLabels(int $id): ?array
+    public function findJoined(int $id): ?array
     {
         return $this->createQueryBuilder('a')
                     ->select('a.visibility', 'b.name, b.slug')

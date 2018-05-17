@@ -9,15 +9,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\VarDumper\Dump;
 
 use App\Service\MemberInterface;
-use App\Service\PreInsert;
-use App\Entity\Label;
-use App\Entity\PersonalLabels;
 use App\Entity\Member;
+use App\Entity\PersonalBlockeds;
+use App\Entity\PersonalContacts;
 
 class MemberController extends AbstractController
 {
     /**
-     * @Route("/api/member/details", name="details_show")
+     * @Route("/api/member/details", name="member_details")
      * @Method({ "POST", "GET" })
      */
     public function getDetails(): object

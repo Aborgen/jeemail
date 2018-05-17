@@ -62,28 +62,32 @@ class LabelInterface
     {
         return $this->em
                     ->getRepository(SELF::DEFAULT_LABEL)
-                    ->findJoinedLabels($id);
+                    ->findJoined($id);
     }
 
     private function getLabels(int $id): ?array
     {
         return $this->em
                     ->getRepository(SELF::LABEL)
-                    ->findJoinedLabels($id);
+                    ->findJoined($id);
     }
 
     private function getCategories(int $id): ?array
     {
         return $this->em
                     ->getRepository(SELF::CATEGORY)
-                    ->findJoinedCategories($id);
+                    ->findJoined($id);
     }
 
-    public function getAllOrganizers(int $id): ?array
+    public function getAllOrganizers(int $id, ?string $json): ?array
     {
         $default    = $this->getDefaultLabels($id);
         $labels     = $this->getLabels($id);
         $categories = $this->getCategories($id);
+        $organizers = json_decode($json);
+        if(!empty($organizers)) {
+            return $this->refreshLabels($organizers);
+        }
 
         return [
             'labels' => [
@@ -94,9 +98,8 @@ class LabelInterface
         ];
     }
 
-    public function refreshLabels(int $id, string $oldObject): object
+    public function refreshLabels(string $oldObject): array
     {
-        $refreshedLabels = $this->getLabels($id);
         return $oldObject['labels']['user'] = $refreshedLabels;
     }
 }
