@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -61,7 +62,7 @@ class OrganizationController extends AbstractController
 
     /**
      * @Route("/api/member/organizers", name="label_get")
-     * @Method({ "POST", "GET" })
+     * @Method({ "POST" })
      */
     public function getAllLabels(LabelInterface $interface)
     {
@@ -70,7 +71,8 @@ class OrganizationController extends AbstractController
             return false;
         }
 
-
+        $organizers = $interface->getAllOrganizers($member->getId());
+        return new JsonResponse($organizers);
     }
 
     /**
