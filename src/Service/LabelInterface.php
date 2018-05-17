@@ -4,10 +4,10 @@ namespace App\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-use App\Constant\LabelConstants as Constant;
 use App\Entity\PersonalCategories;
 use App\Entity\PersonalDefaultLabels;
 use App\Entity\PersonalLabels;
+
 /**
  * This service exists since Label, Default_Label, and Category entities
  * are so similar.
@@ -15,8 +15,9 @@ use App\Entity\PersonalLabels;
 
 class LabelInterface
 {
-    // LABEL | DEFAULT_LABEL | CATEGORY
-    private $type;
+    public const LABEL         = PersonalLabels::class;
+    public const DEFAULT_LABEL = PersonalDefaultLabels::class;
+    public const CATEGORY      = PersonalCategories::class;
     // Entity is an instantiation of either PersonalLabels,
     // PersonalDefaultLabels, or PersonalCategories.
     private $entity;
@@ -27,40 +28,14 @@ class LabelInterface
         $this->em = $entityManager;
     }
 
-    public function getType(): int
-    {
-        return $this->type;
-    }
-
-    public function setType(int $type): void
-    {
-        $type === Constant::LABEL         ||
-        $type === Constant::DEFAULT_LABEL ||
-        $type === Constant::CATEGORY
-            ? $this->type = $type
-            : $this->type = Constant::LABEL;
-
-        $this->setEntity();
-    }
-
     public function getEntity(): string
     {
         return $this->entity;
     }
 
-    private function setEntity(): void
+    public function setEntity(string $entity): void
     {
-        switch ($this->type) {
-            case Constant::LABEL:
-                $this->entity = PersonalLabels::class;
-                break;
-            case Constant::DEFAULT_LABEL:
-                $this->entity = PersonalDefaultLabels::class;
-                break;
-            case Constant::CATEGORY:
-                $this->entity = PersonalCategories::class;
-                break;
-        }
+        $this->entity = $entity;
     }
 
     /**
@@ -73,7 +48,7 @@ class LabelInterface
      *
  	 * @return object|null
 	 */
-    public function findPersonalLabel(string $slug, int $id): ?object
+    public function findEmailsByOrganizer(string $slug, int $id): ?object
     {
         $label = $this->em
                       ->getRepository($this->entity)
@@ -82,11 +57,47 @@ class LabelInterface
         return isset($label[0]) ? $label[0] : null;
     }
 
-    public function getAllLabelsAndCategories(int $id): ?object
+
+    private function getDefaultLabels(int $id): ?array
     {
-        return $this->em->createQuery(
-            'SELECT a, b, c FROM App\Entity\Member m LEFT JOIN m.labels a LEFT JOIN m.defaultLabels b LEFT JOIN m.categories c'
-        );
+        return $this->em
+                    ->getRepository(SELF::DEFAULT_LABEL)
+                    ->findJoinedLabels($id);
+    }
+
+    private function getLabels(int $id): ?array
+    {
+        return $this->em
+                    ->getRepository(SELF::LABEL)
+                    ->findJoinedLabels($id);
+    }
+
+    private function getCategories(int $id): ?array
+    {
+        return $this->em
+                    ->getRepository(SELF::CATEGORY)
+                    ->findJoinedCategories($id);
+    }
+
+    public function getAllOrganizers(int $id): ?array
+    {
+        $default    = $this->getDefaultLabels($id);
+        $labels     = $this->getLabels($id);
+        $categories = $this->getCategories($id);
+
+        return [
+            'labels' => [
+                'default' => $default,
+                'user'    => $labels
+            ],
+            'categories' => $categories
+        ];
+    }
+
+    public function refreshLabels(int $id, string $oldObject): object
+    {
+        $refreshedLabels = $this->getLabels($id);
+        return $oldObject['labels']['user'] = $refreshedLabels;
     }
 }
 ?>

@@ -16,9 +16,6 @@ use App\Entity\PersonalLabels;
 // Services
 use App\Service\LabelInterface;
 
-// Constants
-use App\Constant\LabelConstants;
-
 /**
  * @Route("/email")
  */
@@ -50,9 +47,9 @@ class EmailController extends AbstractController
         $emailsShown = $member->getSettings()[0]->getMaxEmailsShown();
         $id = $member->getId();
             if(isset($defaultLabel)) {
-                $interface->setType(LabelConstants::DEFAULT_LABEL);
                 $personalDefaultLabel =
                     $interface->findPersonalLabel($defaultLabel, $id);
+                $interface->setEntity($interface::DEFAULT_LABEL);
                 return $this->render('email/label.html.twig', [
                     "label"         => $personalDefaultLabel,
                     "emailsPerPage" => $emailsShown
@@ -60,16 +57,16 @@ class EmailController extends AbstractController
             }
 
             if(isset($category)) {
-                $interface->setType(LabelConstants::CATEGORY);
                 $personalCategory =
                     $interface->findPersonalLabel($category, $id);
+                $interface->setEntity($interface::CATEGORY);
                 return $this->render('email/category.html.twig', [
                     "category" => $personalCategory]);
             }
 
             if(isset($label)) {
-                $interface->setType(LabelConstants::LABEL);
                 $personalLabel = $interface->findPersonalLabel($label, $id);
+                $interface->setEntity($interface::LABEL);
 
                 return $this->render('email/label.html.twig', [
                     "label" => $personalLabel]);
