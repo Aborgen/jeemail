@@ -25,45 +25,6 @@ class MemberInterface
         $this->id = $id;
     }
 
-    public function hydrateMember(): ?object
-    {
-        $member = $this->repo->find($this->id);
-        if(isset($member)) {
-            $info = [
-                'name' => [
-                    'first' => $member->getFirstName(),
-                    'last'  => $member->getLastName(),
-                    'full'  => $member->getFirstName() ." ". $member->getLastName(),
-                ],
-                'username' => $member->getUsername(),
-                'gender'   => $member->getGender(),
-                'birthday' => $member->getBirthday(),
-                'address'  => $member->getAddress(),
-                'phone'    => $member->getPhone(),
-                'email'    => $member->getEmail(),
-            ];
-
-            $data = [
-                'icon'       => $member->getIcon(),
-                'settings'   => $member->getSettings(),
-                'contacts'   => $member->getContacts(),
-                'blocked'    => $member->getBlockeds(),
-                'categories' => $member->getCategories(),
-                'labels' => [
-                    'label'    => $member->getLabels(),
-                    'default'  => $member->getDefaultLabels(),
-                ],
-                'emails' => [
-                    'received' => $member->getReceivedEmails(),
-                    'sent'     => $member->getSentEmails()
-                ]
-            ];
-
-            return (object)['data' => $data, 'info' => $info];
-        }
-
-        return null;
-    }
 }
 
 ?>
