@@ -19,6 +19,17 @@ class PersonalBlockedsRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonalBlockeds::class);
     }
 
+    public function findJoined(int $id): ?array
+    {
+        return $this->createQueryBuilder('a')
+                    ->select('a.id AS id')
+                    ->addSelect('b.email')
+                    ->leftJoin('a.blocked', 'b')
+                    ->where('a.member = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult();
+    }
 //    /**
 //     * @return PersonalBlockeds[] Returns an array of PersonalBlockeds objects
 //     */

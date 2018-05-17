@@ -32,7 +32,7 @@ class MemberRepository extends ServiceEntityRepository implements UserLoaderInte
                     ->getOneOrNullResult();
     }
 
-    public function getFilteredMember(int $id): ?array
+    public function findFilteredMember(int $id): ?array
     {
         $result = $this->createQueryBuilder('u')
                     // ->select('partial u.{

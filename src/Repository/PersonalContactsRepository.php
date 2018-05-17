@@ -19,6 +19,27 @@ class PersonalContactsRepository extends ServiceEntityRepository
         parent::__construct($registry, PersonalContacts::class);
     }
 
+    public function findJoined(int $id): ?array
+    {
+        return $this->createQueryBuilder('a')
+                    ->select('a.id')
+                    ->addSelect('b.name, b.email')
+                    ->addSelect('
+                        c.type,
+                        c.nickname,
+                        c.job_title,
+                        c.phone,
+                        c.birthday,
+                        c.relationship,
+                        c.website,
+                        c.notes')
+                    ->leftJoin('a.contact', 'b')
+                    ->leftJoin('a.contactDetails', 'c')
+                    ->where('a.member = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult();
+    }
 //    /**
 //     * @return PersonalContacts[] Returns an array of PersonalContacts objects
 //     */
