@@ -47,32 +47,31 @@ class EmailController extends AbstractController
         $emailsShown = $member->getSettings()[0]->getMaxEmailsShown();
         $id = $member->getId();
             if(isset($defaultLabel)) {
-                $personalDefaultLabel =
-                    $interface->findPersonalLabel($defaultLabel, $id);
                 $interface->setEntity($interface::DEFAULT_LABEL);
+                $emails = $interface->findEmailsByOrganizer($defaultLabel, $id);
                 return $this->render('email/label.html.twig', [
-                    "label"         => $personalDefaultLabel,
+                    "label"         => $emails,
                     "emailsPerPage" => $emailsShown
                 ]);
             }
 
             if(isset($category)) {
-                $personalCategory =
-                    $interface->findPersonalLabel($category, $id);
                 $interface->setEntity($interface::CATEGORY);
+                $emails = $interface->findEmailsByOrganizer($category, $id);
                 return $this->render('email/category.html.twig', [
-                    "category" => $personalCategory]);
+                    "category" => $emails
+                ]);
             }
 
             if(isset($label)) {
-                $personalLabel = $interface->findPersonalLabel($label, $id);
                 $interface->setEntity($interface::LABEL);
+                $emails = $interface->findEmailsByOrganizer($label, $id);
 
                 return $this->render('email/label.html.twig', [
-                    "label" => $personalLabel]);
+                    "label"         => $emails,
+                    "emailsPerPage" => $emailsShown
+                ]);
             }
-
-
     }
 
     /**
