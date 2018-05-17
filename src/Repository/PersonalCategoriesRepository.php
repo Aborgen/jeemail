@@ -36,4 +36,15 @@ class PersonalCategoriesRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getResult();
     }
+
+    public function findJoinedCategories(int $id): ?array
+    {
+        return $this->createQueryBuilder('a')
+                    ->select('a.visibility', 'b.name, b.slug')
+                    ->leftJoin('a.category', 'b')
+                    ->where('a.member = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult();
+    }
 }

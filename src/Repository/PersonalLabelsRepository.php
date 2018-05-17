@@ -51,6 +51,17 @@ class PersonalLabelsRepository extends ServiceEntityRepository
                     ->getQuery()
                     ->getOneOrNullResult();
     }
+
+    public function findJoinedLabels(int $id): ?array
+    {
+        return $this->createQueryBuilder('a')
+                    ->select('a.visibility', 'b.name, b.slug')
+                    ->leftJoin('a.label', 'b')
+                    ->where('a.member = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult();
+    }
    /**
     * @return PersonalLabels[] Returns an array of PersonalLabels objects
     */

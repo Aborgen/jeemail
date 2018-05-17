@@ -39,6 +39,17 @@ class PersonalDefaultLabelsRepository extends ServiceEntityRepository
                     ->getResult();
     }
 
+    public function findJoinedLabels(int $id): ?array
+    {
+        return $this->createQueryBuilder('a')
+                    ->select('a.visibility', 'b.name, b.slug')
+                    ->leftJoin('a.label', 'b')
+                    ->where('a.member = :id')
+                    ->setParameter('id', $id)
+                    ->getQuery()
+                    ->getArrayResult();
+    }
+
    /**
     * @return PersonalDefaultLabels[] Returns an array of PersonalDefaultLabels objects
     */
