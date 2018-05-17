@@ -35,7 +35,10 @@ services:
     # App\EventListener\EnsureNonDuplicateRowEventListener:
     #     tags:
     #         - { name: doctrine.event_listener, event: prePersist }
-
+doctrine:
+    orm:
+        hydrators:
+            COLUMN_HYDRATOR: App\Hydrator\ColumnHydrator
 framework:
     assets:
         packages:
