@@ -5,12 +5,12 @@ namespace App\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use App\Service\LabelInterface;
 use App\Service\PreInsert;
 
-class OrganizationController extends Controller
+class OrganizationController extends AbstractController
 {
     /**
      * @Route("/api/organization/show", name="label_create")
@@ -60,8 +60,8 @@ class OrganizationController extends Controller
      }
 
     /**
-     * @Route("/api/label/get", name="label_get")
-     * @Method({ "POST" })
+     * @Route("/api/member/organizers", name="label_get")
+     * @Method({ "POST", "GET" })
      */
     public function getAllLabels(LabelInterface $interface)
     {
