@@ -14,7 +14,6 @@ Encore
 
     // uncomment if you use Sass/SCSS files
     .enableSassLoader()
-    .enableReactPreset()
 ;
 
 module.exports = Encore.getWebpackConfig();
