@@ -13,16 +13,26 @@ use App\Service\PreInsert;
 
 class OrganizationController extends AbstractController
 {
+    private $member;
+
+    private function getMember(): ?Member
+    {
+        if (!isset($this->member)) {
+            $this->member = $this->get('security.token_storage')
+                                 ->getToken()
+                                 ->getUser();
+        }
+
+        return $this->member;
+    }
+
     /**
      * @Route("/api/organization/show", name="label_create")
      * @Method({ "POST" })
      */
      public function createLabel(PreInsert $preInsert, Request $request):boolean
      {
-         $member = $this->get('security.token_storage')->getToken()->getUser();
-         if(!isset($member)) {
-             return false;
-         }
+         $member = $this->getMember();
 
          $manager = $this->getDoctrine()->getManager();
 
@@ -64,14 +74,9 @@ class OrganizationController extends AbstractController
      * @Route("/api/member/organizers", name="label_get")
      * @Method({ "POST" })
      */
-    public function getAllLabels(LabelInterface $interface)
+    public function getAllLabels(LabelInterface $interface, Request $request)
     {
-        $member = $this->get('security.token_storage')->getToken()->getUser();
-        if(!isset($member)) {
-            return false;
-        }
-
-        $organizers = $interface->getAllOrganizers($member->getId());
+        $member = $this->getMember();
         return new JsonResponse($organizers);
     }
 
