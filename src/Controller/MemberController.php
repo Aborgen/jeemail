@@ -8,10 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\VarDumper\Dump;
 
-use App\Service\MemberInterface;
 use App\Entity\Member;
 use App\Entity\PersonalBlockeds;
 use App\Entity\PersonalContacts;
+
+use App\Service\MemberInterface;
 
 class MemberController extends AbstractController
 {
@@ -32,7 +33,7 @@ class MemberController extends AbstractController
      * @Route("/api/member/details", name="member_details")
      * @Method({ "POST", "GET" })
      */
-    public function getDetails(): object
+    public function getDetails(MemberInterface $interface): object
     {
         $member         = $this->getMember();
         $filteredMember = $interface->getMember($member->getId());
