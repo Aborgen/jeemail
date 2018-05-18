@@ -77,6 +77,9 @@ class OrganizationController extends AbstractController
     public function getAllLabels(LabelInterface $interface, Request $request)
     {
         $member = $this->getMember();
+        $stringOrNull = $request->request->get('organizers');
+        $organizers = $interface
+                          ->getAllOrganizers($member->getId(), $stringOrNull);
         return new JsonResponse($organizers);
     }
 
