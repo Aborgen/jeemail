@@ -52,6 +52,10 @@ class Jeemail extends Component {
         });
     }
 
+    hasKeys(object) {
+        return Object.keys(object).length > 0;
+    }
+
     renderScene() {
         const { changeScene, saveView }    = this;
         const { currentView, currentPage, member, blocked, contacts, organizers } = this.state;
@@ -88,10 +92,18 @@ class Jeemail extends Component {
     }
 
     render() {
-        const scene = this.renderScene();
-        return (
-            scene
+        const { member, blocked, contacts, organizers } = this.state;
+        const renderable = (
+            this.hasKeys(member)   &&
+            this.hasKeys(blocked)  &&
+            this.hasKeys(contacts) &&
+            this.hasKeys(organizers)
         );
+            return (
+                <Fragment>
+                    { renderable && this.renderScene() }
+                </Fragment>
+            );
     }
 }
 
