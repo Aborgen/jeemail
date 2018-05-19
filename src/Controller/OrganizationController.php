@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use App\Service\LabelInterface;
 use App\Service\PreInsert;
+use App\Entity\Member;
 
 class OrganizationController extends AbstractController
 {
