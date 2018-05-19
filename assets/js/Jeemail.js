@@ -1,9 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 // Scenes
 import Home         from './Scenes/Home/index';
 import SettingsMenu from './Scenes/SettingsMenu/index';
 import ThemesMenu   from './Scenes/ThemesMenu/index';
+
+// Services
+import FetchService from './Services/FetchService';
 
 class Jeemail extends Component {
     constructor() {
@@ -11,29 +14,22 @@ class Jeemail extends Component {
         this.state = {
             "currentPage": "/home",
             "currentView": "",
-            "member": {}
+            "member"     : {},
+            "blocked"    : {},
+            "contacts"   : {},
+            "organizers" : {}
         };
 
-        this.changeScene = this.changeScene.bind(this);
-        this.saveView    = this.saveView.bind(this);
+        this.changeScene  = this.changeScene.bind(this);
+        this.saveView     = this.saveView.bind(this);
+        this.fetchService = new FetchService(this);
     }
 
-    componentWillMount() {
-        this.setEmails();
-    }
-
-    setEmails() {
-        fetch('/api/member/details', {
-            method: "POST",
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => response.json())
-        .then((member) => {
-            this.setState({ member })
-        });
+    componentDidMount() {
+        this.fetchService.fetch(FetchService.MEMBER);
+        this.fetchService.fetch(FetchService.BLOCKED);
+        this.fetchService.fetch(FetchService.CONTACTS);
+        this.fetchService.fetch(FetchService.ORGANIZERS);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -58,7 +54,7 @@ class Jeemail extends Component {
 
     renderScene() {
         const { changeScene, saveView }    = this;
-        const { currentView, currentPage, member } = this.state;
+        const { currentView, currentPage, member, blocked, contacts, organizers } = this.state;
         let showIt;
         switch (currentPage) {
             case "/settings":
@@ -81,7 +77,10 @@ class Jeemail extends Component {
                             changeScene={changeScene}
                             currentView={currentView}
                             saveView={saveView}
-                            member={member} />;
+                            member={member}
+                            blocked={blocked}
+                            contacts={contacts}
+                            organizers={organizers} />;
                 break;
         }
 
