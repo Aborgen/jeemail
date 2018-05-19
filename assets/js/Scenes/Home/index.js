@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 // Components
 import DisplayBlock         from '../../Components/DisplayBlock/DisplayBlock';
@@ -32,7 +32,7 @@ class Home extends Component {
     }
 
     splitMemberProps(member) {
-        const { icon = {}, settings = {} } = member;
+        const { icon, settings } = member;
         return {
             header: {
                 name      : member.full_name,
@@ -47,9 +47,8 @@ class Home extends Component {
 
     render() {
         const { changeScene, saveView, currentView, member } = this.props;
-        const { emails, selection }    = this.state;
-        const Fragment = React.Fragment;
-        const { header, body } = this.splitMemberProps(member);
+        const { emails, selection } = this.state;
+        const { header, body }      = this.splitMemberProps(member);
 
         return (
             <Fragment>
