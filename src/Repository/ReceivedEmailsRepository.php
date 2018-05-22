@@ -19,6 +19,27 @@ class ReceivedEmailsRepository extends ServiceEntityRepository
         parent::__construct($registry, ReceivedEmails::class);
     }
 
+    public function findBySlug(int $id, string $slug): ?array
+    {
+        return $this->createQueryBuilder('re')
+                    ->select('re', 'e', 'l')
+                    ->addSelect('dl', 'dl2')
+                    ->addSelect('ls', 'ls2')
+                    ->leftJoin('re.email', 'e')
+                    ->leftJoin('re.category', 'c')
+                    ->leftJoin('c.category', 'c2')
+                    ->leftJoin('re.labels', 'l')
+                    ->leftJoin('l.default', 'dl')
+                    ->leftJoin('dl.label', 'dl2')
+                    ->leftJoin('l.user', 'ls')
+                    ->leftJoin('ls.label', 'ls2')
+                    ->where('re.member = :id')
+                    ->andWhere('ls2.slug = :slug OR dl2.slug = :slug')
+                    ->setParameters(['id' => $id, 'slug' => $slug])
+                    ->getQuery()
+                    ->getArrayResult();
+    }
+
 //    /**
 //     * @return ReceivedEmails[] Returns an array of ReceivedEmails objects
 //     */
