@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use \Symfony\Component\VarDumper\Dump;
@@ -14,7 +15,7 @@ use App\Entity\PersonalDefaultLabels;
 use App\Entity\PersonalLabels;
 
 // Services
-use App\Service\LabelInterface;
+use App\Service\EmailInterface;
 
 /**
  * @Route("/email")
@@ -41,18 +42,20 @@ class EmailController extends AbstractController
     public function show(string $defaultLabel = null,
                          string $category = null,
                          string $label = null,
-                         LabelInterface $interface): object
+                         EmailInterface $interface): object
     {
         $member = $this->get('security.token_storage')->getToken()->getUser();
         $emailsShown = $member->getSettings()[0]->getMaxEmailsShown();
         $id = $member->getId();
             if(isset($defaultLabel)) {
-                $interface->setEntity($interface::DEFAULT_LABEL);
-                $emails = $interface->findEmailsByOrganizer($defaultLabel, $id);
+                $emails = $interface->getEmails($id, $defaultLabel);
+                dump($emails);
                 return $this->render('email/label.html.twig', [
                     "label"         => $emails,
                     "emailsPerPage" => $emailsShown
                 ]);
+
+                return new JsonResponse($emails);
             }
 
             if(isset($category)) {
