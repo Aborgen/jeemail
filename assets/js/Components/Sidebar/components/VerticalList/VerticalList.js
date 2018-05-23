@@ -8,6 +8,7 @@ class VerticalList extends Component {
     constructor() {
         super();
         this.handleClick = this.handleClick.bind(this);
+        this.itemsLength = 0;
     }
 
     handleClick(e) {
@@ -15,38 +16,42 @@ class VerticalList extends Component {
         const catsTrigger = document.querySelector('.categories');
         const moreTrigger = document.querySelector('.moreItems');
         if(clicked === catsTrigger || clicked === moreTrigger) {
-            this.props.expandMenu();
             return;
         }
 
         this.props.toggleHighlight(clicked.id);
     }
 
-    render() {
-        let items = {};
-        let len   = 0;
-        for(const group in this.props.items) {
-            // (no functions declared inside loop)
-            // eslint-disable-next-line
-            const domNodeGroup = this.props.items[group].map((item, i) => {
-                return <li onClick={this.handleClick}
-                           key={item}
-                           id={`sideBar${i + len}`}
-                           className="sideBarItem highlightable">{item}</li>;
-            });
-            items[group] = domNodeGroup;
-            len += domNodeGroup.length;
+    generateItem(item) {
+        if(item.visiblity === false) {
+            return null;
         }
 
         return (
+            <li onClick   = { this.handleClick }
+                key       = { this.itemsLength }
+                id        = { `sideBar${this.itemsLength++}` }
+                className = "sideBarItem highlightable">{ item.name }</li>
+        );
+    }
+
+    generateItems(itemGroup) {
+        if(!Array.isArray(itemGroup)) {
+            return null;
+        }
+
+        return itemGroup.map((item) => this.generateItem(item));
+    }
+
+    render() {
+        const { labels, categories } = this.props.organizers;
+        return (
             <ol className="verticalList">
-                { items['defaultItems'] }
+                { this.generateItems(labels['default']) }
                 <Categories componentName = "sideBar"
-                            categories    = { items['categories'] }
-                            handleClick   = { this.handleClick } />
+                            categories    = { this.generateItems(categories) } />
                 <MoreItems  componentName = "sideBar"
-                            userDefined   = { items['userDefined'] }
-                            handleClick   = { this.handleClick } />
+                            userDefined   = { this.generateItems(labels['user']) } />
                 <li className = "sideBarItem">
                     <a href="">Edit label</a>
                 </li>
@@ -58,9 +63,24 @@ class VerticalList extends Component {
 export default VerticalList;
 
 VerticalList.propTypes = {
-    items: PropTypes.shape({
-        defaultItems : PropTypes.array,
-        categories   : PropTypes.array,
-        userDefined  : PropTypes.array
-    })
+    organizers: PropTypes.shape({
+        labels: PropTypes.shape({
+                user: PropTypes.arrayOf(PropTypes.shape({
+                    visibility: PropTypes.bool.isRequired,
+                    name      : PropTypes.string.isRequired,
+                    slug      : PropTypes.string.isRequired
+                }).isRequired).isRequired,
+                default: PropTypes.arrayOf(PropTypes.shape({
+                    visibility: PropTypes.bool.isRequired,
+                    name      : PropTypes.string.isRequired,
+                    slug      : PropTypes.string.isRequired
+                }).isRequired).isRequired
+        }).isRequired,
+        categories: PropTypes.arrayOf(PropTypes.shape({
+            visibility: PropTypes.bool.isRequired,
+            name      : PropTypes.string.isRequired,
+            slug      : PropTypes.string.isRequired
+        }).isRequired).isRequired
+    }).isRequired,
+    toggleHighlight: PropTypes.func.isRequired
 }
