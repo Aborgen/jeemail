@@ -9,12 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use \Symfony\Component\VarDumper\Dump;
 
-// Entities
-use App\Entity\PersonalCategories;
-use App\Entity\PersonalDefaultLabels;
-use App\Entity\PersonalLabels;
-
-// Services
+use App\Entity\Member;
 use App\Service\EmailInterface;
 
 /**
@@ -22,6 +17,19 @@ use App\Service\EmailInterface;
  */
 class EmailController extends AbstractController
 {
+    private $member;
+
+    private function getMember(): ?Member
+    {
+        if (!isset($this->member)) {
+            $this->member = $this->get('security.token_storage')
+                                 ->getToken()
+                                 ->getUser();
+        }
+
+        return $this->member;
+    }
+
     /**
      * @Route("", name="email_index")
      * @Method({ "GET" })
@@ -29,52 +37,38 @@ class EmailController extends AbstractController
     public function index(): object
     {
         return $this->render('index.html.twig');
-        // return $this->redirectToRoute('email_show_default_label', [
-        //     'defaultLabel' => 'Inbox']);
     }
 
     /**
      * @Route("/{defaultLabel}", name="email_show_default_label")
      * @Route("/category/{category}", name="email_show_category")
      * @Route("/label/{label}", name="email_show_label")
-     * @Method({ "GET" })
+     * @Method({ "POST" })
      */
-    public function show(string $defaultLabel = null,
-                         string $category = null,
-                         string $label = null,
-                         EmailInterface $interface): object
+    public function getEmails(string $defaultLabel = null,
+                              string $category = null,
+                              string $label = null,
+                              EmailInterface $interface): JsonResponse
     {
-        $member = $this->get('security.token_storage')->getToken()->getUser();
-        $emailsShown = $member->getSettings()[0]->getMaxEmailsShown();
-        $id = $member->getId();
+        $member = $this->getMember();
+        $id     = $member->getId();
             if(isset($defaultLabel)) {
                 $emails = $interface->getEmails($id, $defaultLabel);
-                dump($emails);
-                return $this->render('email/label.html.twig', [
-                    "label"         => $emails,
-                    "emailsPerPage" => $emailsShown
-                ]);
-
-                return new JsonResponse($emails);
             }
 
-            if(isset($category)) {
-                $interface->setEntity($interface::CATEGORY);
-                $emails = $interface->findEmailsByOrganizer($category, $id);
-                return $this->render('email/category.html.twig', [
-                    "category" => $emails
-                ]);
+            else if(isset($category)) {
+                $emails = $interface->getEmails($id, $category);
             }
 
-            if(isset($label)) {
-                $interface->setEntity($interface::LABEL);
-                $emails = $interface->findEmailsByOrganizer($label, $id);
-
-                return $this->render('email/label.html.twig', [
-                    "label"         => $emails,
-                    "emailsPerPage" => $emailsShown
-                ]);
+            else if(isset($label)) {
+                $emails = $interface->getEmails($id, $label);
             }
+
+            else {
+                $emails = [];
+            }
+
+            return new JsonResponse($emails);
     }
 
     /**

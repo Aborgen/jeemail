@@ -19,12 +19,12 @@ class EmailInterface
         $this->em = $entityManager;
     }
 
-    private function getSentEmails(int $id, string $slug): ?array
+    private function getSentEmails(int $id, string $slug): array
     {
         return $this->em->getRepository(SELF::SENT)->findBySlug($id, $slug);
     }
 
-    private function getReceivedEmails(int $id, string $slug): ?array
+    private function getReceivedEmails(int $id, string $slug): array
     {
         return $this->em->getRepository(SELF::RECEIVED)->findBySlug($id, $slug);
     }
@@ -32,19 +32,23 @@ class EmailInterface
     private function cleanUp(array &$arr): void
     {
         // TODO: Surely there is a better way of doing this!
+        if(empty($arr)) {
+            return;
+        }
+
         $arr['labels'] = $arr['labels'][0];
-        if($arr['labels']['user'] === null) {
-            $arr['labels']['user'] = [];
+        if($arr['labels']['labels'] === null) {
+            $arr['labels']['labels'] = [];
         }
     }
 
     public function getEmails(int $id, string $slug): array
     {
-        // $sent     = $this->getSentEmails($id, $slug);
-        $sent = [];
+        $sent     = $this->getSentEmails($id, $slug);
         $received = $this->getReceivedEmails($id, $slug);
-        // array_map('self::cleanUp', $received);
-        return [$slug => $received + $sent];
+        array_map('self::cleanUp', $received);
+        array_map('self::cleanUp', $sent);
+        return [$slug => $sent + $received];
     }
 }
 ?>
