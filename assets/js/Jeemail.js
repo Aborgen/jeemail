@@ -1,16 +1,17 @@
 import React, { Component, Fragment } from 'react';
 
-// Scenes
-import Home from './Scenes/Home/index';
+import DisplayBlock from './Components/DisplayBlock/DisplayBlock';
+import Footer       from './Components/Footer/Footer';
+import Header       from './Components/Header/Header';
+import Sidebar      from './Components/Sidebar/Sidebar';
+import SubNav       from './Components/SubNav/SubNav';
 
-// Services
 import FetchService from './Services/FetchService';
 
 class Jeemail extends Component {
     constructor() {
         super();
         this.state = {
-            "currentPage": "/home",
             "currentView": "",
             "member"     : {},
             "blocked"    : {},
@@ -19,8 +20,6 @@ class Jeemail extends Component {
             "emails"     : {}
         };
 
-        this.changeScene  = this.changeScene.bind(this);
-        this.saveView     = this.saveView.bind(this);
         this.fetchService = new FetchService(this);
     }
 
@@ -32,63 +31,8 @@ class Jeemail extends Component {
         this.fetchService.fetch(FetchService.EMAILS);
     }
 
-    getView() {
-        return this.state.view;
-    }
-
-    setView(view) {
-        this.setState((prevState) => {
-            return({ view });
-        });
-    }
-
-<<<<<<< 099a6a1b10f37aa3852e294d5bac4f4d665f93ad
-    saveView(view) {
-        this.setState((prevState) => {
-            return({
-                "currentView": view
-            });
-        });
-    }
-
     hasKeys(object) {
         return Object.keys(object).length > 0;
-    }
-
-    renderScene() {
-        const { changeScene, saveView }    = this;
-        const { currentView, currentPage, member, blocked, contacts, organizers } = this.state;
-        let showIt;
-        switch (currentPage) {
-            case "/settings":
-                showIt = <SettingsMenu
-                            changeScene={changeScene}
-                            currentView={currentView}
-                            saveView={saveView} />;
-                break;
-
-            case "/themes":
-                showIt = <ThemesMenu
-                            changeScene={changeScene}
-                            currentView={currentView}
-                            saveView={saveView} />;
-                break;
-
-            case "/home":
-            default:
-                showIt = <Home
-                            changeScene={changeScene}
-                            currentView={currentView}
-                            saveView={saveView}
-                            member={member}
-                            blocked={blocked}
-                            contacts={contacts}
-                            organizers={organizers}
-                            emails={emails} />;
-                break;
-        }
-
-        return showIt;
     }
 
     render() {
@@ -99,19 +43,29 @@ class Jeemail extends Component {
             this.hasKeys(contacts)   &&
             this.hasKeys(organizers) &&
             this.hasKeys(emails)
-=======
-    render() {
-        return (
-            <Home
-                getView = { this.getView }
-                setView = { this.setView } />
->>>>>>> Remove multi-scene scheme from React
         );
-            return (
+
+        return (
+            <Fragment>
+                { renderable &&
                 <Fragment>
-                    { renderable && this.renderScene() }
+                    <Header member = { member } />
+                    <SubNav />
+                    <Sidebar organizers = { organizers } />
+                    <div className="displayContainer">
+                        <DisplayBlock
+                            blockType  = {"email"}
+                            member     = { member }
+                            blocked    = { blocked }
+                            contacts   = { contacts }
+                            organizers = { organizers }
+                            emails     = { emails } />
+                        <Footer />
+                    </div>
                 </Fragment>
-            );
+                }
+            </Fragment>
+        );
     }
 }
 
