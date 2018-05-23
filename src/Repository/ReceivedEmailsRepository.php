@@ -23,18 +23,21 @@ class ReceivedEmailsRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('re')
                     ->select('re', 'e', 'l')
+                    ->addSelect('c', 'c2')
                     ->addSelect('dl', 'dl2')
                     ->addSelect('ls', 'ls2')
                     ->leftJoin('re.email', 'e')
                     ->leftJoin('re.category', 'c')
                     ->leftJoin('c.category', 'c2')
                     ->leftJoin('re.labels', 'l')
-                    ->leftJoin('l.default', 'dl')
+                    ->leftJoin('l.defaultLabels', 'dl')
                     ->leftJoin('dl.label', 'dl2')
-                    ->leftJoin('l.user', 'ls')
+                    ->leftJoin('l.labels', 'ls')
                     ->leftJoin('ls.label', 'ls2')
                     ->where('re.member = :id')
-                    ->andWhere('ls2.slug = :slug OR dl2.slug = :slug')
+                    ->andWhere('dl2.slug = :slug OR '.
+                               'ls2.slug = :slug OR '.
+                               'c2.slug = :slug')
                     ->setParameters(['id' => $id, 'slug' => $slug])
                     ->getQuery()
                     ->getArrayResult();

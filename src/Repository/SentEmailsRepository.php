@@ -19,6 +19,29 @@ class SentEmailsRepository extends ServiceEntityRepository
         parent::__construct($registry, SentEmails::class);
     }
 
+    public function findBySlug(int $id, string $slug): ?array
+    {
+        return $this->createQueryBuilder('se')
+                    ->select('se', 'e', 'l')
+                    ->addSelect('dl', 'dl2')
+                    ->addSelect('ls', 'ls2')
+                    ->leftJoin('se.email', 'e')
+                    ->leftJoin('se.category', 'c')
+                    ->leftJoin('c.category', 'c2')
+                    ->leftJoin('se.labels', 'l')
+                    ->leftJoin('l.defaultLabels', 'dl')
+                    ->leftJoin('dl.label', 'dl2')
+                    ->leftJoin('l.labels', 'ls')
+                    ->leftJoin('ls.label', 'ls2')
+                    ->where('se.member = :id')
+                    ->andWhere('dl2.slug = :slug OR '.
+                               'ls2.slug = :slug OR '.
+                               'c2.slug = :slug')
+                    ->setParameters(['id' => $id, 'slug' => $slug])
+                    ->getQuery()
+                    ->getArrayResult();
+    }
+
 //    /**
 //     * @return SentEmails[] Returns an array of SentEmails objects
 //     */
