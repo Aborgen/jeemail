@@ -4,12 +4,14 @@ class FetchService {
         this.fetchContacts   = this.fetchContacts.bind(_this);
         this.fetchMember     = this.fetchMember.bind(_this);
         this.fetchOrganizers = this.fetchOrganizers.bind(_this);
+        this.fetchEmails     = this.fetchEmails.bind(_this);
     }
 
     static get BLOCKED() { return 0; }
     static get CONTACTS() { return 1; }
     static get MEMBER() { return 2; }
     static get ORGANIZERS() { return 3; }
+    static get EMAILS() { return 4; }
 
     async fetchBlocked() {
         const content = await fetch('/api/member/blocked', {
@@ -62,7 +64,23 @@ class FetchService {
         this.setState({ organizers });
     }
 
-    async fetch(type) {
+    async fetchEmails(string) {
+
+        const url = string === null
+            ? '/email/Inbox'
+            : `/email/${string}`;
+        const content = await fetch(url, {
+            method: "POST",
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const emails = await content.json();
+        this.setState({ emails });
+    }
+
+    async fetch(type, string = null) {
         const self = this.constructor;
         switch (type) {
             case self.BLOCKED:
@@ -73,6 +91,8 @@ class FetchService {
                 return await this.fetchMember();
             case self.ORGANIZERS:
                 return await this.fetchOrganizers();
+            case self.EMAILS:
+                return await this.fetchEmails(string);
             default:
                 return null;
         };

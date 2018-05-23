@@ -17,7 +17,8 @@ class Jeemail extends Component {
             "member"     : {},
             "blocked"    : {},
             "contacts"   : {},
-            "organizers" : {}
+            "organizers" : {},
+            "emails"     : {}
         };
 
         this.changeScene  = this.changeScene.bind(this);
@@ -30,6 +31,7 @@ class Jeemail extends Component {
         this.fetchService.fetch(FetchService.BLOCKED);
         this.fetchService.fetch(FetchService.CONTACTS);
         this.fetchService.fetch(FetchService.ORGANIZERS);
+        this.fetchService.fetch(FetchService.EMAILS);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -84,7 +86,8 @@ class Jeemail extends Component {
                             member={member}
                             blocked={blocked}
                             contacts={contacts}
-                            organizers={organizers} />;
+                            organizers={organizers}
+                            emails={emails} />;
                 break;
         }
 
@@ -92,12 +95,13 @@ class Jeemail extends Component {
     }
 
     render() {
-        const { member, blocked, contacts, organizers } = this.state;
+        const { member, blocked, contacts, organizers, emails } = this.state;
         const renderable = (
-            this.hasKeys(member)   &&
-            this.hasKeys(blocked)  &&
-            this.hasKeys(contacts) &&
-            this.hasKeys(organizers)
+            this.hasKeys(member)     &&
+            this.hasKeys(blocked)    &&
+            this.hasKeys(contacts)   &&
+            this.hasKeys(organizers) &&
+            this.hasKeys(emails)
         );
             return (
                 <Fragment>
