@@ -7,7 +7,7 @@ class MoreItems extends Component {
 
     getTrigger() {
         return (
-            <div onClick = { this.props.handleClick } >
+            <div>
                 More
             </div>
         );
@@ -37,6 +37,5 @@ export default MoreItems;
 
 MoreItems.propTypes = {
     componentName: PropTypes.string.isRequired,
-    userDefined  : PropTypes.array.isRequired,
-    handleClick  : PropTypes.func.isRequired
+    userDefined  : PropTypes.array.isRequired
 }

@@ -7,7 +7,7 @@ class Categories extends Component {
 
     getTrigger() {
         return (
-            <div onClick = { this.props.handleClick } >
+            <div>
                 Categories
             </div>
         );
@@ -37,6 +37,5 @@ export default Categories;
 
 Categories.propTypes = {
     componentName: PropTypes.string.isRequired,
-    categories   : PropTypes.array.isRequired,
-    handleClick  : PropTypes.func.isRequired
+    categories   : PropTypes.array.isRequired
 }

@@ -8,13 +8,8 @@ import VerticalList         from './components/VerticalList/VerticalList';
 class SideBar extends Component {
     constructor() {
         super();
-        this.state = {
-            "categoriesExpaned": false,
-            "moreExpanded": false
-        };
 
         this.toggleHighlight = this.toggleHighlight.bind(this)
-        this.expandMenu = this.expandMenu.bind(this)
     }
 
     toggleHighlight(view) {
@@ -28,23 +23,6 @@ class SideBar extends Component {
             current.classList.remove('sideBarSelected');
             newNode.classList.add('sideBarSelected');
         }
-
-        this.props.setView(view);
-    }
-
-    getView() {
-        const parentView = this.props.currentView;
-        const thisView   = this.state.currentView;
-        return parentView !== "" ? parentView : thisView
-    }
-
-    expandMenu() {
-        const selectedItem = document.getElementById(this.state.currentView);
-        if(!selectedItem) {
-            return;
-        }
-
-        selectedItem.classList.add('sideBarSelected');
     }
 
     render() {
@@ -54,43 +32,32 @@ class SideBar extends Component {
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
                 <VerticalList toggleHighlight = { this.toggleHighlight }
-                              expandMenu      = { this.expandMenu }
-                              items           = { this.props.items } />
+                              organizers      = { this.props.organizers } />
             </div>
         );
     }
 }
 
 export default SideBar;
-SideBar.defaultProps = {
-    items: {
-        "defaultItems": [
-            "Inbox",
-            "Starred",
-            "Important",
-            "Sent Mail",
-            "Drafts",
-            "Personal"
-        ],
-        "categories": [
-            "Social",
-            "Promotions",
-            "Updates",
-            "Forums"
-        ],
-        "userDefined": [
-            "one",
-            "two",
-            "hullabaloo!",
-            "tan style bile kyle",
-            "long long long long long long long long long"
-        ]
-    }
-};
 
 SideBar.propTypes = {
-    items: PropTypes.shape({
-        default    : PropTypes.array,
-        userDefined: PropTypes.array
-    })
+    organizers: PropTypes.shape({
+        labels: PropTypes.shape({
+                user: PropTypes.arrayOf(PropTypes.shape({
+                    visibility: PropTypes.bool.isRequired,
+                    name      : PropTypes.string.isRequired,
+                    slug      : PropTypes.string.isRequired
+                }).isRequired).isRequired,
+                default: PropTypes.arrayOf(PropTypes.shape({
+                    visibility: PropTypes.bool.isRequired,
+                    name      : PropTypes.string.isRequired,
+                    slug      : PropTypes.string.isRequired
+                }).isRequired).isRequired
+        }).isRequired,
+        categories: PropTypes.arrayOf(PropTypes.shape({
+            visibility: PropTypes.bool.isRequired,
+            name      : PropTypes.string.isRequired,
+            slug      : PropTypes.string.isRequired
+        }).isRequired).isRequired
+    }).isRequired
 }
