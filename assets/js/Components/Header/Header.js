@@ -4,9 +4,17 @@ import PropTypes            from 'prop-types';
 import AdditionalApps       from './components/AdditionalApps/AdditionalApps';
 import Notifications        from './components/Notifications/Notifications';
 import ProfileMenu          from './components/ProfileMenu/ProfileMenu';
-import SearchForm           from '../../Components/SearchForm/SearchForm';
+import Form                 from '../../Components/Form/Form';
 
 class Header extends Component {
+
+    getFields() {
+        return [{
+            name: "headerSearch",
+            type: "input"
+        }];
+    }
+
     render() {
         const { member } = this.props;
         const user = {
@@ -17,6 +25,7 @@ class Header extends Component {
             name: member.full_name,
             email: member.email
         };
+
 
         return (
             <div className="header">
@@ -29,7 +38,10 @@ class Header extends Component {
                     <ProfileMenu    componentName = "header"
                                     user          = { user } />
                 </div>
-                <SearchForm />
+                <Form componentName = { "header" }
+                      method        = { "GET" }
+                      fields        = { this.getFields() }
+                      buttonText    = { "❓" } />
             </div>
         );
     }
