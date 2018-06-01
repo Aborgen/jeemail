@@ -72,7 +72,7 @@ class OrganizationController extends AbstractController
      }
 
     /**
-     * @Route("/api/member/organizers", name="label_get")
+     * @Route("/member/organizers", name="label_get")
      * @Method({ "POST" })
      */
     public function getAllLabels(LabelInterface $interface, Request $request)

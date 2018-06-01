@@ -30,7 +30,7 @@ class MemberController extends AbstractController
     }
 
     /**
-     * @Route("/api/member/details", name="member_details")
+     * @Route("/member/details", name="member_details")
      * @Method({ "POST", "GET" })
      */
     public function getDetails(MemberInterface $interface): object
@@ -41,7 +41,7 @@ class MemberController extends AbstractController
     }
 
     /**
-     * @Route("/api/member/blocked", name="member_blockeds")
+     * @Route("/member/blocked", name="member_blockeds")
      * @Method({ "POST", "GET" })
      */
     public function getBlocked(MemberInterface $interface): object
@@ -52,7 +52,7 @@ class MemberController extends AbstractController
     }
 
     /**
-     * @Route("/api/member/contacts", name="member_contacts")
+     * @Route("/member/contacts", name="member_contacts")
      * @Method({ "POST", "GET" })
      */
     public function getContacts(MemberInterface $interface): object

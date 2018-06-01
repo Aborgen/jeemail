@@ -44,3 +44,7 @@ framework:
                 base_path: 'static/icons/'
             themes:
                 base_path: 'static/themes/'
+    session:
+        cookie_lifetime: 0
+        cookie_domain: .jeemail.com
+        name: SFSESSID
