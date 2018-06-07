@@ -38,6 +38,7 @@ doctrine:
         hydrators:
             COLUMN_HYDRATOR: App\Hydrator\ColumnHydrator
 framework:
+    trusted_hosts: ['^(.+\.)?jeemail.com$']
     assets:
         packages:
             icons:
@@ -46,5 +47,10 @@ framework:
                 base_path: 'static/themes/'
     session:
         cookie_lifetime: 0
+<<<<<<< HEAD
         cookie_domain: .jeemail.com
+=======
+        cookie_domain: jeemail.com
+>>>>>>> 0e4c480... Add all subdomains to trusted_hosts; Update session cookie_domain and save path
         name: SFSESSID
+        save_path: '/tmp/sessions/%kernel.environment%'
