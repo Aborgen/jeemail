@@ -19,14 +19,20 @@ class SecurityController extends AbstractController
      * @Route("/login", name="login")
      * @Method({ "GET", "POST" })
      */
-    public function login(Request $request, AuthenticationUtils $au): object
+    public function login(Request $request,
+                          AuthenticationUtils $au): JsonResponse
     {
-        $lastUsername = $au->getLastUsername();
-        $error        = $au->getLastAuthenticationError();
+        if($request->getMethod('GET')) {
+            $lastUsername = $au->getLastUsername();
+            $error        = $au->getLastAuthenticationError();
+            $template = $this->renderView('security/login.html.twig', [
+                'last_username' => $lastUsername,
+                'error'         => $error
+            ]);
 
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error'         => $error
-        ]);
+            return new JsonResponse(['template' => $template]);
+        }
+
+        // Symfony Security bundle magic happens if the method is POST
     }
 }
