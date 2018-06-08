@@ -19,11 +19,11 @@ security:
             anonymous: true
             form_login:
                 provider: member_from_db
-                login_path: login
+                login_path: client_login
                 check_path: login
                 post_only: true
                 always_use_default_target_path: true
-                default_target_path: email_index
+                default_target_path: client_index
 
             # TODO!
             # remember_me:
