@@ -35,4 +35,23 @@ class SecurityController extends AbstractController
 
         // Symfony Security bundle magic happens if the method is POST
     }
+
+    /**
+     * @Route("/status", name="auth_status")
+     * @Method({ "POST" })
+     */
+    public function authStatus(Request $request): Response
+    {
+        $response = new Response();
+        $authenticated = $this->isGranted('IS_AUTHENTICATED_FULLY') ||
+                         $this->isGranted('IS_AUTHENTICATED_REMEMBERED');
+        if($authenticated) {
+            $response->setStatusCode(Response::HTTP_OK);
+        }
+        else {
+            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+        }
+
+        return $response;
+    }
 }
