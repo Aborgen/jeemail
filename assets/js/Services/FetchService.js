@@ -12,12 +12,12 @@ class FetchService {
     static get MEMBER() { return 2; }
     static get ORGANIZERS() { return 3; }
     static get EMAILS() { return 4; }
-    static get URL() { return "https://api.jeemail.com/api"; }
+    static get URL() { return 'https://api.jeemail.com'; }
 
     async fetchBlocked() {
-        const content = await fetch(`${ FetchService.URL }/blocked`, {
+        const content = await fetch(`${ FetchService.URL }/member/blocked`, {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -28,9 +28,9 @@ class FetchService {
     }
 
     async fetchContacts() {
-        const content = await fetch(`${ FetchService.URL }/contacts`, {
+        const content = await fetch(`${ FetchService.URL }/member/contacts`, {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -41,9 +41,9 @@ class FetchService {
     }
 
     async fetchMember() {
-        const content = await fetch(`${ FetchService.URL }/details`, {
+        const content = await fetch(`${ FetchService.URL }/member/details`, {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -53,9 +53,9 @@ class FetchService {
     };
 
     async fetchOrganizers() {
-        const content = await fetch(`${ FetchService.URL }/organizers`, {
+        const content = await fetch(`${ FetchService.URL }/member/organizers`, {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -72,7 +72,7 @@ class FetchService {
             : `${ FetchService.URL }/email/${string}`;
         const content = await fetch(url, {
             method: "POST",
-            credentials: 'same-origin',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
