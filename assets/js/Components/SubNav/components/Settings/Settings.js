@@ -1,4 +1,5 @@
 import React, { Fragment, Component } from 'react';
+import { Link }                       from 'react-router-dom';
 import PropTypes                      from 'prop-types';
 
 import DropDown from '../../../DropDown/DropDown';
@@ -15,11 +16,12 @@ class Settings extends Component {
     }
 
     getContent() {
-        const links = this.props.nav.map((link) => {
-            return <li key = { link.name }
-                       id  = { link.url }>
-                    { link.name }
+        const links = this.props.nav.map((link, i) => {
+            return (
+                <li key = { i } >
+                    <Link to = { link.url } >{ link.name }</Link>
                 </li>
+            )
         });
 
         return (

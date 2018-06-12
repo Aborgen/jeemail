@@ -13,6 +13,7 @@ class Jeemail extends Component {
         super();
         this.state = {
             "currentView": "",
+            "message"    : Jeemail.LOADING_MESSAGE,
             "member"     : {},
             "blocked"    : {},
             "contacts"   : {},
@@ -23,6 +24,13 @@ class Jeemail extends Component {
         this.fetchService = new FetchService(this);
     }
 
+    static get LOADING_MESSAGE() { return "Loading..."; }
+    static get ERROR_MESSAGE() { return "There seems to have been a problem"; }
+
+    async componentWillMount() {
+        this.checkAuthorization();
+    }
+
     componentDidMount() {
         this.fetchService.fetch(FetchService.MEMBER);
         this.fetchService.fetch(FetchService.BLOCKED);
@@ -31,12 +39,29 @@ class Jeemail extends Component {
         this.fetchService.fetch(FetchService.EMAILS);
     }
 
+
+    async checkAuthorization() {
+        try {
+            const response = await fetch('https://api.jeemail.com/status', {
+                method: "POST",
+                credentials: "include"
+            });
+
+            if(!response.ok) {
+                redirect: window.location.replace('/login.php');
+            }
+        }
+        catch (e) {
+            this.setState({ message: Jeemail.ERROR_MESSAGE })
+        }
+    }
+
     hasKeys(object) {
         return Object.keys(object).length > 0;
     }
 
     render() {
-        const { member, blocked, contacts, organizers, emails } = this.state;
+        const { message, member, blocked, contacts, organizers, emails } = this.state;
         const renderable = (
             this.hasKeys(member)     &&
             this.hasKeys(blocked)    &&
@@ -62,7 +87,8 @@ class Jeemail extends Component {
                             emails     = { emails } />
                         <Footer />
                     </div>
-                </Fragment>
+                </Fragment> ||
+                <p>{ message }</p>
                 }
             </Fragment>
         );

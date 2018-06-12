@@ -12,10 +12,6 @@ class EmailBlock extends Component {
             emails_available: false
         };
 
-        getReceived(3).then((emails) => {
-            this.setState({emails, emails_available: true});
-        });
-
         this.selectionOpt = this.selectionOpt.bind(this);
     }
 

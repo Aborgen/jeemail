@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Fragment, Component } from 'react';
 import PropTypes            from 'prop-types';
 import { Route, Switch }    from 'react-router-dom';
 
@@ -6,15 +6,17 @@ import EmailBlock    from './components/EmailBlock/EmailBlock';
 import SettingsBlock from './components/SettingsBlock/SettingsBlock';
 import ThemesBlock   from './components/ThemesBlock/ThemesBlock';
 
-class DisplayBlock extends PureComponent {
+class DisplayBlock extends Component {
     render() {
         const { type } = this.props;
         return (
-            <Switch>
-                <Route path = "/email" component    = { EmailBlock } />
-                <Route path = "/settings" component = { SettingsBlock } />
-                <Route path = "/theme" component    = { ThemesBlock } />
-            </Switch>
+            <Fragment>
+                <Switch>
+                    <Route path = "/email" component    = { EmailBlock } />
+                    <Route path = "/settings" component = { SettingsBlock } />
+                    <Route path = "/theme" component    = { ThemesBlock } />
+                </Switch>
+            </Fragment>
         );
     }
 }
