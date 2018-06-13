@@ -7,14 +7,28 @@ import SettingsBlock from './components/SettingsBlock/SettingsBlock';
 import ThemesBlock   from './components/ThemesBlock/ThemesBlock';
 
 class DisplayBlock extends Component {
+
     render() {
-        const { type } = this.props;
+        const { member, blocked, contacts, organizers, emails } = this.props;
         return (
             <Fragment>
                 <Switch>
-                    <Route path = "/email" component    = { EmailBlock } />
-                    <Route path = "/settings" component = { SettingsBlock } />
-                    <Route path = "/theme" component    = { ThemesBlock } />
+                    <Route path   = "/email"
+                           render = {
+                               () => <EmailBlock emails = { emails }
+                           } />
+                    <Route path   = "/settings"
+                           render = {
+                               () => <SettingsBlock member     = { member }
+                                                    blocked    = { blocked }
+                                                    contacts   = { contacts }
+                                                    organizers = { organizers }
+                                     />
+                           } />
+                    <Route path   = "/theme"
+                           render = {
+                               () => <ThemesBlock />
+                           } />
                 </Switch>
             </Fragment>
         );
