@@ -6,6 +6,14 @@ import Summary from './components/Summary/Summary';
 class EmailBlock extends Component {
 
     render() {
+        const { emails, selectedEmails, setSelectedEmails } = this.props;
+        const summaries = emails.Inbox.map((email, i) => {
+            const isSelected = selectedEmails.includes(i);
+            return <Summary key               = { i }
+                            email             = { email }
+                            isSelected        = { isSelected }
+                            setSelectedEmails = { setSelectedEmails }
+                            index             = { i } />
         });
 
         return (
@@ -19,7 +27,7 @@ class EmailBlock extends Component {
                         <col className="dateTag" />
                     </colgroup>
                     <tbody>
-                        {emails}
+                        { summaries }
                     </tbody>
                 </table>
             </div>

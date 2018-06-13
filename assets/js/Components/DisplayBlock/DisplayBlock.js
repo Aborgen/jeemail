@@ -7,6 +7,36 @@ import SettingsBlock from './components/SettingsBlock/SettingsBlock';
 import ThemesBlock   from './components/ThemesBlock/ThemesBlock';
 
 class DisplayBlock extends Component {
+    constructor() {
+        super();
+        this.state = {
+            selectedEmails: []
+        };
+
+        this.setSelectedEmails = this.setSelectedEmails.bind(this);
+    }
+
+    setSelectedEmails(isNowSelected, index) {
+        // If a row was just checked, set selectedEmails to the previous
+        // state and include the new row. Otherwise, set selectedEmails to
+        // include every row except the one that was unchecked.
+        if(isNowSelected) {
+            this.setState((prevState) => ({
+                selectedEmails: [...prevState.selectedEmails, index]
+            }));
+        }
+
+        else {
+            this.setState((prevState) => {
+                const nextState = prevState.selectedEmails.filter((email) => {
+                    return email !== index;
+                });
+                return ({
+                    selectedEmails: nextState
+                });
+            });
+        }
+    }
 
     render() {
         const { member, blocked, contacts, organizers, emails } = this.props;
@@ -16,6 +46,8 @@ class DisplayBlock extends Component {
                     <Route path   = "/email"
                            render = {
                                () => <EmailBlock emails = { emails }
+                                                 selectedEmails    = { this.state.selectedEmails }
+                                                 setSelectedEmails = { this.setSelectedEmails } />
                            } />
                     <Route path   = "/settings"
                            render = {
