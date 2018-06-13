@@ -1,19 +1,50 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 
-class Email extends Component {
+class Summary extends Component {
 
     render() {
+        const { email, setSelectedEmails, isSelected, index } = this.props;
         return (
-            <div></div>
+                <tr className="email">
+                    <td>
+                        <input defaultChecked = { isSelected }
+                               type           = "checkbox"
+                               name           = "select"
+                               onClick = {
+                                   (e) => setSelectedEmails(e.target.checked, index)
+                               } >
+                        </input>
+                    </td>
+                    <td>
+                        <input defaultChecked = { email.starred }
+                               type           = "checkbox"
+                               name           = "starred" >
+                        </input>
+                    </td>
+                    <td>
+                        <input defaultChecked = { email.important }
+                               type           = "checkbox"
+                               name           = "important" >
+                        </input>
+                    </td>
+                    <td>{ email.email.reply_to_email }</td>
+                    <td>
+                        <div className="email-title-body">
+                            <span className="george">{ email.email.subject }</span>
+                            <span className="george"> - { email.email.body }</span>
+                        </div>
+                    </td>
+                    <td>&nbsp;</td>
+                    <td><span>{ email.email.timeSent.date }</span></td>
+                </tr>
         );
     }
-
 }
 
-export default Email;
+export default Summary;
 
-Email.propTypes = {
+Summary.propTypes = {
     email: PropTypes.shape({
         id       : PropTypes.number.isRequired,
         important: PropTypes.bool.isRequired,
