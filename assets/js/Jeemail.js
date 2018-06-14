@@ -7,6 +7,7 @@ import Sidebar      from './Components/Sidebar/Sidebar';
 import SubNav       from './Components/SubNav/SubNav';
 
 import FetchService from './Services/FetchService';
+import hasKeys      from './Services/hasKeys';
 
 class Jeemail extends Component {
     constructor() {
@@ -56,18 +57,14 @@ class Jeemail extends Component {
         }
     }
 
-    hasKeys(object) {
-        return Object.keys(object).length > 0;
-    }
-
     render() {
         const { message, member, blocked, contacts, organizers, emails } = this.state;
         const renderable = (
-            this.hasKeys(member)     &&
-            this.hasKeys(blocked)    &&
-            this.hasKeys(contacts)   &&
-            this.hasKeys(organizers) &&
-            this.hasKeys(emails)
+            hasKeys(member)     &&
+            hasKeys(blocked)    &&
+            hasKeys(contacts)   &&
+            hasKeys(organizers) &&
+            hasKeys(emails)
         );
 
         return (
