@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
+import { Switch, Route }    from 'react-router-dom';
 import PropTypes            from 'prop-types';
 
-import EmailViews           from './components/EmailViews/EmailViews';
-import InputTools           from './components/InputTools/InputTools';
-import MoreOptions          from './components/MoreOptions/MoreOptions';
-import Pages                from './components/Pages/Pages';
-import Refresh              from './components/Refresh/Refresh';
-import Selection            from './components/Selection/Selection';
-import Settings             from './components/Settings/Settings';
+import EmailNav   from './components/EmailNav/EmailNav';
+import EmailViews from './components/EmailViews/EmailViews';
+import InputTools from './components/InputTools/InputTools';
+import Pages      from './components/Pages/Pages';
+import Settings   from './components/Settings/Settings';
 
 class SubNav extends Component {
 
@@ -27,12 +26,21 @@ class SubNav extends Component {
             <div className = "subNav">
                 <div className = "subNavPiece subNavLeft">
                     <EmailViews  componentName = "subNav" />
-                    <Selection   componentName = "subNav" />
-                    <Refresh     componentName = "subNav" />
-                    <MoreOptions componentName = "subNav" />
+                    <Switch>
+                        <Route path = "/email" component = { EmailNav } />
+                        <Route path = "/settings" component = { EmailNav } />
+                    </Switch>
+
                 </div>
                 <div className = "subNavPiece subNavRight">
-                    <Pages       componentName = "subNav" />
+                    <Route path = "/" render = {
+                        (props) => {
+                            const notSettings
+                                = props.location.pathname !== "/settings";
+                            return notSettings &&
+                                <Pages componentName = "subNav" />
+                        }
+                    } />
                     <InputTools  componentName = "subNav" />
                     <Settings    componentName = "subNav" />
                 </div>
