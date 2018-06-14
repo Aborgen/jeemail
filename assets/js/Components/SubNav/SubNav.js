@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Switch, Route }    from 'react-router-dom';
 import PropTypes            from 'prop-types';
 
-import EmailNav   from './components/EmailNav/EmailNav';
-import EmailViews from './components/EmailViews/EmailViews';
-import InputTools from './components/InputTools/InputTools';
-import Pages      from './components/Pages/Pages';
-import Settings   from './components/Settings/Settings';
+import EmailNav    from './components/EmailNav/EmailNav';
+import EmailViews  from './components/EmailViews/EmailViews';
+import InputTools  from './components/InputTools/InputTools';
+import Pages       from './components/Pages/Pages';
+import Settings    from './components/Settings/Settings';
+import SettingsNav from './components/SettingsNav/SettingsNav';
 
 class SubNav extends Component {
 
@@ -28,7 +29,7 @@ class SubNav extends Component {
                     <EmailViews  componentName = "subNav" />
                     <Switch>
                         <Route path = "/email" component = { EmailNav } />
-                        <Route path = "/settings" component = { EmailNav } />
+                        <Route path = "/settings" component = { SettingsNav } />
                     </Switch>
 
                 </div>
