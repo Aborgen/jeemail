@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import Email   from './components/Email/Email';
-import Summary from './components/Summary/Summary';
+import FullEmail from './components/FullEmail/FullEmail';
+import Summary   from './components/Summary/Summary';
 
 class EmailBlock extends Component {
 

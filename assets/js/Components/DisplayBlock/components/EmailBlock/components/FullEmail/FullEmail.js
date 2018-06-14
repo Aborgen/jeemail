@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 
-class Email extends Component {
+class FullEmail extends Component {
 
     render() {
         return (
@@ -11,9 +11,9 @@ class Email extends Component {
 
 }
 
-export default Email;
+export default FullEmail;
 
-Email.propTypes = {
+FullEmail.propTypes = {
     email: PropTypes.shape({
         id       : PropTypes.number.isRequired,
         important: PropTypes.bool.isRequired,
