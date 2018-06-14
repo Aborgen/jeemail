@@ -67,7 +67,7 @@ Settings.defaultProps = {
         },
         {
             name: "Themes",
-            url: "/themes"
+            url: "/settings/themes"
         },
         {
             name: "Customize address",

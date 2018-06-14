@@ -51,7 +51,7 @@ EmailViews.defaultProps = {
         },
         {
             name: "Contacts",
-            url: ""
+            url: "/settings/contacts"
         },
         {
             name: "Tasks",
