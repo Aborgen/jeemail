@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
-import PropTypes            from 'prop-types';
-import { Route, Switch }    from 'react-router-dom';
+import PropTypes                      from 'prop-types';
+import { Redirect, Route, Switch }    from 'react-router-dom';
 
 import EmailBlock    from './components/EmailBlock/EmailBlock';
 import SettingsBlock from './components/SettingsBlock/SettingsBlock';
@@ -43,6 +43,10 @@ class DisplayBlock extends Component {
         return (
             <Fragment>
                 <Switch>
+                    <Route exact path   = "/"
+                                 render = {
+                                     () => <Redirect to = "/email" />
+                                 } />
                     <Route path   = "/email"
                            render = {
                                () => <EmailBlock emails = { emails }
