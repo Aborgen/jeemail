@@ -18,22 +18,20 @@ class SettingsBlock extends Component {
         const { radioChecked, selectionChecked } = this.state;
 
         return (
-            <div className="mainBlock">
-                <table>
-                    <colgroup>
-                        <col className="settingDescription" />
-                        <col className="setting" />
-                    </colgroup>
-                    <tbody>
-                        <Settings type="radio"
-                                  settings={radio}
-                                  checked={radioChecked} />
-                        <Settings type="selection"
-                                  settings={selection}
-                                  checked={selectionChecked} />
-                    </tbody>
-                </table>
-            </div>
+            <table>
+                <colgroup>
+                    <col className="settingDescription" />
+                    <col className="setting" />
+                </colgroup>
+                <tbody>
+                    <Settings type="radio"
+                              settings={radio}
+                              checked={radioChecked} />
+                    <Settings type="selection"
+                              settings={selection}
+                              checked={selectionChecked} />
+                </tbody>
+            </table>
         );
     }
 }

@@ -17,20 +17,18 @@ class EmailBlock extends Component {
         });
 
         return (
-            <div className="mainBlock">
-                <table className="emailList">
-                    <colgroup>
-                        <col span="3" className="select" />
-                        <col className="emailName" />
-                        <col className="emailTitle" />
-                        <col className="whitespace" />
-                        <col className="dateTag" />
-                    </colgroup>
-                    <tbody>
-                        { summaries }
-                    </tbody>
-                </table>
-            </div>
+            <table className="emailList">
+                <colgroup>
+                    <col span="3" className="select" />
+                    <col className="emailName" />
+                    <col className="emailTitle" />
+                    <col className="whitespace" />
+                    <col className="dateTag" />
+                </colgroup>
+                <tbody>
+                    { summaries }
+                </tbody>
+            </table>
         );
     }
 

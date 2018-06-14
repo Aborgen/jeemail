@@ -41,7 +41,7 @@ class DisplayBlock extends Component {
     render() {
         const { member, blocked, contacts, organizers, emails } = this.props;
         return (
-            <Fragment>
+            <div className = "mainBlock">
                 <Switch>
                     <Route exact path   = "/"
                                  render = {
@@ -61,12 +61,8 @@ class DisplayBlock extends Component {
                                                     organizers = { organizers }
                                      />
                            } />
-                    <Route path   = "/theme"
-                           render = {
-                               () => <ThemesBlock />
-                           } />
                 </Switch>
-            </Fragment>
+            </div>
         );
     }
 }
