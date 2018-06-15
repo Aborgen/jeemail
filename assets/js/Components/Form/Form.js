@@ -1,34 +1,47 @@
-import React, { PureComponent } from 'react';
-import PropTypes                from 'prop-types';
+import React, { Component } from 'react';
+import PropTypes            from 'prop-types';
 
-import Button from '../../Components/Button/Button';
+import Button    from '../Button/Button';
+import Radio     from '../Radio/Radio';
+import TextInput from '../TextInput/TextInput';
 
-class Form extends PureComponent {
+import hasKeys   from '../../Services/hasKeys';
 
-    generateInput(fields) {
-        const elements = fields.map((field, index) => {
+class Form extends Component {
+
+    generateInput(bundles, componentName) {
+        const classes = componentName !== undefined
+            ? `mixedInputGroup ${componentName}mixedInputGroup`
+            : `mixedInputGroup`;
+
+        return bundles.map((bundle, i) => {
+            const { textInputs, radios, legend } = bundle;
             return (
-                <div className = { `formGroup ${field.name}FormGroup` }
-                     key       = { index } >
+                <fieldset className = { classes }
+                          id        = { `${componentName}MixedInputGroup${i}` }
+                          key       = { i } >
                     {
-                        field.label !== undefined &&
-                        <label htmlFor = { field.name } >
-                            { field.label }
-                        </label>
+                        legend !== undefined &&
+                        <legend>{ legend }</legend>
                     }
-                    <input type        = { field.type }
-                           name        = { field.name }
-                           id          = { field.name }
-                           placeholder = { field.text } ></input>
-                </div>
+                    {
+                        hasKeys(textInputs) &&
+                        <TextInput fields = { textInputs.fields } />
+                    }
+                    {
+                        hasKeys(radios) &&
+                        <Radios fields        = { radios.fields }
+                                parentName    = { componentName }
+                                legend        = { radios.legend } />
+                    }
+                </fieldset>
             );
         });
-
-        return elements;
     }
 
     render() {
-        const { componentName, method, fields, buttonText } = this.props;
+        const { componentName, method,
+                bundles, buttonText } = this.props;
         const classes = componentName !== undefined
             ? `form ${componentName}Form`
             : `form`;
@@ -39,7 +52,7 @@ class Form extends PureComponent {
         return (
             <div className = { classes } >
                 <form method = { formMethod } >
-                    { this.generateInput(fields) }
+                    { this.generateInput(bundles, componentName) }
                     <Button type = { "submit" }
                             name = { "submit" }
                             text = { buttonText } />
@@ -54,11 +67,22 @@ export default Form;
 Form.propTypes = {
     componentName: PropTypes.string.isRequired,
     method       : PropTypes.string.isRequired,
-    fields       : PropTypes.arrayOf(PropTypes.shape({
-        name : PropTypes.string.isRequired,
-        type : PropTypes.string.isRequired,
-        label: PropTypes.string,
-        text : PropTypes.string
-    }).isRequired).isRequired,
-    buttonText   : PropTypes.string.isRequired
+    buttonText   : PropTypes.string.isRequired,
+    bundles      : PropTypes.arrayOf(PropTypes.shape({
+        legend    : PropTypes.string,
+        textInputs: PropTypes.shape({
+            fields: PropTypes.arrayOf(PropTypes.shape({
+                name : PropTypes.string.isRequired,
+                label: PropTypes.string,
+                text : PropTypes.string
+            }).isRequired)
+        }),
+        radios    : PropTypes.shape({
+            fields: PropTypes.arrayOf(PropTypes.shape({
+                name : PropTypes.string.isRequired,
+                label: PropTypes.string
+            }).isRequired),
+            legend: PropTypes.string
+        })
+    }).isRequired).isRequired
 }
