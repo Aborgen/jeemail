@@ -8,10 +8,16 @@ import Form                 from '../../Components/Form/Form';
 
 class Header extends Component {
 
-    getFields() {
+    getBundles() {
         return [{
-            name: "headerSearch",
-            type: "input"
+            textInputs: {
+                fields: [
+                    {
+                        name: "headerSearch"
+                    }
+                ]
+            },
+            radios: {}
         }];
     }
 
@@ -40,7 +46,7 @@ class Header extends Component {
                 </div>
                 <Form componentName = { "header" }
                       method        = { "GET" }
-                      fields        = { this.getFields() }
+                      bundles       = { this.getBundles() }
                       buttonText    = { "❓" } />
             </div>
         );
