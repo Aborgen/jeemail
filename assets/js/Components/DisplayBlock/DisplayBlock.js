@@ -39,19 +39,22 @@ class DisplayBlock extends Component {
     }
 
     render() {
-        const { member, blocked, contacts, organizers, emails } = this.props;
+        const { member, blocked, contacts, organizers, emails, fetchEmails, message } = this.props;
         return (
             <div className = "mainBlock">
                 <Switch>
                     <Route exact path   = "/"
                                  render = {
-                                     () => <Redirect to = "/email" />
+                                     () => <Redirect to = "/email/Inbox" />
                                  } />
                     <Route path   = "/email"
                            render = {
                                () => <EmailBlock emails = { emails }
                                                  selectedEmails    = { this.state.selectedEmails }
-                                                 setSelectedEmails = { this.setSelectedEmails } />
+                                                 setSelectedEmails = { this.setSelectedEmails }
+                                                 fetchEmails       = { fetchEmails }
+                                                 message           = { message }
+                                     />
                            } />
                     <Route path   = "/settings"
                            render = {
@@ -59,6 +62,7 @@ class DisplayBlock extends Component {
                                                     blocked    = { blocked }
                                                     contacts   = { contacts }
                                                     organizers = { organizers }
+                                                    message    = { message }
                                      />
                            } />
                 </Switch>

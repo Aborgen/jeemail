@@ -1,37 +1,50 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { Route, Switch }              from 'react-router-dom';
 
-import FullEmail from './components/FullEmail/FullEmail';
-import Summary   from './components/Summary/Summary';
+import FullEmail   from './components/FullEmail/FullEmail';
+import SummaryList from './components/SummaryList/SummaryList';
 
 class EmailBlock extends Component {
 
     render() {
-        const { emails, selectedEmails, setSelectedEmails } = this.props;
-        const summaries = emails.Inbox.map((email, i) => {
-            const isSelected = selectedEmails.includes(i);
-            return <Summary key               = { i }
-                            email             = { email }
-                            isSelected        = { isSelected }
-                            setSelectedEmails = { setSelectedEmails }
-                            index             = { i } />
-        });
+        const { emails, selectedEmails, setSelectedEmails, fetchEmails, message } = this.props;
+
 
         return (
-            <table className="emailList">
-                <colgroup>
-                    <col span="3" className="select" />
-                    <col className="emailName" />
-                    <col className="emailTitle" />
-                    <col className="whitespace" />
-                    <col className="dateTag" />
-                </colgroup>
-                <tbody>
-                    { summaries }
-                </tbody>
-            </table>
+            <Fragment>
+
+
+                <Switch>
+                    <Route path   = "/email/:organizer(label|category)/:slug"
+                           render = { ({ match }) => <SummaryList match             = { match }
+                                                                  emails            = { emails }
+                                                                  fetchEmails       = { fetchEmails }
+                                                                  selectedEmails    = { selectedEmails }
+                                                                  setSelectedEmails = { setSelectedEmails }
+                                                                  message           = { message } /> }
+                    />
+                    <Route path   = "/email/:slug"
+                           render = { ({ match }) => <SummaryList match             = { match }
+                                                                  emails            = { emails }
+                                                                  fetchEmails       = { fetchEmails }
+                                                                  selectedEmails    = { selectedEmails }
+                                                                  setSelectedEmails = { setSelectedEmails }
+                                                                  message           = { message } /> }
+                    />
+                    <Route path   = "/email/:organizer(label|category)/:slug/:uid"
+                           render = { ({ match }) => <FullEmail match       = { match }
+                                                                emails      = { emails }
+                                                                fetchEmails = { fetchEmails } /> }
+                    />
+                    <Route path   = "/email/:slug/:uid"
+                           render = { ({ match }) => <FullEmail match       = { match }
+                                                                emails      = { emails }
+                                                                fetchEmails = { fetchEmails } /> }
+                    />
+                </Switch>
+            </Fragment>
         );
     }
-
 }
 
 export default EmailBlock;

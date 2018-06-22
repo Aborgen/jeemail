@@ -13,8 +13,9 @@ class Jeemail extends Component {
     constructor() {
         super();
         this.state = {
+            "authorized" : false,
             "currentView": "",
-            "message"    : Jeemail.LOADING_MESSAGE,
+            "message"    : "",
             "member"     : {},
             "blocked"    : {},
             "contacts"   : {},
@@ -25,35 +26,26 @@ class Jeemail extends Component {
         this.fetchService = new FetchService(this);
     }
 
-    static get LOADING_MESSAGE() { return "Loading..."; }
-    static get ERROR_MESSAGE() { return "There seems to have been a problem"; }
-
-    async componentWillMount() {
-        this.checkAuthorization();
+    componentWillMount() {
+        this.fetchService.checkAuthorization();
     }
 
     componentDidMount() {
-        this.fetchService.fetch(FetchService.MEMBER);
-        this.fetchService.fetch(FetchService.BLOCKED);
-        this.fetchService.fetch(FetchService.CONTACTS);
-        this.fetchService.fetch(FetchService.ORGANIZERS);
-        this.fetchService.fetch(FetchService.EMAILS);
+        this.getFromApi();
     }
 
-
-    async checkAuthorization() {
-        try {
-            const response = await fetch('https://api.jeemail.com/status', {
-                method: "POST",
-                credentials: "include"
-            });
-
-            if(!response.ok) {
-                redirect: window.location.replace('/login.php');
-            }
+    componentDidUpdate(prevProps, prevState) {
+        if(this.state.authorized && !prevState.authorized) {
+            this.getFromApi();
         }
-        catch (e) {
-            this.setState({ message: Jeemail.ERROR_MESSAGE })
+    }
+
+    getFromApi() {
+        if(this.state.authorized) {
+            this.fetchService.fetch(FetchService.MEMBER)();
+            this.fetchService.fetch(FetchService.BLOCKED)();
+            this.fetchService.fetch(FetchService.CONTACTS)();
+            this.fetchService.fetch(FetchService.ORGANIZERS)();
         }
     }
 
@@ -63,9 +55,9 @@ class Jeemail extends Component {
             hasKeys(member)     &&
             hasKeys(blocked)    &&
             hasKeys(contacts)   &&
-            hasKeys(organizers) &&
-            hasKeys(emails)
+            hasKeys(organizers)
         );
+        const fetchEmails = this.state.authorized && this.fetchService.fetch(FetchService.EMAILS);
 
         return (
             <Fragment>
@@ -81,10 +73,12 @@ class Jeemail extends Component {
                             blocked    = { blocked }
                             contacts   = { contacts }
                             organizers = { organizers }
-                            emails     = { emails } />
+                            emails     = { emails }
+                            fetchEmails = { fetchEmails }
+                            message = { message } />
                         <Footer />
                     </div>
-                </Fragment> ||
+                </Fragment>  ||
                 <p>{ message }</p>
                 }
             </Fragment>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link }             from 'react-router-dom';
 import PropTypes            from 'prop-types'
 
 import Categories           from './components/Categories/Categories';
@@ -31,7 +32,9 @@ class VerticalList extends Component {
             <li onClick   = { this.handleClick }
                 key       = { this.itemsLength }
                 id        = { `sideBar${this.itemsLength++}` }
-                className = "sideBarItem highlightable">{ item.name }</li>
+                className = "sideBarItem highlightable">
+                <Link to = { item.slug } >{ item.name }</Link>
+            </li>
         );
     }
 
