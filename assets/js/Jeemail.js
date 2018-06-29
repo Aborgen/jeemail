@@ -68,14 +68,13 @@ class Jeemail extends Component {
                     <Sidebar organizers = { organizers } />
                     <div className="displayContainer">
                         <DisplayBlock
-                            blockType  = {"email"}
-                            member     = { member }
-                            blocked    = { blocked }
-                            contacts   = { contacts }
-                            organizers = { organizers }
-                            emails     = { emails }
+                            member      = { member }
+                            blocked     = { blocked }
+                            contacts    = { contacts }
+                            organizers  = { organizers }
+                            emails      = { emails }
                             fetchEmails = { fetchEmails }
-                            message = { message } />
+                            message     = { message } />
                         <Footer />
                     </div>
                 </Fragment>  ||

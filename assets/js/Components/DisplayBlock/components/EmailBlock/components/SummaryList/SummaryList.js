@@ -10,24 +10,14 @@ class SummaryList extends Component {
      * @return array | false
      */
     getSummaries() {
-        const { emails, selectedEmails, setSelectedEmails, fetchEmails,
+        const { emails, selectedEmails, setSelectedEmails, checkState,
                 match } = this.props;
-        const { organizer, slug, url } = match.params;
-        const hasEmails = emails[organizer]
-            ? slug in emails[organizer]
-            : slug in emails
-        console.count(hasEmails);
-        // If there are no emails, fetchEmails will be called, which will
-        // attempt to update Jeemail's emails state. If the emails do not exist
-        // server side, the state will not be updated and getSummaries() will
-        // return false.
-        if(!hasEmails) {
-            const fetchUrl = organizer ? `/${organizer}/${slug}` : `/${slug}`;
-            fetchEmails(fetchUrl);
+        const emailArray = checkState(emails, match);
+        if(!emailArray) {
+            // The email label/category does not exist in the database
             return false;
         }
 
-        const emailArray = emails[organizer] ? emails[organizer][slug] : emails[slug];
         return emailArray.map((email, i) => {
             const isSelected = selectedEmails.includes(i);
             return <Summary key               = { i }
@@ -39,8 +29,8 @@ class SummaryList extends Component {
     }
 
     render() {
-        const { emails, message } = this.props;
-        const summariesAvailable  = this.getSummaries();
+        const { message } = this.props;
+        const summariesAvailable = this.getSummaries();
         return (
             <Fragment>
                 { summariesAvailable &&
@@ -55,8 +45,8 @@ class SummaryList extends Component {
                     <tbody>
                         { summariesAvailable }
                     </tbody>
-                </table>             ||
-                <p>{ message }</p>
+                </table> ||
+                  <p>{ message }</p>
                 }
             </Fragment>
         );
