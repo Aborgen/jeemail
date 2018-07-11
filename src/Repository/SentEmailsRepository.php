@@ -22,14 +22,15 @@ class SentEmailsRepository extends ServiceEntityRepository
     public function findBySlug(int $id, string $slug): ?array
     {
         return $this->createQueryBuilder('se')
-                    ->select('se', 'e', 'l')
+                    ->select('se', 'l')
+                    ->addSelect('PARTIAL con.{id, reply_to_email, body, subject}', 'EXTRACT(EPOCH FROM con.timestamp) AS timestamp')
                     ->addSelect('dl', 'dl2')
                     ->addSelect('ls', 'ls2')
-                    ->leftJoin('se.email', 'e')
+                    ->leftJoin('se.content', 'con')
                     ->leftJoin('se.category', 'c')
                     ->leftJoin('c.category', 'c2')
                     ->leftJoin('se.labels', 'l')
-                    ->leftJoin('l.defaultLabels', 'dl')
+                    ->leftJoin('l.defaultLabel', 'dl')
                     ->leftJoin('dl.label', 'dl2')
                     ->leftJoin('l.labels', 'ls')
                     ->leftJoin('ls.label', 'ls2')
@@ -39,35 +40,6 @@ class SentEmailsRepository extends ServiceEntityRepository
                                'c2.slug = :slug')
                     ->setParameters(['id' => $id, 'slug' => $slug])
                     ->getQuery()
-                    ->getArrayResult();
+                    ->getResult('EMAIL_HYDRATOR');
     }
-
-//    /**
-//     * @return SentEmails[] Returns an array of SentEmails objects
-//     */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?SentEmails
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
