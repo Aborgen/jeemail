@@ -30,9 +30,10 @@ services:
         resource: '../src/DataFixtures'
 
     # Event Listeners
-    # App\EventListener\EnsureNonDuplicateRowEventListener:
-    #     tags:
-    #         - { name: doctrine.event_listener, event: prePersist }
+    # Automatically updates last_active field in Member table
+    App\EventListener\ActivityListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller }
 doctrine:
     orm:
         hydrators:
