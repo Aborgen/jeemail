@@ -39,7 +39,7 @@ class PersonalDefaultLabels
     private $visibility;
 
     /**
-     * @ORM\OneToMany(targetEntity="ReceivedSentEmailsToLabels", mappedBy="defaultLabels")
+     * @ORM\OneToMany(targetEntity="ReceivedSentEmailsToLabels", mappedBy="defaultLabel")
      */
     private $sentOrReceivedEmails;
 

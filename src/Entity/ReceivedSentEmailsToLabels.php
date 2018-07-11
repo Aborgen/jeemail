@@ -37,7 +37,7 @@ class ReceivedSentEmailsToLabels
      * @ORM\ManyToOne(targetEntity="PersonalDefaultLabels", inversedBy="sentOrReceivedEmails")
      * @ORM\JoinColumn(name="PersonalDefaultLabelsID", referencedColumnName="PersonalDefaultLabelsID", nullable=true)
      */
-    private $defaultLabels;
+    private $defaultLabel;
 
     /**
      * @ORM\ManyToOne(targetEntity="PersonalLabels", inversedBy="sentOrReceivedEmails")
@@ -74,14 +74,14 @@ class ReceivedSentEmailsToLabels
         return $this;
     }
 
-    public function getDefaultLabels(): ?PersonalDefaultLabels
+    public function getDefaultLabel(): ?PersonalDefaultLabels
     {
         return $this->defaultLabels;
     }
 
-    public function setDefaultLabels(?PersonalDefaultLabels $defaultLabels): self
+    public function setDefaultLabel(?PersonalDefaultLabels $defaultLabel): self
     {
-        $this->defaultLabels = $defaultLabels;
+        $this->defaultLabels = $defaultLabel;
 
         return $this;
     }
