@@ -123,6 +123,11 @@ class Member implements UserInterface, \Serializable
      */
     private $icon;
 
+    /**
+     * @ORM\Column(type="datetime", options={"default":"(now() at TIME ZONE 'utc')"})
+     */
+    private $last_active;
+
     public function __construct()
     {
         $this->contacts       = new ArrayCollection();
@@ -528,6 +533,24 @@ class Member implements UserInterface, \Serializable
         $this->icon = $icon;
 
         return $this;
+    }
+
+    public function getLastActive(): ?\DateTimeInterface
+    {
+        return $this->last_active;
+    }
+
+    public function setLastActive(\DateTimeInterface $last_active): self
+    {
+        $this->last_active = $last_active;
+
+        return $this;
+    }
+
+    public function isActiveNow(): bool
+    {
+        $delay = new \DateTime("2 minutes ago");
+        return $this->getLastActive() > $delay;
     }
 
     /**
