@@ -37,6 +37,9 @@ services:
 doctrine:
     orm:
         hydrators:
+        dql:
+            datetime_functions:
+                extract: App\DoctrineExtensions\Extract
 framework:
     trusted_hosts: ['^(.+\.)?jeemail.com$']
     assets:
