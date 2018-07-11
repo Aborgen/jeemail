@@ -114,14 +114,14 @@ class Email
         return $this;
     }
 
-    public function getTimeSent(): ?\DateTimeInterface
+    public function getTimestamp(): ?\DateTimeInterface
     {
-        return $this->timeSent;
+        return $this->timestamp;
     }
 
-    public function setTimeSent(\DateTimeInterface $timeSent): self
+    public function setTimeStamp(\DateTimeInterface $timestamp): self
     {
-        $this->timeSent = $timeSent;
+        $this->timestamp = $timestamp;
 
         return $this;
     }
