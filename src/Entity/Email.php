@@ -41,17 +41,17 @@ class Email
     private $body;
 
     /**
-     * @ORM\Column(name="time_sent", type="datetime")
+     * @ORM\Column(name="timestamp", type="datetime")
      */
-    private $timeSent;
+    private $timestamp;
 
     /**
-     * @ORM\OneToMany(targetEntity="ReceivedEmails", mappedBy="email")
+     * @ORM\OneToMany(targetEntity="ReceivedEmails", mappedBy="content")
      */
     private $receivedEmails;
 
     /**
-     * @ORM\OneToMany(targetEntity="SentEmails", mappedBy="email")
+     * @ORM\OneToMany(targetEntity="SentEmails", mappedBy="content")
      */
     private $sentEmails;
 

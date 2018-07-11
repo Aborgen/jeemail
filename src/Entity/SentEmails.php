@@ -29,7 +29,7 @@ class SentEmails
      * @ORM\ManyToOne(targetEntity="Email", inversedBy="sentEmails")
      * @ORM\JoinColumn(name="EmailID", referencedColumnName="EmailID", nullable=false)
      */
-    private $email;
+    private $content;
 
     /**
      * @ORM\Column(type="boolean")
@@ -74,14 +74,14 @@ class SentEmails
         return $this;
     }
 
-    public function getEmail(): ?Email
+    public function getContent(): ?Email
     {
         return $this->email;
     }
 
-    public function setEmail(?Email $email): self
+    public function setContent(?Email $content): self
     {
-        $this->email = $email;
+        $this->email = $content;
 
         return $this;
     }

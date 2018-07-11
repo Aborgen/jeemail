@@ -29,7 +29,7 @@ class ReceivedEmails
      * @ORM\ManyToOne(targetEntity="Email", inversedBy="receivedEmails")
      * @ORM\JoinColumn(name="EmailID", referencedColumnName="EmailID", nullable=false)
      */
-    private $email;
+    private $content;
 
     /**
      * @ORM\Column(type="boolean", options={"default":0})
@@ -52,6 +52,11 @@ class ReceivedEmails
      */
     private $labels;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":0})
+     */
+    private $email_read;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
@@ -62,14 +67,14 @@ class ReceivedEmails
         return $this->id;
     }
 
-    public function getEmail(): ?Email
+    public function getContent(): ?Email
     {
-        return $this->email;
+        return $this->content;
     }
 
-    public function setEmail(?Email $email): self
+    public function setContent(?Email $content): self
     {
-        $this->email = $email;
+        $this->content = $content;
 
         return $this;
     }
@@ -149,6 +154,18 @@ class ReceivedEmails
                 $label->setReceivedEmail(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmailRead(): ?bool
+    {
+        return $this->email_read;
+    }
+
+    public function setEmailRead(bool $email_read): self
+    {
+        $this->email_read = $email_read;
 
         return $this;
     }
