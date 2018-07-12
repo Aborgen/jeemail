@@ -29,25 +29,10 @@ class EmailInterface
         return $this->em->getRepository(SELF::RECEIVED)->findBySlug($id, $slug);
     }
 
-    private function cleanUp(array &$arr): void
-    {
-        // TODO: Surely there is a better way of doing this!
-        if(empty($arr)) {
-            return;
-        }
-
-        $arr['labels'] = $arr['labels'][0];
-        if($arr['labels']['labels'] === null) {
-            $arr['labels']['labels'] = [];
-        }
-    }
-
     public function getEmails(int $id, string $slug): array
     {
         $sent     = $this->getSentEmails($id, $slug);
         $received = $this->getReceivedEmails($id, $slug);
-        array_map('self::cleanUp', $received);
-        array_map('self::cleanUp', $sent);
         return [$slug => $sent + $received];
     }
 }

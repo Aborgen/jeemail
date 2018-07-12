@@ -37,6 +37,7 @@ services:
 doctrine:
     orm:
         hydrators:
+            EMAIL_HYDRATOR: App\Hydrator\EmailHydrator
         dql:
             datetime_functions:
                 extract: App\DoctrineExtensions\Extract
