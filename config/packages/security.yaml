@@ -24,6 +24,7 @@ security:
                 post_only: true
                 always_use_default_target_path: true
                 default_target_path: client_index
+                csrf_token_generator: security.csrf.token_manager
 
             # TODO!
             # remember_me:

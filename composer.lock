@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1391123b98dd3b7532c61c4c8bd00757",
+    "content-hash": "5b81165d5ba08edfe81b84ffe349596e",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -4029,16 +4029,16 @@
         },
         {
             "name": "symfony/security",
-            "version": "v4.1.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security.git",
-                "reference": "2ba804b4af205c060094c28cece0b42a26a67537"
+                "reference": "fa46e38ff4dea2d3949630efd33ed73e2ac0850a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security/zipball/2ba804b4af205c060094c28cece0b42a26a67537",
-                "reference": "2ba804b4af205c060094c28cece0b42a26a67537",
+                "url": "https://api.github.com/repos/symfony/security/zipball/fa46e38ff4dea2d3949630efd33ed73e2ac0850a",
+                "reference": "fa46e38ff4dea2d3949630efd33ed73e2ac0850a",
                 "shasum": ""
             },
             "require": {
@@ -4102,7 +4102,7 @@
             ],
             "description": "Symfony Security Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-30T07:26:09+00:00"
+            "time": "2018-06-22T08:59:39+00:00"
         },
         {
             "name": "symfony/security-bundle",
