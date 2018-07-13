@@ -31,15 +31,6 @@ class EmailController extends AbstractController
     }
 
     /**
-     * @Route("", name="email_index")
-     * @Method({ "GET" })
-     */
-    public function index(): object
-    {
-        return $this->render('index.html.twig');
-    }
-
-    /**
      * @Route("/{defaultLabel}", name="email_show_default_label")
      * @Route("/category/{category}", name="email_show_category")
      * @Route("/label/{label}", name="email_show_label")
