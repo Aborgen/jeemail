@@ -41,7 +41,6 @@ class OrganizationController extends AbstractController
          $label = $request->request->get('label');
          $newLabel = new Label();
          $newLabel->setName($label);
-         // TODO: sluggify service
          $newLabel->setSlug($label);
 
          // Next, use PreInsert to query the database to determine whether
