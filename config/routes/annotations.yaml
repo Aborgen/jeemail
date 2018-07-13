@@ -3,12 +3,15 @@ controllers:
     type: annotation
 
 client_index:
-    path: "/"
-    defaults: &client_redirect
+    path: "/redirect/index"
+    defaults:
         _controller: FrameworkBundle:Redirect:urlRedirect
         path: "https://jeemail.com"
         permanent: true
 
 client_login:
     path: "/redirect/login"
-    defaults: *client_redirect
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: "https://jeemail.com/login"
+        permanent: true
