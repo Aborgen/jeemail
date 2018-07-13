@@ -17,14 +17,23 @@ class ActivityListener
     {
         $this->em       = $em;
         $this->security = $security;
+        $this->setMember();
     }
 
-    private function getMember()
+    private function setMember(): void
     {
-        if(!isset($this->member)) {
-            $this->member = $this->security->getToken()->getUser();
+        $member = $this->security->getToken();
+        if(isset($member)) {
+            $member->getUser();
         }
 
+        $this->member = $member;
+
+        return;
+    }
+    // Member | Symfony\Component\Security\Core\Authentication\Token\AnonymousToken
+    private function getMember()
+    {
         return $this->member;
     }
 
