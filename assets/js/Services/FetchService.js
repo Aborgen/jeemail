@@ -90,7 +90,7 @@ class FetchService {
                     FetchService.REQ, FetchService.TIMEOUT);
 
             if(!response.ok) {
-                redirect: window.location.replace('/login.php');
+                redirect: window.location.replace('/login');
                 throw new Error("Unauthorized");
             }
 
