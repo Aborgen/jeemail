@@ -28,15 +28,15 @@ class Summary extends Component {
                                name           = "important" >
                         </input>
                     </td>
-                    <td>{ email.email.reply_to_email }</td>
+                    <td>{ email.content.reply_to_email }</td>
                     <td>
                         <div className="email-title-body">
-                            <span className="george">{ email.email.subject }</span>
-                            <span className="george"> - { email.email.body }</span>
+                            <span className="george">{ email.content.subject }</span>
+                            <span className="george"> - { email.content.body }</span>
                         </div>
                     </td>
                     <td>&nbsp;</td>
-                    <td><span>{ email.email.timeSent.date }</span></td>
+                    <td><span>{ email.content.timestamp }</span></td>
                 </tr>
         );
     }

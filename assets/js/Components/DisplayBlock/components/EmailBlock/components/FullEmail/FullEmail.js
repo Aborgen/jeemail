@@ -42,7 +42,7 @@ class FullEmail extends Component {
                             <tr>
                                 <td>from:</td>
                                 <td>
-                                    { `${ email.email.id }<${ email.email.reply_to_email }>` }</td>
+                                    { `${ email.content.id }<${ email.content.reply_to_email }>` }</td>
                             </tr>
                             <tr>
                                 <td>to:</td>
@@ -54,7 +54,7 @@ class FullEmail extends Component {
                             </tr>
                             <tr>
                                 <td>subject:</td>
-                                <td>{ email.email.subject }</td>
+                                <td>{ email.content.subject }</td>
                             </tr>
                             <tr>
                                 <td>mailed-by:</td>
@@ -94,7 +94,7 @@ class FullEmail extends Component {
             return false;
         }
 
-        return emailArray.find((obj) => obj.id == uid) || false;
+        return emailArray.find((email) => email.id == uid) || false;
     }
 
     generateLabels(labels) {
@@ -114,7 +114,9 @@ class FullEmail extends Component {
         const { componentName, message }  = this.props;
         const self = this.constructor;
         const email = this.findEmail();
-        const { labels, defaultLabels } = email ? email.labels : {labels: [], defaultLabels: {}};
+        const { labels, defaultLabel } = email
+            ? email.organizers
+            : { labels: [], defaultLabel: {} };
 
         return (
             <div>
@@ -122,14 +124,14 @@ class FullEmail extends Component {
                 <Fragment>
                     <header className = "emailHeader">
                         <div className = "emailHeaderTop">
-                            <span><h1>{ email.title }</h1></span>
+                            <span><h1>{ email.content.subject }</h1></span>
                             <span className = "important">
                                 <input type    = "checkbox"
                                        defaultChecked = { email.important } ></input>
                             </span>
                             <span className = "labels">
                                 <ol>
-                                    { this.generateLabels(defaultLabels) }
+                                    { this.generateLabels(defaultLabel) }
                                     { this.generateLabels(labels) }
                                 </ol>
                             </span>
@@ -139,7 +141,7 @@ class FullEmail extends Component {
                                 <div>
                                     <span>{ email.id }</span>
                                     <span>
-                                        &lt;{ email.sent_by_email }&gt;
+                                        &lt;{ email.content.reply_to_email }&gt;
                                     </span>
                                 </div>
                                 <div>
@@ -154,8 +156,8 @@ class FullEmail extends Component {
                             </div>
                             <div className = "headerBottomRight">
                                 <span className = "date">
-                                    <span>{ email.timestamp }</span>
-                                    <span>({  } days ago)</span>
+                                    <span>{ email.content.timestamp }</span>
+                                    <span>({ new Date(parseInt(email.content.timestamp)).getDay()  } days ago)</span>
                                 </span>
                                 <span>
                                     <input type    = "checkbox"
@@ -164,7 +166,7 @@ class FullEmail extends Component {
                                 <span>
                                     <span>Reply</span>
                                     <span>
-                                        <DropDown parentName    = { this.props.componentName }
+                                        <DropDown parentName    = { componentName }
                                                   componentName = { "fullEmail" }
                                                   trigger       = { this.getTrigger(self.DROPDOWN_TWO) }
                                                   content       = { this.getContent(self.DROPDOWN_TWO) } />
@@ -174,7 +176,7 @@ class FullEmail extends Component {
                         </div>
                     </header>
                     <article>
-                        <p>{ email.body }</p>
+                        <p>{ email.content.body }</p>
                     </article>
                 </Fragment> ||
                 <p>{ message }</p>

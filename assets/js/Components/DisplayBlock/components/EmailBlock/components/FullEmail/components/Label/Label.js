@@ -7,13 +7,12 @@ class Label extends PureComponent {
         if(!label.visibility) {
             return null;
         }
-        console.log(label);
 
         return (
             <li id        = { `label${index}` }
                 className = "label"
-                title     = { `Search for all messages with the label ${ label.label.name }` } >
-                <span>{ label.label.name }</span>
+                title     = { `Search for all messages with the label ${ label.name }` } >
+                <span>{ label.name }</span>
                 <span>x</span>
             </li>
         );
