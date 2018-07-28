@@ -53,36 +53,40 @@
 // const MONTH_DAY_RELATIVE = 2;
 // const TODAY              = 3;
 //
-const dayBundle = {
-    keys: ['en-us', 'en', 'en-gb'],
-    obj: {
-        full: [
-            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-            "Friday", "Saturday"
-        ],
-        short: [
-            "Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"
-        ]
-    }
-};
-
-const monthBundle = {
-    keys: ['en-us', 'en', 'en-gb'],
-    obj: {
-        full: [
-            "January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"
-        ],
-        short: [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
-            "Oct", "Nov", "Dec"
-        ]
-    }
-};
 
 
-const dayNames   = { locale: fooToCoo(dayBundle) };
-const monthNames = { locale: fooToCoo(monthBundle) };
+function generateDateStringsHelper() {
+    const dayBundle = {
+        keys: ['en-US', 'en', 'en-GB'],
+        obj: {
+            full: [
+                "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+                "Friday", "Saturday"
+            ],
+            short: [
+                "Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"
+            ]
+        }
+    };
+
+    const monthBundle = {
+        keys: ['en-US', 'en', 'en-GB'],
+        obj: {
+            full: [
+                "January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"
+            ],
+            short: [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+                "Oct", "Nov", "Dec"
+            ]
+        }
+    };
+    const dayNames   = { locale: fooToCoo(dayBundle) };
+    const monthNames = { locale: fooToCoo(monthBundle) };
+
+    return { dayNames, monthNames };
+}
 
 function fooToCoo(foo) {
     const { keys, obj } = foo;
@@ -138,62 +142,93 @@ function fooToCoo(foo) {
 //     // 12/21/17
 // }
 
+// TODO: Rename every time I use self to summin' else
 class DateConverter {
     constructor(timestamp, is24HourTime = false) {
         if(typeof timestamp === 'undefined') {
-            throw new Error("DateConverter must be provided a timestamp");
+            throw new Error("DateConverter must be provided a date");
         }
 
         this.is24HourTime = typeof is24HourTime === "boolean"
             ? is24HourTime
             : false;
-        this.daysSince    = 0;
-        this.year         = 0;
-        this.dated        = "";
-        this.month        = { str:{ full:"", short:"" }, int:0 };
-        this.day          = { str:{ full:"", short:"" }, int:0 };
+        this.timeElapsed = 0;
+        this.year        = {full:0, short:0};
+        this.date        = 0;
+        this.month       = { str:{ full:'', short:'' }, int:0 };
+        this.day         = { str:{ full:'', short:'' }, int:0 };
+        this.hours       = 0;
+        this.minutes     = 0;
 
-        this.setDate(timestamp);
-        this.locale       = this.getLocale();
+        this.locale      = '';
+        this.era         = {};
+        this._setLocale();
+        this.setEra(timestamp);
     }
 
-    getDate() {
-        return this.date;
+    static get DATE_UNITS() {
+        return {
+            second: 1000,
+            minute: 60000,
+            hour: 3600000,
+            day: 86400000
+        };
     }
 
-    setDate(date) {
-        if(!(date instanceof Date)) {
-            this.date = this._msToDate(date);
+    static get MIN_SECONDS() { return 30; }
+    static get MAX_DAYS()    { return 30; }
+
+    static get FULL_TIMESTAMP()     { return 0; }
+    static get PARTIAL_TIMESTAMP()  { return 1; }
+    static get RELATIVE_TIMESTAMP() { return 2; }
+    static get YMD()                { return 3; }
+
+    getEra() {
+        return this.era;
+    }
+
+    setEra(era) {
+        if(!(era instanceof Date)) {
+            this.era = this._msToDate(era);
+            this.processEra();
             return;
         }
 
-        this.date = date;
-        // this.processDate();
+        this.era = era;
+        this.processEra();
         return;
     }
 
     getLocale() {
-        const { language, browserLanguage, languages } = navigator;
-        if(typeof this.locale !== "undefined") {
-            return this.locale;
-        }
-
-        if(language) {
-            return language;
-        }
-        else if(languages) {
-            return languages[0];
-        }
-        else if(browserLanguage) {
-            return browserLanguage;
-        }
-        else {
-            return "en";
-        }
+        return this.locale;
     }
 
-    getDateMs() {
-        return this.date.getTime();
+    _setLocale() {
+        const { language, browserLanguage, languages } = navigator;
+        if(language) {
+            this.locale = language;
+        }
+        else if(languages) {
+            this.locale = languages[0];
+        }
+        else if(browserLanguage) {
+            this.locale = browserLanguage;
+        }
+        else {
+            this.locale = "en";
+        }
+
+        return;
+    }
+
+    getEraMs() {
+        return this.era.getTime();
+    }
+
+    toggle24HourTime() {
+        this.is24HourTime = !this.is24HourTime;
+        this.processEra();
+        return;
     }
 
     // Safely convert a millisecond value into a Date object
@@ -202,99 +237,75 @@ class DateConverter {
             throw new TypeError("_msToDate only accepts numbers");
         }
 
-        if(ms / 1000 < 1) {
+        if(ms / this.constructor.DATE_UNITS.second < 1) {
             throw new RangeError("_msToDate requires that ms be in milliseconds (>= 1000)");
         }
 
         return new Date(ms);
     }
 
-    // Find hour difference from UTC to the client's reported timezone in ms
-    getOffset() {
-        const now = new Date();
-        return -(now.getTimezoneOffset() * 60 * 1000);
+    // Store various parts of the Date object in state
+    processEra() {
+        const { era, locale }          = this;
+        const { dayNames, monthNames } = generateDateStringsHelper();
+        // Year
+        this.year.full = era.getFullYear();
+        this.year.short = this.year.full.toString().slice(-2);
+        // Month
+        const month = era.getMonth();
+        this.month.int       = month + 1;
+        this.month.str.full  = monthNames.locale[locale].full[month];
+        this.month.str.short = monthNames.locale[locale].short[month];
+        // Day
+        const day = era.getDay();
+        this.day.int       = day + 1;
+        this.day.str.full  = dayNames.locale[locale].full[this.day.int];
+        this.day.str.short = dayNames.locale[locale].short[this.day.int];
+        // Date
+        this.date = era.getDate();
+        // Offset
+        this.timeElapsed = this._calculateTimeSinceEra();
+        // Time
+        const minutes = era.getMinutes();
+        this.minutes = minutes > 0 ? minutes : "00";
+        this.hours   = era.getHours();
+
+        return;
     }
 
-    // Store various parts of the Date object in state
-    // processDate() {
-    //     const { date, locale } = this;
-    //     // Year
-    //     this.year = date.getFullYear();
-    //     // Month
-    //     this.month.int       = date.getMonth();
-    //     this.month.str.full  = monthNames.locale[locale].full[this.month];
-    //     this.month.str.short = monthNames.locale[locale].short[this.month];
-    //     // Day
-    //     this.day.int       = date.getDay();
-    //     this.day.str.full  = dayNames.locale[locale].full[day];
-    //     this.day.str.short = dayNames.locale[locale].short[day];
-    //     // Date
-    //     this.dated = date.getDate();
-    //     // Offset
-    //     this.daysSince = this._calculateTimeSinceDate();
-    //     // Time
-    //     this.minutes = date.getMinutes();
-    //     const hour = date.getHours();
-    //     if(!this.is24HourTime) {
-    //         if(hour > 12) {
-    //             this.hour = hour - 12;
-    //         }
-    //         else {
-    //             this.hour = hour;
-    //         }
-    //     }
-    //     else {
-    //         this.hour = hour;
-    //     }
-    //
-    //     return;
-    // }
-
-    _calculateTimeSinceDate() {
-        const now = new Date();
-        const deltaMs = now.getTime() - this.getDateMs();
-        const seconds = Math.floor(deltaMs / 1000);
-        const units = {
-            second: 1,
-            minute: 60,
-            hour: 3600,
-            day: 86400,
-            MIN_SECONDS: 30,
-            MAX_DAYS: 30,
-            MAX_HOURS: 7
-        };
+    _calculateTimeSinceEra() {
+        const self    = this.constructor;
+        const now     = new Date();
+        const deltaMs = now.getTime() - this.getEraMs();
+        const units   = self.DATE_UNITS;
         // If there is less than 1 second or less than MIN_SECONDS
-        if(seconds < units.second || seconds < units.MIN_SECONDS) {
+        if(deltaMs < units.second ||
+           deltaMs < (self.MIN_SECONDS * units.second)) {
             // Just now
             return 0;
         }
         // If there is less than 60 seconds
-        else if(seconds < units.minute) {
+        else if(deltaMs < units.minute) {
             // Seconds ago
+            const seconds = Math.floor(deltaMs / units.second);
             return { seconds };
         }
         // If there is less than 60 minutes
-        else if(seconds < units.hour) {
+        else if(deltaMs < units.hour) {
             // Minutes ago
-            const minutes = Math.floor(seconds / units.minute);
+            const minutes = Math.floor(deltaMs / units.minute);
             return { minutes };
         }
         // If there is less than 24 hours
-        else if(seconds < units.day) {
+        else if(deltaMs < units.day) {
             // Hours ago
-            const hours = Math.floor(seconds / units.hour);
-            if(hours > units.MAX_HOURS) {
-                const remainder = seconds % units.hour;
-                const minutes   = Math.floor(remainder / units.minute);
-                return { hours, minutes };
-            }
-
+            const hours = Math.floor(deltaMs / units.hour);
             return { hours };
         }
         // If there is less than or there is 30 days
-        else if(seconds <= (units.day * units.MAX_DAYS)) {
+        else if(deltaMs <= (self.MAX_DAYS * units.day)) {
             // Days ago
-            const days = Math.floor(seconds / units.day);
+            const days = Math.floor(deltaMs / units.day);
             return { days };
         }
         // Otherwise, this property will not be used
@@ -303,9 +314,53 @@ class DateConverter {
         }
     }
 
-    _roundUpToHundredths(n) {
-        return Math.round(n * 100) / 100;
+    formatedString(type) {
+        // Tue, Jul 24, 2018 at 1:30 PM
+        // Jul 12 (12 days ago)
+        // 1:33 pm
+        // Jul 23
+        // 12/21/17
+        const self = this.constructor;
+        let time;
+        if(!this.is24HourTime) {
+            if(this.hours > 12) {
+                time = `${this.hours - 12}:${this.minutes} pm`;
+            }
+            else {
+                time = `${this.hours}:${this.minutes} am`;
+            }
+        }
+        else {
+            time = `${this.hours}:${this.minutes}`;
+        }
+
+        switch(type) {
+            case self.FULL_TIMESTAMP:
+                return `${this.day.str.short}, ${this.month.str.short} ${this.date}, ${this.year.full} at ${time}`;
+            case self.PARTIAL_TIMESTAMP:
+                return time;
+            case self.RELATIVE_TIMESTAMP:
+                if(this.timeElapsed === 0) {
+                    return "Just now!";
+                }
+                else if(!this.timeElapsed) {
+                    return `${this.month.str.short} ${this.date}`;
+                }
+                else {
+                    const unit = Object.keys(this.timeElapsed)[0];
+                    return `${this.month.str.short} ${this.date} (${this.timeElapsed[unit]} ${unit} ago)`;
+                }
+            case self.YMD:
+            // Fall through
+            default:
+                if(this.locale === 'en-US') {
+                    return `${this.month.int}/${this.date}/${this.year.short}`;
+                }
+
+                return `${this.date}/${this.month.int}/${this.year.short}`;
+        }
     }
 }
 
+Object.freeze(DateConverter);
 export default DateConverter;

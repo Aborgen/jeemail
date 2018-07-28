@@ -28,7 +28,7 @@ describe('in state, it', () => {
         expect(converter.getDate()).toBeInstanceOf(Date);
     });
 
-    test('sets Date object from provided timestamp', () => {
+    test('sets Date object from provided timestamp(ms)', () => {
         const nowMs      = now.getTime();
         const converter2 = new DateConverter(nowMs);
         expect(converter2.getDate()).toBeInstanceOf(Date);
