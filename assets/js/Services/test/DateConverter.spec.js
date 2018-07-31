@@ -2,10 +2,6 @@ import DateConverter from '../DateConverter.js';
 
 describe('Class DateConverter --', () => {
     describe('it throws' , () => {
-        test('an Error if no timestamp is provided in the constructor', () => {
-            expect(() => new DateConverter()).toThrow(Error);
-        });
-
         test('a TypeError if timestamp is not a number', () => {
             expect(() => new DateConverter(NaN)).toThrow(TypeError);
             expect(() => new DateConverter('not a number')).toThrow(TypeError);
@@ -31,6 +27,12 @@ describe('Class DateConverter --', () => {
             const nowMs      = now.getTime();
             const converter2 = new DateConverter(nowMs);
             expect(converter2.getEra()).toBeInstanceOf(Date);
+        });
+
+        test('if no timestamp or Date object is provided, set era to be epoch', () => {
+            const epoch      = new Date(0);
+            const converter3 = new DateConverter();
+            expect(converter3.getEraMs()).toEqual(epoch.getTime());
         });
 
         test('it sets locale from the client\'s browser', () => {

@@ -145,10 +145,6 @@ function fooToCoo(foo) {
 // TODO: Rename every time I use self to summin' else
 class DateConverter {
     constructor(timestamp, is24HourTime = false) {
-        if(typeof timestamp === 'undefined') {
-            throw new Error("DateConverter must be provided a date");
-        }
-
         this.is24HourTime = typeof is24HourTime === "boolean"
             ? is24HourTime
             : false;
@@ -163,7 +159,14 @@ class DateConverter {
         this.locale      = '';
         this.era         = {};
         this._setLocale();
-        this.setEra(timestamp);
+
+        if(typeof timestamp === 'undefined') {
+            this.era = new Date(0);
+        }
+
+        else {
+            this.setEra(timestamp);
+        }
     }
 
     static get DATE_UNITS() {
