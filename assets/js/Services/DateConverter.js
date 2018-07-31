@@ -269,8 +269,8 @@ class DateConverter {
         // Day
         const day = era.getDay();
         this.day.int       = day + 1;
-        this.day.str.full  = dayNames.locale[locale].full[this.day.int];
-        this.day.str.short = dayNames.locale[locale].short[this.day.int];
+        this.day.str.full  = dayNames.locale[locale].full[day];
+        this.day.str.short = dayNames.locale[locale].short[day];
         // Date
         this.date = era.getDate();
         // Offset

@@ -157,11 +157,11 @@ describe('Class DateConverter --', () => {
             });
 
             test('it sets the day in string form', () => {
-                expect(converter.day.str.full).toEqual('Saturday');
+                expect(converter.day.str.full).toEqual('Friday');
             });
 
             test('it sets the day in shortened string form', () => {
-                expect(converter.day.str.short).toEqual('Sat');
+                expect(converter.day.str.short).toEqual('Fri');
             });
 
             test('it sets the hours', () => {
@@ -189,7 +189,7 @@ describe('Class DateConverter --', () => {
             const time = `${hours}:${minutes} ${amOrPm}`;
             it('outputs correctly formated full timestamp', () => {
                 expect(converter.formatedString(DateConverter.FULL_TIMESTAMP))
-                    .toEqual("Sat, Nov 11, 2011 at " + time);
+                    .toEqual("Fri, Nov 11, 2011 at " + time);
             });
 
             it('outputs correctly formated partial timestamp', () => {
