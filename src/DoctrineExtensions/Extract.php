@@ -33,6 +33,6 @@ class Extract extends FunctionNode
         //     $this->type->dispatch($sqlWalker)   . " "      .
         //     $this->source->dispatch($sqlWalker) . ')';
 
-        return 'EXTRACT(' . $unit . ' FROM ' . $this->timestamp->dispatch($sqlWalker) . ')';
+        return 'EXTRACT(' . $unit . ' FROM ' . $this->timestamp->dispatch($sqlWalker) . ' AT TIME ZONE \'UTC\') * 1000';
     }
 }
