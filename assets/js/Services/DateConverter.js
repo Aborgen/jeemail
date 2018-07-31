@@ -356,17 +356,20 @@ class DateConverter {
                     return "Just now!";
                 }
                 else if(this.timeElapsed === -1) {
+                    // Jan 01
                     return `${this.month.str.short} ${this.date}`;
                 }
                 else if(!this.timeElapsed) {
-                    return `${this.month.int}/${this.date}/${this.year.short}`;
+                    // 01/01/15
+                    // Fall through to default
                 }
                 else {
+                    // Jan 01 (10 days ago)
                     const unit = Object.keys(this.timeElapsed)[0];
                     return `${this.month.str.short} ${this.date} (${this.timeElapsed[unit]} ${unit} ago)`;
                 }
             case self.YMD:
-            // Fall through
+            // Fall through to default
             default:
                 if(this.locale === 'en-US') {
                     return `${this.month.int}/${this.date}/${this.year.short}`;
