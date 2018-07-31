@@ -9,9 +9,6 @@ class Summary extends Component {
         const { email, setSelectedEmails, isSelected, index } = this.props;
         const timestamp = email.content.timestamp;
         const converter = new DateConverter(timestamp);
-        console.log("timestamp:\t" + timestamp);
-        console.log(converter.formatedString(DateConverter.FULL_TIMESTAMP));
-        console.log('----');
         return (
                 <tr className="email">
                     <td>
