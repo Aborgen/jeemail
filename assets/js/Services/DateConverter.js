@@ -233,7 +233,13 @@ class DateConverter {
 
     // Safely convert a millisecond value into a Date object
     _msToDate(ms) {
-        if(typeof ms !== 'number' || isNaN(ms)) {
+        if(typeof ms !== 'number') {
+            ms = parseInt(ms);
+        }
+
+        if(isNaN(ms)) {
+            // console.log(ms);
+            // console.log(typeof ms);
             throw new TypeError("_msToDate only accepts numbers");
         }
 
