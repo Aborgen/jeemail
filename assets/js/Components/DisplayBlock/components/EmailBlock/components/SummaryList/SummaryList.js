@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react';
 
 import Summary from './components/Summary/Summary';
 
-import hasKeys from '../../../../../../Services/hasKeys';
+import hasKeys       from '../../../../../../Services/hasKeys';
+import DateConverter from '../../../../../../Services/DateConverter';
 
 class SummaryList extends Component {
 
@@ -18,12 +19,15 @@ class SummaryList extends Component {
             return false;
         }
 
+        const converter = new DateConverter();
         return emailArray.map((email, i) => {
             const isSelected = selectedEmails.includes(i);
+            converter.setEra(email.content.timestamp);
             return <Summary key               = { i }
                             email             = { email }
                             isSelected        = { isSelected }
                             setSelectedEmails = { setSelectedEmails }
+                            timestamp         = { converter.formatedString(DateConverter.RELATIVE_TIMESTAMP) }
                             index             = { i } />
         });
     }

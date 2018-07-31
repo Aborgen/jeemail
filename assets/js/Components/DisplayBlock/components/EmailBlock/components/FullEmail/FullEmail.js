@@ -5,10 +5,13 @@ import { Link }                       from 'react-router-dom';
 import DropDown from '../../../../../DropDown/DropDown';
 import Label    from './components/Label/Label';
 
+import DateConverter from '../../../../../../Services/DateConverter';
+
 class FullEmail extends Component {
     constructor() {
         super();
         this.labelCount = 0;
+        this.dateConverter = new DateConverter();
     }
 
     static get DROPDOWN_ONE() { return 0; }
@@ -50,7 +53,7 @@ class FullEmail extends Component {
                             </tr>
                             <tr>
                                 <td>date:</td>
-                                <td></td>
+                                <td>{ this.dateConverter.formatedString(DateConverter.FULL_TIMESTAMP) }</td>
                             </tr>
                             <tr>
                                 <td>subject:</td>
@@ -112,11 +115,11 @@ class FullEmail extends Component {
 
     render() {
         const { componentName, message }  = this.props;
-        const self = this.constructor;
+        const self  = this.constructor;
         const email = this.findEmail();
-        const { labels, defaultLabel } = email
-            ? email.organizers
-            : { labels: [], defaultLabel: {} };
+        if(email) {
+            this.dateConverter.setEra(email.content.timestamp);
+        }
 
         return (
             <div>
@@ -131,8 +134,8 @@ class FullEmail extends Component {
                             </span>
                             <span className = "labels">
                                 <ol>
-                                    { this.generateLabels(defaultLabel) }
-                                    { this.generateLabels(labels) }
+                                    { this.generateLabels(email.organizers.defaultLabel) }
+                                    { this.generateLabels(email.organizers.labels) }
                                 </ol>
                             </span>
                         </div>
@@ -156,8 +159,7 @@ class FullEmail extends Component {
                             </div>
                             <div className = "headerBottomRight">
                                 <span className = "date">
-                                    <span>{ email.content.timestamp }</span>
-                                    <span>({ new Date(parseInt(email.content.timestamp)).getDay()  } days ago)</span>
+                                    <span>{ this.dateConverter.formatedString(DateConverter.RELATIVE_TIMESTAMP) }</span>
                                 </span>
                                 <span>
                                     <input type    = "checkbox"

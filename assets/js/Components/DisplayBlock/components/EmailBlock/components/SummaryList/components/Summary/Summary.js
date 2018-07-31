@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 
-import DateConverter from '../../../../../../../../Services/DateConverter';
-
 class Summary extends Component {
 
     render() {
-        const { email, setSelectedEmails, isSelected, index } = this.props;
-        const timestamp = email.content.timestamp;
-        const converter = new DateConverter(timestamp);
+        const { email, setSelectedEmails, isSelected, index, timestamp } = this.props;
         return (
                 <tr className="email">
                     <td>
@@ -42,7 +38,7 @@ class Summary extends Component {
                     <td>&nbsp;</td>
                     <td>
                         <span>
-                            { converter.formatedString(DateConverter.RELATIVE_TIMESTAMP) }
+                            { timestamp }
                         </span>
                     </td>
                 </tr>
