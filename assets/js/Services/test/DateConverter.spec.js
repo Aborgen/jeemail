@@ -197,8 +197,10 @@ describe('Class DateConverter --', () => {
 
             it('outputs correctly formated relative timestamp', () => {
                 //TODO: Needs more setup to demonstrate the relative nature
+                // Right now, since 11/11/11 exceeds one years difference,
+                // it is shown in DD/MM/YY or MM/DD/YY.
                 expect(converter.formatedString(DateConverter.RELATIVE_TIMESTAMP))
-                    .toEqual("Nov 11");
+                    .toEqual("11/11/11");
             });
 
             it('outputs correctly formated year month day timestamp', () => {

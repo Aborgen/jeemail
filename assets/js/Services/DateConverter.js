@@ -171,7 +171,8 @@ class DateConverter {
             second: 1000,
             minute: 60000,
             hour: 3600000,
-            day: 86400000
+            day: 86400000,
+            year: 31557600000
         };
     }
 
@@ -314,8 +315,13 @@ class DateConverter {
             const days = Math.floor(deltaMs / units.day);
             return { days };
         }
-        // Otherwise, this property will not be used
+        // Relative time will not be used
+        else if(deltaMs <= units.year) {
+            return -1;
+        }
+        // Display date in mm/dd/yy or dd/mm/yy dependant on locale
         else {
+            // mm/dd/yy | dd/mm/yy
             return false;
         }
     }
@@ -349,8 +355,11 @@ class DateConverter {
                 if(this.timeElapsed === 0) {
                     return "Just now!";
                 }
-                else if(!this.timeElapsed) {
+                else if(this.timeElapsed === -1) {
                     return `${this.month.str.short} ${this.date}`;
+                }
+                else if(!this.timeElapsed) {
+                    return `${this.month.int}/${this.date}/${this.year.short}`;
                 }
                 else {
                     const unit = Object.keys(this.timeElapsed)[0];

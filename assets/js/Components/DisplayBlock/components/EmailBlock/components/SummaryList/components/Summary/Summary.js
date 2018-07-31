@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes            from 'prop-types';
 
+import DateConverter from '../../../../../../../../Services/DateConverter';
+
 class Summary extends Component {
 
     render() {
         const { email, setSelectedEmails, isSelected, index } = this.props;
+        const timestamp = email.content.timestamp;
+        const converter = new DateConverter(timestamp);
+        console.log("timestamp:\t" + timestamp);
+        console.log(converter.formatedString(DateConverter.FULL_TIMESTAMP));
+        console.log('----');
         return (
                 <tr className="email">
                     <td>
@@ -36,7 +43,11 @@ class Summary extends Component {
                         </div>
                     </td>
                     <td>&nbsp;</td>
-                    <td><span>{ email.content.timestamp }</span></td>
+                    <td>
+                        <span>
+                            { converter.formatedString(DateConverter.RELATIVE_TIMESTAMP) }
+                        </span>
+                    </td>
                 </tr>
         );
     }
