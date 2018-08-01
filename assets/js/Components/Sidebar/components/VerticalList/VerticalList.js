@@ -8,12 +8,12 @@ import MoreItems            from './components/MoreItems/MoreItems';
 class VerticalList extends Component {
     constructor() {
         super();
+
         this.handleClick = this.handleClick.bind(this);
-        this.itemsLength = 0;
     }
 
     handleClick(e) {
-        const clicked = e.target;
+        const clicked = e.target.parentNode;
         const catsTrigger = document.querySelector('.categories');
         const moreTrigger = document.querySelector('.moreItems');
         if(clicked === catsTrigger || clicked === moreTrigger) {
@@ -23,27 +23,29 @@ class VerticalList extends Component {
         this.props.toggleHighlight(clicked.id);
     }
 
-    generateItem(item) {
-        if(item.visiblity === false) {
-            return null;
-        }
-
-        return (
-            <li onClick   = { this.handleClick }
-                key       = { this.itemsLength }
-                id        = { `sideBar${this.itemsLength++}` }
-                className = "sideBarItem highlightable">
-                <Link to = { item.slug } >{ item.name }</Link>
-            </li>
-        );
-    }
-
-    generateItems(itemGroup) {
+    generateItems(itemGroup, rootPath = null) {
         if(!Array.isArray(itemGroup)) {
             return null;
         }
 
-        return itemGroup.map((item) => this.generateItem(item));
+        return itemGroup.map((item, i) => {
+            if(item.visiblity === false) {
+                return null;
+            }
+
+            const path = rootPath
+                ? `/email/${rootPath}/${item.slug}`
+                : `/email/${item.slug}`;
+
+            return (
+                <li onClick   = { this.handleClick }
+                    key       = { i }
+                    id        = { `sideBar${i}` }
+                    className = "sideBarItem highlightable">
+                    <Link to = { path } >{ item.name }</Link>
+                </li>
+            );
+        });
     }
 
     render() {
@@ -52,9 +54,9 @@ class VerticalList extends Component {
             <ol className="verticalList">
                 { this.generateItems(labels['default']) }
                 <Categories componentName = "sideBar"
-                            categories    = { this.generateItems(categories) } />
+                            categories    = { this.generateItems(categories, 'category') } />
                 <MoreItems  componentName = "sideBar"
-                            userDefined   = { this.generateItems(labels['user']) } />
+                            userDefined   = { this.generateItems(labels['user'], 'label') } />
                 <li className = "sideBarItem">
                     <a href="">Edit label</a>
                 </li>
