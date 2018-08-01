@@ -45,7 +45,7 @@ class DisplayBlock extends Component {
                 <Switch>
                     <Route exact path   = "/"
                                  render = {
-                                     () => <Redirect to = "/email/Inbox" />
+                                     () => <Redirect to = "/email" />
                                  } />
                     <Route path   = "/email"
                            render = {
