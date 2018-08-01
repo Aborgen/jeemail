@@ -67,12 +67,20 @@ class FetchService {
         try {
             const res = await fetchWithTimeout(url, FetchService.REQ,
                 FetchService.TIMEOUT);
-            const emails     = await res.json();
-            const prevEmails = this.state.emails[string.substring(1)] || [];
-            const newEmails  = emails[string.substring(1)]            || [];
+            const emails = await res.json();
+            let key = string.split('/');
+            key     = key[key.length - 1];
+            const prevEmails = this.state.emails[key] || [];
+            const newEmails  = emails[key]            || [];
             const stateHasChanged = objectArrayDiff(prevEmails, newEmails);
             if(stateHasChanged) {
-                this.setState({ emails });
+                this.setState((prevState) => {
+                    const nextState = prevState.emails;
+                    nextState[key] = newEmails;
+                    return ({
+                        emails: nextState
+                    });
+                });
             }
 
             return true;
