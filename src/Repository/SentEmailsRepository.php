@@ -24,6 +24,7 @@ class SentEmailsRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('se')
                     ->select('se', 'l')
                     ->addSelect('PARTIAL con.{id, reply_to_email, body, subject}', 'EXTRACT(EPOCH FROM con.timestamp) AS timestamp')
+                    ->addSelect('c', 'c2')
                     ->addSelect('dl', 'dl2')
                     ->addSelect('ls', 'ls2')
                     ->leftJoin('se.content', 'con')
