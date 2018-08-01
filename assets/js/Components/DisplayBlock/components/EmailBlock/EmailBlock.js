@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Route, Switch }              from 'react-router-dom';
+import { Redirect, Route, Switch }              from 'react-router-dom';
 
 import FullEmail   from './components/FullEmail/FullEmail';
 import SummaryList from './components/SummaryList/SummaryList';
@@ -15,9 +15,10 @@ class EmailBlock extends Component {
 
         return (
             <Fragment>
-
-
                 <Switch>
+                    <Route exact path = "/email" render = {
+                        () => <Redirect to = "/email/Inbox" />
+                    } />
                     <Route exact path   = "/email/:organizer(label|category)/:slug"
                            render = { ({ match }) => <SummaryList match             = { match }
                                                                   emails            = { emails }
