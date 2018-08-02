@@ -1,27 +1,11 @@
 import React, { Component } from 'react';
-import { Link }             from 'react-router-dom';
+import { NavLink }             from 'react-router-dom';
 import PropTypes            from 'prop-types'
 
 import Categories           from './components/Categories/Categories';
 import MoreItems            from './components/MoreItems/MoreItems';
 
 class VerticalList extends Component {
-    constructor() {
-        super();
-
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick(e) {
-        const clicked = e.target.parentNode;
-        const catsTrigger = document.querySelector('.categories');
-        const moreTrigger = document.querySelector('.moreItems');
-        if(clicked === catsTrigger || clicked === moreTrigger) {
-            return;
-        }
-
-        this.props.toggleHighlight(clicked.id);
-    }
 
     generateItems(itemGroup, rootPath = null) {
         if(!Array.isArray(itemGroup)) {
@@ -38,11 +22,13 @@ class VerticalList extends Component {
                 : `/email/${item.slug}`;
 
             return (
-                <li onClick   = { this.handleClick }
-                    key       = { i }
+                <li key       = { i }
                     id        = { `sideBar${i}` }
                     className = "sideBarItem highlightable">
-                    <Link to = { path } >{ item.name }</Link>
+                    <NavLink to              = { path }
+                             activeClassName = "sideBarSelected">
+                             { item.name }
+                    </NavLink>
                 </li>
             );
         });

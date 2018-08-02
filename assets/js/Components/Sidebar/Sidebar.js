@@ -6,24 +6,6 @@ import Button               from '../Button/Button';
 import VerticalList         from './components/VerticalList/VerticalList';
 
 class SideBar extends Component {
-    constructor() {
-        super();
-
-        this.toggleHighlight = this.toggleHighlight.bind(this)
-    }
-
-    toggleHighlight(view) {
-        const current = document.querySelector('.sideBarSelected');
-        const newNode = document.getElementById(view);
-        if(!current) {
-            newNode.classList.add('sideBarSelected');
-        }
-
-        if(current && current !== newNode) {
-            current.classList.remove('sideBarSelected');
-            newNode.classList.add('sideBarSelected');
-        }
-    }
 
     render() {
         return (
@@ -31,8 +13,7 @@ class SideBar extends Component {
                 <div className="sideBarButton">
                     <Button type={"submit"} name={"compose"} text="Compose" />
                 </div>
-                <VerticalList toggleHighlight = { this.toggleHighlight }
-                              organizers      = { this.props.organizers } />
+                <VerticalList organizers = { this.props.organizers } />
             </div>
         );
     }
