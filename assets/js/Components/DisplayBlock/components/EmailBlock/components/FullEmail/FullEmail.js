@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes                      from 'prop-types';
-import { Link }                       from 'react-router-dom';
 
 import DropDown from '../../../../../DropDown/DropDown';
 import Label    from './components/Label/Label';
@@ -41,6 +40,10 @@ class FullEmail extends Component {
             case self.DROPDOWN_ONE:
                 return (
                     <table>
+                        <colgroup>
+                            <col className="emailDropDown_title" />
+                            <col className="emailDropDown_content" />
+                        </colgroup>
                         <tbody>
                             <tr>
                                 <td>from:</td>
@@ -49,7 +52,7 @@ class FullEmail extends Component {
                             </tr>
                             <tr>
                                 <td>to:</td>
-                                <td></td>
+                                <td>You</td>
                             </tr>
                             <tr>
                                 <td>date:</td>
@@ -67,15 +70,33 @@ class FullEmail extends Component {
                     </table>
                 );
             case self.DROPDOWN_TWO:
+                const topics = [
+                    {
+                        name: "Reply"
+                    },
+                    {
+                        name: "Forward"
+                    },
+                    {
+                        name: "Add to Contacts"
+                    },
+                    {
+                        name: "Delete"
+                    },
+                    {
+                        name: "Block"
+                    },
+                    {
+                        name: "Print"
+                    }
+                ];
                 return (
                     <ol>
                         {
-                            this.props.dropDownTwo.map((dropDownOne, i) => {
+                            topics.map((topic, i) => {
                                 return (
                                     <li key = { i } >
-                                        <Link to = { "" } >
-                                            { dropDownOne.name }
-                                        </Link>
+                                        { topic.name }
                                     </li>
                                 );
                             })
@@ -141,12 +162,16 @@ class FullEmail extends Component {
                         </div>
                         <div className = "emailHeaderBottom">
                             <div className = "headerBottomLeft">
-                                <div>
+                                <span className = "emailSenderImg">
+                                    <img title = { email.content.reply_to_email }
+                                         src   ="" />
+                                </span>
+                                <span>
                                     <span>{ email.id }</span>
                                     <span>
                                         &lt;{ email.content.reply_to_email }&gt;
                                     </span>
-                                </div>
+                                </span>
                                 <div>
                                     <span>to me</span>
                                     <span>
@@ -186,33 +211,10 @@ class FullEmail extends Component {
             </div>
         );
     }
-
 }
 
 export default FullEmail;
 
-FullEmail.defaultProps = {
-    dropDownTwo: [
-        {
-            name: "Reply"
-        },
-        {
-            name: "Forward"
-        },
-        {
-            name: "Add to Contacts"
-        },
-        {
-            name: "Delete"
-        },
-        {
-            name: "Block"
-        },
-        {
-            name: "Print"
-        }
-    ]
-}
 FullEmail.propTypes = {
     email: PropTypes.shape({
         id       : PropTypes.number.isRequired,
